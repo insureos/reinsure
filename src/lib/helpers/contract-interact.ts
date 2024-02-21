@@ -36,7 +36,10 @@ import {
 
 import axios from '@/lib/axiosClient';
 
-export const registerInsurer = (insuranceCreator: PublicKey) => {
+export const registerInsurer = (
+  insuranceCreator: PublicKey,
+  description: string
+) => {
   return new Promise(async (resolve, reject) => {
     try {
       const program = await getInsuranceProgram(Connection, Signer);
@@ -47,7 +50,7 @@ export const registerInsurer = (insuranceCreator: PublicKey) => {
       );
 
       await program.methods
-        .registerInsurer('')
+        .registerInsurer(description)
         .accounts({
           insuranceCreator: insuranceCreator,
           insurer: insurer,
@@ -62,6 +65,30 @@ export const registerInsurer = (insuranceCreator: PublicKey) => {
         });
     } catch (e) {
       reject(e);
+    }
+  });
+};
+
+export const findInsurer = (insuranceCreator: PublicKey) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const program = await getInsuranceProgram(Connection, Signer);
+
+      const [insurer] = await get_pda_from_seeds(
+        [insuranceCreator.toBuffer()],
+        program
+      );
+
+      await program.account.insurer
+        .fetch(insurer)
+        .then(() => {
+          resolve(true);
+        })
+        .catch((e) => {
+          reject(false);
+        });
+    } catch (e) {
+      reject(false);
     }
   });
 };
@@ -95,13 +122,13 @@ export const registerLP = (lpCreator: PublicKey) => {
 
 export const registerInsurance = (
   insuranceCreator: PublicKey,
-  insuranceId:string,
-  coverage:number,
-  premium:number,
-  minimumCommission:number,
-  deductible:number,
-  expiry:number,
-  insuranceMetadataLink:string
+  insuranceId: string,
+  coverage: number,
+  premium: number,
+  minimumCommission: number,
+  deductible: number,
+  expiry: number,
+  insuranceMetadataLink: string
 ) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -116,13 +143,15 @@ export const registerInsurance = (
         program
       );
 
+      console.log('in interact');
+
       await program.methods
         .registerInsurance(
           insuranceId,
           new BN(coverage),
           new BN(premium),
           new BN(minimumCommission),
-          deductible,
+          new BN(deductible),
           new BN(expiry),
           insuranceMetadataLink
         )
@@ -137,6 +166,7 @@ export const registerInsurance = (
           resolve(insurance);
         })
         .catch((e) => {
+          console.log('insde catch');
           reject(e);
         });
     } catch (e) {

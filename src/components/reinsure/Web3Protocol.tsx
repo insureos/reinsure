@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import Image from 'next/image';
 
 import { useRouter } from 'next/router';
@@ -16,6 +16,20 @@ import cn from 'classnames';
 
 import { useLockBodyScroll } from '@/lib/hooks/use-lock-body-scroll';
 
+import { uploadMetadataToIPFS } from '@/lib/helpers/metadata';
+import {
+  registerInsurance,
+  registerInsurer,
+  findInsurer,
+} from '@/lib/helpers/contract-interact';
+import { useAppSelector, useAppDispatch } from '@/store/store';
+import { PublicKey } from '@solana/web3.js';
+import { onLoading, onFailure, onSuccess } from '@/store/callLoaderSlice';
+
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { setSigner, setConnection } from '@/lib/helpers/wallet';
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
+
 interface Web3ProtocolProps {}
 
 const DurationOptions = [
@@ -27,6 +41,16 @@ const DurationOptions = [
   '9 Months',
   '1 Year',
 ];
+
+const durationMap: any = {
+  '1 Week': 604800000,
+  '2 Weeks': 1209600000,
+  '1 Month': 2678400000,
+  '3 Months': 7948800000,
+  '6 Months': 15811200000,
+  '9 Months': 23760000000,
+  '1 Year': 31622400000,
+};
 
 interface DropdownProps {
   active: string;
@@ -193,26 +217,209 @@ const AddressInput: React.FC<AddressInputProps> = ({
   );
 };
 
+interface RegisterInsurerProps {
+  desc: string;
+  setDesc: React.Dispatch<React.SetStateAction<string>>;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  submitFunc: () => void;
+}
+
+const RegisterInsurer: React.FC<RegisterInsurerProps> = ({
+  desc,
+  setDesc,
+  setIsOpen,
+  submitFunc,
+}) => {
+  return (
+    <div className="absolute bottom-0 left-0 right-0 top-0 z-[100] flex items-center justify-center bg-[rgba(255,255,255,0.08)]">
+      <div className="flex h-[20rem] w-[32rem] flex-col justify-between rounded-[1.5rem] bg-gray-900 p-8 pt-5 shadow-xl">
+        <div className="flex items-center justify-between text-lg font-bold xl:text-xl 3xl:text-2xl">
+          <div>Register as Insurer</div>
+          <WalletMultiButton className="rounded-full" />
+        </div>
+        <Textarea
+          label="Description"
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+        />
+        <Button color="info" onClick={submitFunc} shape="rounded" size="small">
+          Register
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 const Web3Protocol: React.FC<Web3ProtocolProps> = ({}) => {
   const router = useRouter();
+  const [coverage, setCoverage] = useState(0);
+  const [premium, setPremium] = useState(0);
+  const [deductible, setDeductible] = useState(0);
   const [duration, setDuration] = useState('');
+  const [redemptionPolicy, setRedemptionPolicy] = useState('');
   const [addressList, setAddressList] = useState<any[]>([]);
   const [addressModal, setAddressModal] = useState(false);
 
-  useLockBodyScroll(addressModal);
+  const [registerModal, setRegisterModal] = useState(false);
+  const [registerDesc, setRegisterDesc] = useState('');
+
+  const dispatch = useAppDispatch();
+  const wallet = useWallet();
+  const { connection } = useConnection();
+
+  useLockBodyScroll(addressModal || registerModal);
+
+  const checkRegistry = async () => {
+    if (!wallet.publicKey) return;
+    await findInsurer(wallet.publicKey)
+      .then((res) => {
+        if (res) {
+          setRegisterModal(false);
+        } else {
+          setRegisterModal(true);
+        }
+      })
+      .catch((e) => {
+        if (!e) setRegisterModal(true);
+      });
+  };
+
+  useEffect(() => {
+    if (wallet.publicKey)
+      setSigner(
+        wallet.publicKey,
+        wallet.signTransaction,
+        wallet.signAllTransactions
+      );
+    if (connection) setConnection(connection);
+  }, [wallet.publicKey, connection]);
+
+  useEffect(() => {
+    if (wallet.publicKey) {
+      checkRegistry();
+    }
+  }, [wallet.publicKey]);
+
+  const registerInsurerFunc = async () => {
+    if (registerDesc === '') return;
+    if (!wallet.publicKey) return;
+    setRegisterModal(false);
+    dispatch(onLoading('Registering Insurer...'));
+
+    await registerInsurer(wallet.publicKey, registerDesc)
+      .then((res) => {
+        dispatch(
+          onSuccess({
+            label: 'Insurer Registration Success',
+            description: 'check out tx at',
+            link: res
+              ? `https://solscan.io/account/${res.toString()}?cluster=devnet`
+              : '',
+            redirect: null,
+          })
+        );
+      })
+      .catch((err) => {
+        dispatch(
+          onFailure({
+            label: 'Insurer Registration Failed',
+            description: err.message,
+            link: '',
+            redirect: null,
+          })
+        );
+        setRegisterModal(true);
+      });
+  };
+
+  const registerInsuranceFunc = async () => {
+    if (!wallet.publicKey) return;
+    if (
+      coverage === 0 ||
+      premium === 0 ||
+      deductible === 0 ||
+      redemptionPolicy === '' ||
+      duration === ''
+    )
+      return;
+    dispatch(onLoading('Registering Insurance...'));
+
+    const durationSecs = durationMap[duration];
+    const metadataHash = await uploadMetadataToIPFS({
+      coverage: coverage,
+      premium: premium,
+      deductible: deductible,
+      duration: durationSecs,
+      redemptionPolicy: redemptionPolicy,
+    });
+
+    console.log(durationSecs);
+
+    await registerInsurance(
+      wallet.publicKey,
+      '1',
+      coverage,
+      premium,
+      1,
+      deductible,
+      durationSecs,
+      `https://ipfs.io/ipfs/${metadataHash}`
+    )
+      .then((res) => {
+        dispatch(
+          onSuccess({
+            label: 'Insurance Registration Success',
+            description: 'check out tx at',
+            link: res
+              ? `https://solscan.io/account/${res.toString()}?cluster=devnet`
+              : '',
+            redirect: null,
+          })
+        );
+      })
+      .catch((err) => {
+        dispatch(
+          onFailure({
+            label: 'Insurance Registration Failed',
+            description: err.message,
+            link: '',
+            redirect: null,
+          })
+        );
+      });
+  };
 
   return (
     <div className="flex h-full w-full flex-col justify-center gap-4">
+      {!wallet.publicKey && !registerModal && (
+        <div className="absolute bottom-0 left-0 right-0 top-0 z-[100] flex items-center justify-center bg-[rgba(255,255,255,0.08)]">
+          <div className="flex h-[10rem] w-[24rem] flex-col justify-between rounded-[1.5rem] bg-gray-900 p-8 shadow-xl">
+            <div className="text-base xl:text-lg 3xl:text-xl">
+              Connect Wallet to continue
+            </div>
+            <WalletMultiButton className="rounded-full" />
+          </div>
+        </div>
+      )}
       <div className="mb-5 text-xl font-bold xl:text-2xl 3xl:text-3xl">
         Web3 Protocol
       </div>
+      {registerModal && (
+        <RegisterInsurer
+          desc={registerDesc}
+          setDesc={setRegisterDesc}
+          setIsOpen={setRegisterModal}
+          submitFunc={registerInsurerFunc}
+        />
+      )}
       <div className="flex gap-20">
         <Input
           required
           label="Coverage Amount (in $)"
           type="number"
           className="w-[30rem]"
-          value={0}
+          value={coverage}
+          onChange={(e: any) => setCoverage(e.target.value)}
         />
         <div className="flex flex-col">
           <div className="mb-2 text-xs uppercase tracking-widest text-gray-100 sm:mb-3 sm:text-sm">
@@ -226,7 +433,7 @@ const Web3Protocol: React.FC<Web3ProtocolProps> = ({}) => {
           />
         </div>
       </div>
-      <div className="my-5 flex flex-col">
+      {/* <div className="my-5 flex flex-col">
         <div className="mb-2 flex items-center gap-5  sm:mb-3">
           <div className="text-xs uppercase tracking-widest text-gray-100 sm:text-sm">
             Protocol Addresses to be covered -
@@ -270,26 +477,50 @@ const Web3Protocol: React.FC<Web3ProtocolProps> = ({}) => {
             </div>
           );
         })}
-      </div>
-      <Textarea label="Redemption Policy" />
+      </div> */}
+      <Textarea
+        label="Redemption Policy"
+        value={redemptionPolicy}
+        onChange={(e) => setRedemptionPolicy(e.target.value)}
+      />
       <div className="flex items-end gap-10">
         <Input
           required
           label="Premium (in $)"
           type="number"
           className="w-[30rem]"
-          value={0}
+          value={premium}
+          onChange={(e: any) => setPremium(e.target.value)}
         />
         <Button color="primary" shape="rounded" size="small">
           Auto Calculate
         </Button>
       </div>
-      <div className="mt-3 flex flex-col">
+      <div className="flex items-end gap-10">
+        <Input
+          required
+          label="Deductible (in $)"
+          type="number"
+          className="w-[30rem]"
+          value={deductible}
+          onChange={(e: any) => setDeductible(e.target.value)}
+        />
+      </div>
+      {/* <div className="mt-3 flex flex-col">
         <div className="mb-2 text-xs uppercase tracking-widest text-gray-100 sm:mb-3 sm:text-sm">
           Maximum Bidder Leverage
         </div>
         <RangeSlider />
-      </div>
+      </div> */}
+      <Button
+        color="info"
+        onClick={registerInsuranceFunc}
+        shape="rounded"
+        size="small"
+        className="mt-10 w-60"
+      >
+        Register
+      </Button>
     </div>
   );
 };
