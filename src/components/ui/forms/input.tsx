@@ -9,7 +9,10 @@ type InputProps = React.DetailedHTMLProps<
   error?: string;
   className?: string;
   inputClassName?: string;
+  labelClassName?: string;
+  suffix?: React.ReactNode;
   useUppercaseLabel?: boolean;
+  suffixClassName?: string;
 };
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -20,13 +23,16 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       type = 'text',
       className,
       inputClassName,
+      labelClassName,
+      suffix,
+      suffixClassName,
       useUppercaseLabel = true,
       ...props
     },
     ref
   ) => (
     <div className={cn('text-xs sm:text-sm', className)}>
-      <label>
+      <div className={labelClassName}>
         {label && (
           <span
             className={cn(
@@ -52,7 +58,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             inputClassName
           )}
         />
-      </label>
+        {suffix && (
+          <span
+            className={cn('whitespace-nowrap leading-normal', suffixClassName)}
+          >
+            {suffix}
+          </span>
+        )}
+      </div>
       {error && (
         <span role="alert" className="mt-2 block text-red-500 sm:mt-2.5">
           {error}

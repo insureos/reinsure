@@ -7,7 +7,11 @@ export type MODAL_VIEW =
   | 'PROFILE_INFO_VIEW'
   | 'FOLLOWING_VIEW'
   | 'FOLLOWERS_VIEW'
-  | 'NFT_PREVIEW';
+  | 'NFT_PREVIEW'
+  | 'FUND_TRANSFER_PREVIEW'
+  | 'PROFIT_TRANSFER_PREVIEW'
+  | 'DCA_ORDER_HISTORY'
+  | 'DCA_STEPPER';
 
 interface ModalTypes {
   isOpen: boolean;

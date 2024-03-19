@@ -357,7 +357,7 @@ const Web3Protocol: React.FC<Web3ProtocolProps> = ({}) => {
 
     await registerInsurance(
       wallet.publicKey,
-      '1',
+      '2',
       coverage,
       premium,
       1,

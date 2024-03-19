@@ -1,13 +1,17 @@
+import classNames from 'classnames';
+import cn from 'classnames'
 interface InputLabelProps {
   title: string;
   subTitle?: string;
   important?: boolean;
+  className?:string;
+  titleClassName?:string;
 }
 
-function InputLabel({ title, subTitle, important }: InputLabelProps) {
+function InputLabel({ title, subTitle, important,className,titleClassName }: InputLabelProps) {
   return (
-    <div className="relative mb-3">
-      <span className="block text-sm font-medium uppercase tracking-wider text-white">
+    <div className={cn("relative mb-3",className)}>
+      <span className={cn("block text-sm font-medium uppercase tracking-wider text-white",titleClassName)}>
         {title}
         {important && <sup className="ml-1.5 text-red-500">*</sup>}
       </span>

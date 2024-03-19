@@ -10,14 +10,15 @@ export { Tab };
 export function TabItem({
   children,
   className,
-}: React.PropsWithChildren<{ className?: string }>) {
+  tabItemLayoutId = 'activeTabIndicator',
+}: React.PropsWithChildren<{ className?: string; tabItemLayoutId?: string }>) {
   return (
     <Tab
       className={({ selected }) =>
         cn(
-          'relative py-2 uppercase tracking-wider focus:outline-none hover:text-gray-100 xs:py-2.5 sm:py-3',
+          'relative py-2 uppercase tracking-wider hover:text-gray-100 focus:outline-none xs:py-2.5 sm:py-3',
           {
-            'font-medium text-gray-100': selected,
+            'font-medium !text-gray-100': selected,
             'text-gray-400': !selected,
           },
           className
@@ -31,8 +32,8 @@ export function TabItem({
           </span>
           {selected && (
             <motion.span
-              className="absolute left-0 right-0 bottom-0 -z-[1] h-0.5 w-full rounded-lg bg-gray-400 md:z-0"
-              layoutId="activeTabIndicator"
+              className="absolute bottom-0 left-0 right-0 -z-[1] h-0.5 w-full rounded-lg bg-gray-400 md:z-0"
+              layoutId={tabItemLayoutId}
             />
           )}
         </>
