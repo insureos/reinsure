@@ -24,45 +24,6 @@ const ProposalsPage: NextPageWithLayout = () => {
       router.push(routes.createProposal);
     }, 800);
   }
-  const tabMenuItems = [
-    {
-      title: (
-        <>
-          Risk Mitigation
-          {totalActiveVote > 0 && (
-            <span className="ml-0.5 md:ml-1.5 lg:ml-2">{totalActiveVote}</span>
-          )}
-        </>
-      ),
-      path: 'active',
-    },
-    {
-      title: (
-        <>
-          Claim Processing
-          {totalOffChainVote > 0 && (
-            <span className="ml-0.5 md:ml-1.5 lg:ml-2">
-              {totalOffChainVote}
-            </span>
-          )}
-        </>
-      ),
-      path: 'off-chain',
-    },
-    {
-      title: (
-        <>
-          Expired{' '}
-          {totalExecutableVote > 0 && (
-            <span className="ml-0.5 md:ml-1.5 lg:ml-2">
-              {totalExecutableVote}
-            </span>
-          )}
-        </>
-      ),
-      path: 'executable',
-    },
-  ];
   return (
     <>
       <NextSeo title="Proposal" description="reAssure.fi" />
@@ -78,11 +39,12 @@ const ProposalsPage: NextPageWithLayout = () => {
               <Image alt="Vote Pool" src={votePool} width={32} height={32} />
             </div>
             <div>
-              <h2 className="mb-2 font-medium uppercase text-gray-100 xl:text-lg">
-                You have 100 votes
+              <h2 className="mb-2 font-medium  text-gray-100 xl:text-lg">
+                Have you Faced a Security Exploit?
               </h2>
               <p className="leading-relaxed text-gray-400">
-                You need REASSURE tokens to participate in governance.
+                You can file a claim for your insurance for evaluation by the LP
+                token holders
               </p>
             </div>
           </div>
@@ -90,24 +52,13 @@ const ProposalsPage: NextPageWithLayout = () => {
             <Button
               shape="rounded"
               fullWidth={true}
-              className="uppercase"
               onClick={() => goToCreateProposalPage()}
             >
-              Create Proposal
+              File a Claim
             </Button>
           </div>
         </header>
-        <ParamTab tabMenu={tabMenuItems}>
-          <TabPanel className="focus:outline-none">
-            <VoteList voteStatus={'active'} />
-          </TabPanel>
-          <TabPanel className="focus:outline-none">
-            <VoteList voteStatus={'off-chain'} />
-          </TabPanel>
-          <TabPanel className="focus:outline-none">
-            <VoteList voteStatus={'executable'} />
-          </TabPanel>
-        </ParamTab>
+        <VoteList voteStatus={'active'} />
       </section>
     </>
   );

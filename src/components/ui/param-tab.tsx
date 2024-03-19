@@ -62,7 +62,6 @@ export default function ParamTab({
       selectedIndex={selectedTabIndex}
       onChange={(index) => handleTabChange(index)}
     >
-      tabListClassName,
       <Tab.List
         className={cn(
           'relative mb-6 bg-body bg-dark text-sm uppercase before:absolute before:bottom-0 before:left-0 before:w-full before:rounded-sm before:bg-gray-800 sm:gap-8 sm:rounded-none md:before:h-0.5',

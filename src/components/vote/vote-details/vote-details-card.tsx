@@ -88,10 +88,16 @@ export default function VoteDetailsCard({ vote }: any) {
               'mb-5 pb-5 before:h-[1px] before:w-full md:mb-0 md:pb-0 md:pl-5 md:before:h-full md:before:w-[1px] xl:pl-3'
             )}
           >
-            <h3 className="text-gray-400 md:text-base md:font-medium md:uppercase md:text-gray-100 2xl:text-lg ">
-              Voting ends in
+            <div className="flex flex-col gap-2">
+              <div className="uppercase">Expected Compensation :</div>
+              <div className="xl:text-cl text-base xl:text-lg">
+                2,000,000 USD
+              </div>
+            </div>
+            <h3 className="text-xs flex flex-col gap-2 font-medium text-gray-100 md:uppercase xl:text-sm 3xl:text-base ">
+              <div>Voting ends in :</div>
+              <AuctionCountdown date={new Date(Date.now() + 172800000)} />
             </h3>
-            <AuctionCountdown date={new Date(Date.now() + 172800000)} />
           </div>
         )}
 

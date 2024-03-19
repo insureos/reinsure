@@ -6,7 +6,7 @@ function CountdownDisplayWrapper({ days, hours, minutes, seconds }: any) {
   return (
     <div
       className={cn(
-        'flex items-center text-base font-medium -tracking-wider text-gray-100 xs:text-lg md:text-xl xl:text-xl 2xl:text-2xl',
+        'flex items-center font-medium -tracking-wider text-gray-100 3xl:text-xl xl:text-lg text-base',
         'gap-3 md:gap-2.5 lg:gap-6 xl:gap-5 '
       )}
     >
@@ -16,7 +16,7 @@ function CountdownDisplayWrapper({ days, hours, minutes, seconds }: any) {
           <span className={cn('md:hidden')}>d</span>
           <span
             className={cn(
-              'hidden truncate pt-2.5 text-sm -tracking-wide text-gray-400 ',
+              'hidden truncate pt-1 3xl:text-sm xl:text-xs text-2xs -tracking-wide text-gray-400 ',
               'md:block'
             )}
           >
@@ -29,7 +29,7 @@ function CountdownDisplayWrapper({ days, hours, minutes, seconds }: any) {
         <span className={cn('md:hidden')}>h</span>
         <span
           className={cn(
-            'hidden truncate pt-2.5 text-sm -tracking-wide text-gray-400',
+            'hidden truncate pt-1 3xl:text-sm xl:text-xs text-2xs -tracking-wide text-gray-400',
             'md:block'
           )}
         >
@@ -41,7 +41,7 @@ function CountdownDisplayWrapper({ days, hours, minutes, seconds }: any) {
         <span className={cn('md:hidden')}>m</span>
         <span
           className={cn(
-            'hidden truncate pt-2.5 text-sm -tracking-wide text-gray-400 ',
+            'hidden truncate pt-1 3xl:text-sm xl:text-xs text-2xs -tracking-wide text-gray-400 ',
             'md:block'
           )}
         >
@@ -53,7 +53,7 @@ function CountdownDisplayWrapper({ days, hours, minutes, seconds }: any) {
         <span className={cn('md:hidden')}>s</span>
         <span
           className={cn(
-            'hidden truncate pt-2.5 text-sm -tracking-wide text-gray-400 ',
+            'hidden truncate pt-1 3xl:text-sm xl:text-xs text-2xs -tracking-wide text-gray-400 ',
             'md:block'
           )}
         >
