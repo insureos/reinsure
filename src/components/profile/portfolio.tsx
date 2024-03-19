@@ -42,8 +42,8 @@ export default function Portfolio() {
           ))}
         </div>
         <div className="block">
-          <h3 className="text-heading-style mb-3 uppercase text-white">
-            Protocols
+          <h3 className="mb-3 text-sm font-medium uppercase text-white xl:text-base 3xl:text-lg">
+            Insuree
           </h3>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
             {authorProtocols?.map((protocol) => (
@@ -56,8 +56,8 @@ export default function Portfolio() {
           </div>
         </div>
         <div className="block">
-          <h3 className="text-heading-style mb-3 uppercase text-white">
-            Networks
+          <h3 className="mb-3 text-sm font-medium uppercase text-white xl:text-base 3xl:text-lg">
+            Insurer
           </h3>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4">
             {authorNetworks?.map((network) => (
@@ -70,7 +70,10 @@ export default function Portfolio() {
           </div>
         </div>
       </div>
-      <div className="space-y-8 xl:space-y-9">
+      <div className="space-y-6">
+        <h3 className="text-sm font-medium uppercase text-white xl:text-base 3xl:text-lg">
+          Transactions
+        </h3>
         <TransactionSearchForm />
         <TransactionHistory />
       </div>

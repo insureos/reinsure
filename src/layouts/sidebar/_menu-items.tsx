@@ -11,9 +11,9 @@ import { CompassIcon } from '@/components/icons/compass';
 
 export const menuItems = [
   {
-    name: 'Invest',
+    name: 'Open Pools',
     icon: <HomeIcon />,
-    href: routes.invest,
+    href: routes.openpools,
   },
   {
     name: 'Marketplace',

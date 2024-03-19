@@ -6,7 +6,7 @@ const routes = {
   createProposal: '/proposals/create',
   charts: '/charts',
   portfolio: '/portfolio',
-  invest: '/invest',
+  openpools: '/open-pools',
   insuranceRisk: '/insurance-risk',
   riskMitigation: '/risk-mitigation',
   claimPayouts: '/claim-payouts',

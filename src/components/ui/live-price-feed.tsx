@@ -39,7 +39,7 @@ export function LivePriceFeed({
   return (
     <div
       className={cn(
-        'flex items-center gap-4 rounded-lg bg-light-dark p-5 lg:flex-row',
+        'flex items-center gap-4 rounded-lg bg-light-dark p-5 flex-col',
         {
           'light:border light:border-slate-200': !isBorder,
           'shadow-card': !isBorder,
@@ -48,7 +48,7 @@ export function LivePriceFeed({
     >
       <div className="mt-4 mr-2 flex items-center text-xs font-medium 2xl:text-sm">
         <span
-          className="mr-5 truncate tracking-tighter text-gray-400 2xl:w-24 3xl:w-auto"
+          className="mr-5 tracking-tighter text-gray-400 2xl:w-24 3xl:w-auto"
           title={`${usdBalance} USD`}
         >
           {usdBalance} USD

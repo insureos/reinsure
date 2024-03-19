@@ -41,7 +41,7 @@ export default function ListCard({
   return (
     <div
       className={cn(
-        'flex items-center justify-between text-sm font-medium shadow-card bg-light-dark',
+        'xl:text-xs text-2xs flex items-center justify-between bg-light-dark shadow-card',
         className
       )}
     >
@@ -58,7 +58,7 @@ export default function ListCard({
         <div className="ml-2">
           {name}
           {coinType && (
-            <span className="block pt-0.5 text-xs font-normal capitalize text-gray-400">
+            <span className="xl:text-xs text-2xs block pt-0.5 font-normal capitalize text-gray-400">
               {coinType}
             </span>
           )}
