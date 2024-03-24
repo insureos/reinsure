@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CurrencySwapIcons from '@/components/ui/currency-swap-icons';
 import { CoinList } from '@/components/ui/currency-swap-icons';
-import TransactionInfo from '@/components/ui/transaction-info';
 import Button from '@/components/ui/button/button';
 import Input from '@/components/ui/forms/input';
 interface FarmListTypes {

@@ -1,12 +1,7 @@
 import cn from 'classnames';
 import ListCard from '@/components/ui/list-card';
-import ParamTab, { TabPanel } from '@/components/ui/param-tab';
-import TransactionSearchForm from '@/components/author/transaction-search-form';
 import TransactionHistory from '@/components/author/transaction-history';
-import CollectionCard from '@/components/ui/collection-card';
-import SidebarTwo from '@/layouts/sidebar/_portfolio';
 
-import { collections } from '@/data/static/collections';
 import {
   authorWallets,
   authorNetworks,

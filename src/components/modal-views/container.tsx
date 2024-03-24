@@ -7,17 +7,7 @@ import { Transition } from '@/components/ui/transition';
 import Button from '@/components/ui/button';
 import { Close } from '@/components/icons/close';
 import { useModal, MODAL_VIEW } from '@/components/modal-views/context';
-import Followers from '@/components/profile/followers-view';
 // dynamic imports
-const SearchView = dynamic(() => import('@/components/insurance-risk/view'));
-const ShareView = dynamic(() => import('@/components/nft/share-view'));
-const SelectWallet = dynamic(() => import('@/components/nft/select-wallet'));
-const ProfileInfo = dynamic(
-  () => import('@/components/profile/profile-info-view')
-);
-const PreviewContent = dynamic(
-  () => import('@/components/create-nft/nft-preview-content')
-);
 const FundTransfer = dynamic(
   () => import('@/components/marketplace/modals/fund-transfer')
 );
@@ -26,20 +16,6 @@ const ProfitTransfer = dynamic(
 );
 function renderModalContent(view: MODAL_VIEW | string) {
   switch (view) {
-    case 'SEARCH_VIEW':
-      return <SearchView />;
-    case 'SHARE_VIEW':
-      return <ShareView />;
-    case 'WALLET_CONNECT_VIEW':
-      return <SelectWallet />;
-    case 'PROFILE_INFO_VIEW':
-      return <ProfileInfo />;
-    case 'FOLLOWING_VIEW':
-      return <Followers />;
-    case 'FOLLOWERS_VIEW':
-      return <Followers />;
-    case 'NFT_PREVIEW':
-      return <PreviewContent />;
     case 'FUND_TRANSFER_PREVIEW':
       return <FundTransfer />;
     case 'PROFIT_TRANSFER_PREVIEW':
@@ -81,7 +57,7 @@ export default function ModalContainer() {
         </Transition.Child>
 
         {/* This element is to trick the browser into centering the modal contents. */}
-        {view && view !== 'SEARCH_VIEW' && (
+        {view && (
           <span className="inline-block h-full align-middle" aria-hidden="true">
             &#8203;
           </span>

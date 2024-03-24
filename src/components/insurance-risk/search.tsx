@@ -35,7 +35,7 @@ export default function Search() {
                   size="small"
                   variant="ghost"
                   color="gray"
-                  onClick={() => openDrawer('DRAWER_SEARCH')}
+                  onClick={() => openDrawer('DRAWER_FILTER')}
                   className="!h-11 !p-3 hover:!translate-y-0 hover:!shadow-none focus:!translate-y-0 focus:!shadow-none"
                 >
                   <OptionIcon className="relative h-auto w-[18px]" />
@@ -47,7 +47,7 @@ export default function Search() {
         </div>
 
         <div className="fixed bottom-6 left-1/2 z-10 w-full -translate-x-1/2 px-9 sm:hidden">
-          <Button onClick={() => openDrawer('DRAWER_SEARCH')} fullWidth>
+          <Button onClick={() => openDrawer('DRAWER_FILTER')} fullWidth>
             Filters
           </Button>
         </div>

@@ -10,18 +10,13 @@ const DrawerFilters = dynamic(
   () => import('@/components/insurance-risk/filters')
 );
 const DrawerMenu = dynamic(() => import('@/layouts/sidebar/_layout-menu'));
-const PreviewContent = dynamic(
-  () => import('@/components/create-nft/nft-preview-content')
-);
 
 function renderDrawerContent(view: DRAWER_VIEW | string) {
   switch (view) {
     case 'DASHBOARD_SIDEBAR':
       return <Sidebar />;
-    case 'DRAWER_SEARCH':
+    case 'DRAWER_FILTER':
       return <DrawerFilters />;
-    case 'DRAWER_PREVIEW_NFT':
-      return <PreviewContent />;
     default:
       return <DrawerMenu />;
   }

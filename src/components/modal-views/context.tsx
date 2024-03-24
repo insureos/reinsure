@@ -1,13 +1,6 @@
 import { atom, useAtom } from 'jotai';
 
 export type MODAL_VIEW =
-  | 'SEARCH_VIEW'
-  | 'SHARE_VIEW'
-  | 'WALLET_CONNECT_VIEW'
-  | 'PROFILE_INFO_VIEW'
-  | 'FOLLOWING_VIEW'
-  | 'FOLLOWERS_VIEW'
-  | 'NFT_PREVIEW'
   | 'FUND_TRANSFER_PREVIEW'
   | 'PROFIT_TRANSFER_PREVIEW';
 
@@ -19,7 +12,7 @@ interface ModalTypes {
 
 const modalAtom = atom<ModalTypes>({
   isOpen: false,
-  view: 'SEARCH_VIEW',
+  view: 'FUND_TRANSFER_PREVIEW',
   data: null,
 });
 

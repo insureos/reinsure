@@ -10,7 +10,6 @@ import { Close } from '@/components/icons/close';
 import { useDrawer } from '@/components/drawer-views/context';
 import { ChevronDown } from '@/components/icons/chevron-down';
 import { MenuItem } from '@/components/ui/collapsible-menu';
-import WalletConnect from '@/components/nft/wallet-connect';
 import { menuItems } from '@/layouts/sidebar/_menu-items';
 
 export function MenuItems() {
@@ -22,15 +21,15 @@ export function MenuItems() {
     <div className="flex items-center xl:px-10 2xl:px-14 3xl:px-16">
       {menuItems.map((item, index) => (
         <Fragment key={'layout' + item.name + index}>
-            <ActiveLink
-              href={{
-                pathname: item.href,
-              }}
-              className="mx-3 text-[13px] font-medium uppercase text-gray-300 transition first:ml-0 last:mr-0 hover:text-white 2xl:mx-3 2xl:text-sm 3xl:mx-4"
-              activeClassName="!text-white"
-            >
-              {item.name}
-            </ActiveLink>
+          <ActiveLink
+            href={{
+              pathname: item.href,
+            }}
+            className="mx-3 text-[13px] font-medium uppercase text-gray-300 transition first:ml-0 last:mr-0 hover:text-white 2xl:mx-3 2xl:text-sm 3xl:mx-4"
+            activeClassName="!text-white"
+          >
+            {item.name}
+          </ActiveLink>
         </Fragment>
       ))}
     </div>
@@ -70,9 +69,6 @@ export default function DrawerMenu() {
           </div>
         </div>
       </Scrollbar>
-      <div className="absolute right-0 bottom-4 z-10 w-full px-6">
-        <WalletConnect anchorClassName="w-full" btnClassName="!w-full !h-11" />
-      </div>
     </div>
   );
 }

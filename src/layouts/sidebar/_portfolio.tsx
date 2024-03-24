@@ -1,9 +1,6 @@
 import cn from 'classnames';
 import Scrollbar from '@/components/ui/scrollbar';
-import Avatar from '@/components/ui/avatar';
 import TopupButton from '@/components/ui/topup-button';
-import TransactCoin from '@/components/ui/transact-coin';
-import WalletCard from '@/components/ui/wallet-card-two';
 import { motion } from 'framer-motion';
 //images
 import AuthorImage from '@/assets/images/author.jpg';

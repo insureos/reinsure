@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import Slider from 'rc-slider';
 import { RadioGroup } from '@/components/ui/radio-group';
 import Collapse from '@/components/ui/collapse';
-import CollectionSelect from '@/components/ui/collection-select-list';
 import { useDrawer } from '@/components/drawer-views/context';
 import Scrollbar from '@/components/ui/scrollbar';
 import Button from '@/components/ui/button';

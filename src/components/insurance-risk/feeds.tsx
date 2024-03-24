@@ -1,6 +1,6 @@
 import cn from 'classnames';
 import { NFTList } from '@/data/static/nft-list';
-import NFTGrid from '@/components/ui/nft-card';
+import OracleCard from '@/components/ui/oracle-card';
 import { useGridSwitcher } from '@/lib/hooks/use-grid-switcher';
 
 export default function Feeds({ className }: { className?: string }) {
@@ -16,7 +16,7 @@ export default function Feeds({ className }: { className?: string }) {
       )}
     >
       {NFTList.map((nft) => (
-        <NFTGrid
+        <OracleCard
           key={nft.id}
           name={nft.name}
           image={nft.image}

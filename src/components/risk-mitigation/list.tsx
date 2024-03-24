@@ -2,12 +2,11 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CurrencySwapIcons from '@/components/ui/currency-swap-icons';
 import { CoinList } from '@/components/ui/currency-swap-icons';
-import TransactionInfo from '@/components/ui/transaction-info';
 import Button from '@/components/ui/button/button';
 import Input from '@/components/ui/forms/input';
 
 import { NFTList } from '@/data/static/nft-list';
-import NFTGrid from '@/components/ui/nft-card';
+import OracleCard from '@/components/ui/oracle-card';
 
 interface FarmListTypes {
   from: string;
@@ -68,7 +67,7 @@ const FarmList: React.FC<FarmListTypes> = ({
               <div className="grid w-full auto-cols-min grid-flow-col grid-cols-3 overflow-x-auto pb-3">
                 {NFTList.map((nft) => (
                   <div key={nft.id} className="px-3">
-                    <NFTGrid
+                    <OracleCard
                       name={nft.name}
                       image={nft.image}
                       author={nft.author}

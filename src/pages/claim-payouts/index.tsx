@@ -6,7 +6,7 @@ import routes from '@/config/routes';
 import Button from '@/components/ui/button';
 import Image from '@/components/ui/image';
 import { Tab, TabItem, TabPanel, TabPanels } from '@/components/ui/tab';
-import VoteList from '@/components/vote/vote-list';
+import VoteList from '@/components/claim-payouts/vote-list';
 import { ExportIcon } from '@/components/icons/export-icon';
 // static data
 import { getVotesByStatus } from '@/data/static/vote-data';
