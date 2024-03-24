@@ -162,33 +162,33 @@ export function Status() {
       <RadioGroup.Option value="buy-now">
         {({ checked }) => (
           <span
-            className={`flex h-9 cursor-pointer items-center justify-center rounded-lg border border-solid text-center text-sm font-medium uppercase tracking-wide transition-all ${
+            className={`xl:text-xm flex h-9 cursor-pointer items-center justify-center rounded-lg border border-solid text-center text-2xs font-medium tracking-wide transition-all 3xl:text-sm ${
               checked
                 ? 'border-brand bg-brand text-white shadow-button'
                 : 'border-gray-700 bg-gray-800 text-white'
             }`}
           >
-            Buy Now
+            Versioning
           </span>
         )}
       </RadioGroup.Option>
       <RadioGroup.Option value="on-auction">
         {({ checked }) => (
           <span
-            className={`flex h-9 cursor-pointer items-center justify-center rounded-lg border border-solid text-center text-sm font-medium uppercase tracking-wide transition-all ${
+            className={`xl:text-xm flex h-9 cursor-pointer items-center justify-center rounded-lg border border-solid text-center text-2xs font-medium tracking-wide transition-all 3xl:text-sm ${
               checked
                 ? 'border-brand bg-brand text-white shadow-button'
                 : 'border-gray-700 bg-gray-800 text-white'
             }`}
           >
-            On Auction
+            Supply Chain
           </span>
         )}
       </RadioGroup.Option>
       <RadioGroup.Option value="new">
         {({ checked }) => (
           <span
-            className={`flex h-9 cursor-pointer items-center justify-center rounded-lg border border-solid text-center text-sm font-medium uppercase tracking-wide transition-all ${
+            className={`xl:text-xm flex h-9 cursor-pointer items-center justify-center rounded-lg border border-solid text-center text-2xs font-medium tracking-wide transition-all 3xl:text-sm ${
               checked
                 ? 'border-brand bg-brand text-white shadow-button'
                 : 'border-gray-700 bg-gray-800 text-white'
@@ -201,13 +201,13 @@ export function Status() {
       <RadioGroup.Option value="has-offers">
         {({ checked }) => (
           <span
-            className={`flex h-9 cursor-pointer items-center justify-center rounded-lg border border-solid text-center text-sm font-medium uppercase tracking-wide transition-all ${
+            className={`xl:text-xm flex h-9 cursor-pointer items-center justify-center rounded-lg border border-solid text-center text-2xs font-medium tracking-wide transition-all 3xl:text-sm ${
               checked
                 ? 'border-brand bg-brand text-white shadow-button'
                 : 'border-gray-700 bg-gray-800 text-white'
             }`}
           >
-            Has offers
+            Popular
           </span>
         )}
       </RadioGroup.Option>
@@ -218,15 +218,15 @@ export function Status() {
 export function Filters() {
   return (
     <>
-      <Collapse label="Status" initialOpen>
+      <Collapse label="Options" initialOpen>
         <Status />
       </Collapse>
-      <Collapse label="Price Range" initialOpen>
+      {/* <Collapse label="Price Range" initialOpen>
         <PriceRange />
       </Collapse>
       <Collapse label="Collection" initialOpen>
         <CollectionSelect onSelect={(value) => console.log(value)} />
-      </Collapse>
+      </Collapse> */}
     </>
   );
 }

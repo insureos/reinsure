@@ -40,4 +40,9 @@ export const menuItems = [
     icon: <ProfileIcon />,
     href: routes.portfolio,
   },
+  {
+    name: 'Open Policies',
+    icon: <PoolIcon />,
+    href: routes.openPolicies,
+  },
 ];

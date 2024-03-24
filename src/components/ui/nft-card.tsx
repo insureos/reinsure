@@ -22,7 +22,10 @@ export default function NFTGrid({
   price,
 }: NFTGridProps) {
   return (
-    <AnchorLink href="/insurance-risk/details"  className="relative flex h-[10rem] w-full justify-between overflow-hidden rounded-lg bg-light-dark p-3 shadow-card transition-all duration-200 hover:shadow-large">
+    <AnchorLink
+      href="/insurance-risk/details"
+      className="relative flex h-[10rem] w-full justify-between overflow-hidden rounded-lg border border-gray-800 bg-light-dark p-3 shadow-card transition-all px-3 duration-200 hover:shadow-large"
+    >
       <div className="flex h-full w-[75%] flex-col justify-between">
         <div className="flex flex-col gap-5">
           <div className="text-wrap text-sm xl:text-base 3xl:text-lg">

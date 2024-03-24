@@ -433,7 +433,7 @@ const Web3Protocol: React.FC<Web3ProtocolProps> = ({}) => {
           />
         </div>
       </div>
-      {/* <div className="my-5 flex flex-col">
+      <div className="my-5 flex flex-col">
         <div className="mb-2 flex items-center gap-5  sm:mb-3">
           <div className="text-xs uppercase tracking-widest text-gray-100 sm:text-sm">
             Protocol Addresses to be covered -
@@ -477,7 +477,7 @@ const Web3Protocol: React.FC<Web3ProtocolProps> = ({}) => {
             </div>
           );
         })}
-      </div> */}
+      </div>
       <Textarea
         label="Redemption Policy"
         value={redemptionPolicy}
@@ -506,12 +506,12 @@ const Web3Protocol: React.FC<Web3ProtocolProps> = ({}) => {
           onChange={(e: any) => setDeductible(e.target.value)}
         />
       </div>
-      {/* <div className="mt-3 flex flex-col">
+      <div className="mt-3 flex flex-col">
         <div className="mb-2 text-xs uppercase tracking-widest text-gray-100 sm:mb-3 sm:text-sm">
           Maximum Bidder Leverage
         </div>
         <RangeSlider />
-      </div> */}
+      </div>
       <Button
         color="info"
         onClick={registerInsuranceFunc}

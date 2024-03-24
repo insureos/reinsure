@@ -5,6 +5,10 @@ import { CoinList } from '@/components/ui/currency-swap-icons';
 import TransactionInfo from '@/components/ui/transaction-info';
 import Button from '@/components/ui/button/button';
 import Input from '@/components/ui/forms/input';
+
+import { NFTList } from '@/data/static/nft-list';
+import NFTGrid from '@/components/ui/nft-card';
+
 interface FarmListTypes {
   from: string;
   to: string;
@@ -60,30 +64,33 @@ const FarmList: React.FC<FarmListTypes> = ({
             }}
             transition={{ duration: 0.4, ease: 'easeInOut' }}
           >
-            <div className="grid grid-cols-2 gap-4 border-t border-dashed border-gray-700 px-4 py-4">
-              <div className="flex flex-col gap-4">
-                <div className="flex gap-3 text-sm xl:text-base 3xl:text-lg">
-                  <div>USDT staked: </div>
-                  <div className="font-semibold">$ 200</div>
-                </div>
-                <div className="flex w-full gap-2">
-                  <Input type="number" value={0} className="w-full" />
-                  <Button shape="rounded" color="info">
-                    Stake USDT
-                  </Button>
-                </div>
+            <div className="flex w-full flex-col gap-4 border-t border-dashed border-gray-700 px-4 py-4">
+              <div className="grid w-full auto-cols-min grid-flow-col grid-cols-3 overflow-x-auto pb-3">
+                {NFTList.map((nft) => (
+                  <div key={nft.id} className="px-3">
+                    <NFTGrid
+                      name={nft.name}
+                      image={nft.image}
+                      author={nft.author}
+                      authorImage={nft.authorImage}
+                      price={nft.price}
+                      collection={nft.collection}
+                    />
+                  </div>
+                ))}
               </div>
-              <div className="flex flex-col gap-4">
-                <div className="flex gap-3 text-sm xl:text-base 3xl:text-lg">
-                  <div>USDC staked: </div>
-                  <div className="font-semibold">$ 250</div>
-                </div>
-                <div className="flex w-full gap-2">
-                  <Input type="number" value={0} className="w-full" />
-                  <Button shape="rounded" color="info">
-                    Stake USDC
-                  </Button>
-                </div>
+              <div className="mt-2 flex w-full items-center justify-center gap-2">
+                <Button shape="rounded" size="small" className="w-1/2">
+                  Active Mitigation Strategies
+                </Button>
+                <Button
+                  shape="rounded"
+                  size="small"
+                  className="w-1/2"
+                  color="success"
+                >
+                  Deploy Mitigation Strategies
+                </Button>
               </div>
             </div>
           </motion.div>

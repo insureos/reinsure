@@ -24,13 +24,6 @@ const FundTransfer = dynamic(
 const ProfitTransfer = dynamic(
   () => import('@/components/marketplace/modals/profit-transfer')
 );
-const DCAOrderHistory = dynamic(
-  () => import('@/components/marketplace/modals/dca-order-history')
-);
-const DCAStepper = dynamic(
-  () => import('@/components/marketplace/modals/dca-stepper')
-);
-
 function renderModalContent(view: MODAL_VIEW | string) {
   switch (view) {
     case 'SEARCH_VIEW':
@@ -51,10 +44,6 @@ function renderModalContent(view: MODAL_VIEW | string) {
       return <FundTransfer />;
     case 'PROFIT_TRANSFER_PREVIEW':
       return <ProfitTransfer />;
-    case 'DCA_ORDER_HISTORY':
-      return <DCAOrderHistory />;
-    case 'DCA_STEPPER':
-      return <DCAStepper />;
     default:
       return null;
   }

@@ -91,7 +91,7 @@ export default function VoteDetailsCard({ vote }: any) {
             <div className="flex items-center gap-3">
               <div className="uppercase">Expected Compensation :</div>
               <div className="xl:text-cl text-base xl:text-lg">
-                2,000,000 USD
+                $ 2,000,000
               </div>
             </div>
             <h3 className="flex flex-col gap-2 text-xs font-medium text-gray-100 md:uppercase xl:text-sm 3xl:text-base ">

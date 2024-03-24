@@ -9,6 +9,7 @@ const routes = {
   insuranceRisk: '/insurance-risk',
   riskMitigation: '/risk-mitigation',
   claimPayouts: '/claim-payouts',
+  openPolicies:'/open-policies',
   reinsure: '/reinsure',
 
   marketplace: '/marketplace',
