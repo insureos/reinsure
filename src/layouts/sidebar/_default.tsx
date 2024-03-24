@@ -16,7 +16,7 @@ export default function Sidebar({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'top-0 left-0 z-40 h-screen w-full flex-col justify-between max-w-full border-r border-dashed border-gray-700 bg-dark xs:w-80 xl:fixed  xl:w-72 2xl:w-80',
+        'left-0 top-0 z-40 h-screen w-full max-w-full flex-col justify-between border-r border-dashed border-gray-700 bg-dark xs:w-72 xl:fixed',
         className
       )}
     >
@@ -36,22 +36,24 @@ export default function Sidebar({ className }: { className?: string }) {
         </div>
       </div>
 
-        <div className="px-6 pb-5 2xl:px-8">
-            {menuItems.map((item, index) => (
-              <MenuItem
-                key={'default' + item.name + index}
-                name={item.name}
-                href={item.href}
-                icon={item.icon}
-              />
-            ))}
-        </div>
+      <div className="px-6 pb-5 2xl:px-8">
+        {menuItems.map((item, index) => (
+          <MenuItem
+            key={'default' + item.name + index}
+            name={item.name}
+            href={item.href}
+            icon={item.icon}
+          />
+        ))}
+      </div>
 
-        <div className='px-6 pb-5 flex flex-col justify-end'>
-          <Link href={'/reinsure'}>
-          <div className='border-2 cursor-pointer rounded-lg border-gray-500 w-full flex items-center justify-center py-2' >+ Reinsure</div>
-          </Link>
-        </div>
+      <div className="flex flex-col justify-end px-6 pb-5">
+        <Link href={'/reinsure'}>
+          <div className="flex w-full cursor-pointer items-center justify-center rounded-lg border-2 border-gray-500 py-2">
+            + Reinsure
+          </div>
+        </Link>
+      </div>
     </div>
   );
 }

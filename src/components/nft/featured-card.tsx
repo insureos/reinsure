@@ -10,8 +10,8 @@ type ItemType = {
   name: string;
   authorSlug: string;
   avatar?: StaticImageData;
-  updated: Date | string;
-  value?: number | null;
+  created_at: Date | string;
+  amount?: number | null;
   transactionUrl?: String;
 };
 type FeaturedCardProps = {
@@ -20,8 +20,15 @@ type FeaturedCardProps = {
 };
 
 export default function FeaturedCard({ item, className }: FeaturedCardProps) {
-  const { label, name, avatar, authorSlug, updated, value, transactionUrl } =
-    item;
+  const {
+    label,
+    name,
+    avatar,
+    authorSlug,
+    created_at,
+    amount,
+    transactionUrl,
+  } = item;
   return (
     <div
       className={cn(
@@ -30,37 +37,37 @@ export default function FeaturedCard({ item, className }: FeaturedCardProps) {
       )}
     >
       <div className="flex w-[68%] shrink-0 items-center">
-        {/* <div className="h-7 w-7 shrink-0 rounded-full md:h-8 md:w-8 xl:h-10 xl:w-10">
+        <div className="h-7 w-7 shrink-0 rounded-full md:h-8 md:w-8 xl:h-10 xl:w-10">
           {avatar && <Image src={avatar} alt={name} width={40} height={40} />}
-        </div> */}
+        </div>
         <div className="ml-2 truncate">
           <div className="mb-0.5 truncate text-sm font-medium -tracking-wider text-white">
-            {/* {label} by{' '} */}
+            {label} by{' '}
             <AnchorLink
               href={authorSlug}
               className="-tracking-wide text-gray-400 hover:text-white"
             >
-              {name}
+              @{name}
             </AnchorLink>
           </div>
           <div className="truncate text-xs -tracking-wider text-gray-400">
-            last updated {dayjs(updated).format('MMM D, YYYY')} at{' '}
-            {dayjs(updated).format('h:mm a')}
+            {dayjs(created_at).format('MMM D, YYYY')} at{' '}
+            {dayjs(created_at).format('h:mm a')}
           </div>
         </div>
       </div>
-      {(value || transactionUrl) && (
+      {(amount || transactionUrl) && (
         <div className="flex shrink-0 items-center pl-2 pr-0.5">
-          {value && (
+          {amount && (
             <div className="pr-2.5 text-sm font-medium -tracking-wider sm:pr-3 sm:text-base">
-              {value}
+              {amount} ETH
             </div>
           )}
-          {/* {transactionUrl && (
+          {transactionUrl && (
             <AnchorLink href="#" className="text-gray-300 hover:text-white">
               <ArrowLinkIcon className="h-3 w-3" />
             </AnchorLink>
-          )} */}
+          )}
         </div>
       )}
     </div>

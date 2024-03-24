@@ -65,7 +65,7 @@ function RadioGroupOption({ value }: RadioOptionProps) {
     <RadioGroup.Option value={value}>
       {({ checked }) => (
         <span
-          className={`relative flex h-8 cursor-pointer items-center justify-center rounded-lg px-3 text-sm uppercase tracking-wider ${
+          className={`relative flex h-8 cursor-pointer items-center justify-center whitespace-pre rounded-lg px-3 text-2xs xl:text-xs 3xl:text-sm ${
             checked ? 'text-white' : 'text-gray-400'
           }`}
         >
@@ -95,7 +95,7 @@ export default function Sidebar({ className }: { className?: string }) {
         className
       )}
     >
-      <div className="relative z-20 h-full pb-5 overflow-auto">
+      <div className="relative z-20 h-full overflow-auto pb-5">
         <div className="mx-0 mx-5 mt-2 flex flex-col justify-between overflow-hidden rounded-lg bg-transparent p-4">
           <div className="w-full sm:w-[48%] lg:w-full">
             <h3 className="mb-2 text-center text-sm uppercase tracking-wider text-gray-400 3xl:mb-3">
@@ -112,11 +112,12 @@ export default function Sidebar({ className }: { className?: string }) {
           <RadioGroup
             value={status}
             onChange={handleOnChange}
-            className="mb-4 flex items-center gap-5"
+            className="mb-4 flex items-center gap-3"
           >
-            <RadioGroupOption value="Week" />
-            <RadioGroupOption value="Month" />
-            <RadioGroupOption value="Year" />
+            <RadioGroupOption value="1 hr" />
+            <RadioGroupOption value="1 Day" />
+            <RadioGroupOption value="1 Month" />
+            <RadioGroupOption value="6 Months" />
           </RadioGroup>
           <LivePriceFeed {...priceFeed} />
           <div className="my-4 block">

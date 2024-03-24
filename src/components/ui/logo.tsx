@@ -8,7 +8,7 @@ export default function Logo() {
   const isMounted = useIsMounted();
   return (
     <AnchorLink
-      href={'/'}
+      href={'/reinsure'}
       className="flex w-36 outline-none sm:w-40 4xl:w-48"
     >
       <span className="relative flex overflow-hidden">

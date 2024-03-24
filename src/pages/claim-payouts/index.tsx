@@ -5,13 +5,16 @@ import cn from 'classnames';
 import routes from '@/config/routes';
 import Button from '@/components/ui/button';
 import Image from '@/components/ui/image';
-import ParamTab, { TabPanel } from '@/components/ui/param-tab';
+import { Tab, TabItem, TabPanel, TabPanels } from '@/components/ui/tab';
 import VoteList from '@/components/vote/vote-list';
 import { ExportIcon } from '@/components/icons/export-icon';
 // static data
 import { getVotesByStatus } from '@/data/static/vote-data';
 import votePool from '@/assets/images/vote-pool.svg';
 import RootLayout from '@/layouts/_root-layout';
+
+const tabItemClassName =
+  'flex-1 justify-center capitalize text-gray-600 [&>span:first-child]:relative [&>span:first-child]:z-10 [&>span:first-child]:justify-center [&>span:first-child]:px-5 [&>span:first-child]:text-white [&>span:nth-of-type(2)]:top-1.5 [&>span:nth-of-type(2)]:z-0 [&>span:nth-of-type(2)]:h-[calc(100%-12px)] [&>span:nth-of-type(2)]:shadow-md [&>span:nth-of-type(2)]:bg-light-dark [&>span:only-child]:text-gray-300 [&>span]:overflow-hidden [&>span]:rounded-full';
 
 const ProposalsPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -58,7 +61,31 @@ const ProposalsPage: NextPageWithLayout = () => {
             </Button>
           </div>
         </header>
-        <VoteList voteStatus={'active'} />
+        <Tab.Group key="nested">
+          <Tab.List className="relative mx-auto flex h-13 max-w-[450px] justify-between rounded-full bg-[#0C0F19] px-1.5 text-sm shadow-2xl min-[450px]:justify-start min-[450px]:gap-6 2xl:gap-10">
+            <TabItem
+              tabItemLayoutId="nestedTabIndicator"
+              className={tabItemClassName}
+            >
+              Completed Claims
+            </TabItem>
+            <TabItem
+              tabItemLayoutId="nestedTabIndicator"
+              className={tabItemClassName}
+            >
+              Ongoing Claims
+            </TabItem>
+            {/* <span className="absolute inset-x-0 bottom-0 border border-gray-200"></span> */}
+          </Tab.List>
+          <TabPanels className="mt-4">
+            <TabPanel className="focus:outline-none">
+              <VoteList voteStatus={'active'} />
+            </TabPanel>
+            <TabPanel className="focus:outline-none">
+              <VoteList voteStatus={'active'} />
+            </TabPanel>
+          </TabPanels>
+        </Tab.Group>
       </section>
     </>
   );

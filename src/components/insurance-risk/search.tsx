@@ -1,7 +1,11 @@
 import Button from '@/components/ui/button';
-import Feeds from '@/components/search/feeds';
+import Feeds from '@/components/insurance-risk/feeds';
 import { useDrawer } from '@/components/drawer-views/context';
-import { Filters, GridSwitcher, SortList } from '@/components/search/filters';
+import {
+  Filters,
+  GridSwitcher,
+  SortList,
+} from '@/components/insurance-risk/filters';
 import { OptionIcon } from '@/components/icons/option';
 
 export default function Search() {
@@ -9,16 +13,12 @@ export default function Search() {
   return (
     <>
       <div className="grid 2xl:grid-cols-[280px_minmax(auto,_1fr)] 4xl:grid-cols-[320px_minmax(auto,_1fr)]">
-        <div className="hidden border-r border-dashed pr-8 border-gray-700 2xl:block">
+        <div className="hidden border-r border-dashed border-gray-700 pr-8 2xl:block">
           <Filters />
         </div>
 
         <div className="2xl:pl-8 4xl:pl-10">
-          <div className="relative z-10 mb-6 flex items-center justify-between">
-            <span className="text-xs font-medium text-white sm:text-sm">
-              5,686,066 items
-            </span>
-
+          <div className="relative z-10 mb-6 flex items-center justify-end">
             <div className="flex gap-6 3xl:gap-8">
               <SortList />
               <div className="hidden 3xl:block">

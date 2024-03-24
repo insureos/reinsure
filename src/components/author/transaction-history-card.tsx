@@ -2,9 +2,10 @@ import Image from '@/components/ui/image';
 import { LongArrowRight } from '@/components/icons/long-arrow-right';
 import { LongArrowUp } from '@/components/icons/long-arrow-up';
 import { VerifiedIcon } from '@/components/icons/verified-icon';
-import { GasIcon } from '@/components/icons/gas-icon';
 import { QuestionIcon } from '@/components/icons/question-icon';
 import { StaticImageData } from 'next/image';
+import { ExchangeIcon } from '@/components/icons/exchange';
+
 
 type CardProps = {
   name: string;
@@ -17,8 +18,7 @@ type CardProps = {
   transactionMethodLogo: StaticImageData | string;
   transactionMethod: string;
   transactionAmount: number;
-  gasFee: number;
-  currencyType: string;
+  exchangeRate: string;
 };
 
 export default function TransactionHistoryCard({ item }: { item: CardProps }) {
@@ -27,8 +27,7 @@ export default function TransactionHistoryCard({ item }: { item: CardProps }) {
     avatar,
     date,
     time,
-    currencyType,
-    gasFee,
+    exchangeRate,
     transactionMethod,
     transactionMethodLogo,
     transactionFromAvatar,
@@ -36,10 +35,10 @@ export default function TransactionHistoryCard({ item }: { item: CardProps }) {
     transactionAmount,
     transactionType,
   } = item ?? {};
-  const bgColor = transactionType === 'credited' ? '#D2D786' : '#F2C672';
+  const bgColor = transactionType === 'sell' ? '#D2D786' : '#F2C672';
   return (
-    <div className="rounded-lg p-4 text-sm shadow-card bg-light-dark sm:p-5 md:p-6">
-      <div className="flex items-center justify-between border-b border-dashed pb-3.5 border-gray-700 sm:pb-5">
+    <div className="rounded-lg bg-light-dark p-4 text-sm shadow-card sm:p-5 md:p-6">
+      <div className="flex items-center justify-between border-b border-dashed border-gray-700 pb-3.5 sm:pb-5">
         <div className="flex items-center font-medium ">
           <Image
             src={avatar}
@@ -49,9 +48,7 @@ export default function TransactionHistoryCard({ item }: { item: CardProps }) {
             placeholder="blur"
             className="rounded-full"
           />
-          <div className="ml-2 truncate -tracking-wider text-white">
-            {name}
-          </div>
+          <div className="ml-2 truncate -tracking-wider text-white">{name}</div>
         </div>
         <div className="truncate pl-2 text-xs -tracking-wide text-gray-400 xs:text-sm ">
           {date}
@@ -66,16 +63,16 @@ export default function TransactionHistoryCard({ item }: { item: CardProps }) {
             >
               <LongArrowUp
                 className={`h-5 w-5 xl:h-6 xl:w-6 ${
-                  transactionType === 'credited' ? 'rotate-180' : 'rotate-0'
+                  transactionType === 'sell' ? 'rotate-180' : 'rotate-0'
                 }`}
               />
-              <div className="absolute top-0 -right-1.5 ">
-                <VerifiedIcon className="h-4 w-4" />
+              <div className="absolute -right-1.5 top-0 ">
+                {/* <VerifiedIcon className="h-4 w-4" /> */}
               </div>
             </div>
             <div className="ml-2.5 flex flex-col truncate xl:ml-4">
               <strong className="mb-0.5 font-medium -tracking-wider text-white">
-                {transactionType === 'credited' ? 'Receive' : 'Send'}
+                {transactionType === 'sell' ? 'Sell' : 'Buy'}
               </strong>
               <span className="text-xs text-gray-400">{time}</span>
             </div>
@@ -103,7 +100,11 @@ export default function TransactionHistoryCard({ item }: { item: CardProps }) {
           </div>
         </div>
         <div className="col-span-1 flex items-center text-gray-400 sm:pl-3 md:pl-0 lg:pl-3">
-          <LongArrowRight className="h-5 w-5 md:h-6 md:w-6 lg:h-5 lg:w-5 xl:h-7 xl:w-7" />
+          <LongArrowRight
+            className={`h-5 w-5 md:h-6 md:w-6 lg:h-5 lg:w-5 xl:h-7 xl:w-7 ${
+              transactionType === 'sell' ? 'rotate-180' : 'rotate-0'
+            }`}
+          />
         </div>
         <div className="col-span-4  flex flex-col gap-2.5 sm:flex-row sm:gap-x-4 md:flex-col 2xl:flex-row">
           <div className="flex items-center lg:w-1/2">
@@ -115,7 +116,6 @@ export default function TransactionHistoryCard({ item }: { item: CardProps }) {
                   width={40}
                   height={40}
                   className="rounded-full"
-                  placeholder="blur"
                 />
               ) : (
                 <QuestionIcon className="h-5 w-5 xl:h-6 xl:w-6" />
@@ -123,7 +123,8 @@ export default function TransactionHistoryCard({ item }: { item: CardProps }) {
             </div>
             <div className="ml-2.5 flex flex-col truncate xl:ml-4">
               <span className="mb-0.5 text-xs text-gray-400">
-                +{transactionAmount}
+                {transactionType == 'sell' ? '+' : '-'}
+                {transactionAmount}
               </span>
               <strong className="font-medium -tracking-wider text-white">
                 {transactionMethod}
@@ -132,13 +133,14 @@ export default function TransactionHistoryCard({ item }: { item: CardProps }) {
           </div>
           <div className="flex items-center lg:w-1/2">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-600/5 text-gray-400 md:h-9 md:w-9 xl:h-10 xl:w-10">
-              <GasIcon className="h-4 w-4" />
+              <ExchangeIcon className="h-4 w-4" />
             </div>
             <div className="ml-2.5 flex flex-col truncate xl:ml-4">
-              <span className="mb-0.5 text-xs text-gray-400">Gas Fee</span>
-              <strong className="font-medium -tracking-wider text-white">
-                {gasFee}
-                {currencyType}
+              <span className="mb-0.5 text-xs text-gray-400">
+                Exchange Rate
+              </span>
+              <strong className="text-2xs font-medium text-white xl:text-xs 3xl:text-sm">
+                {exchangeRate}
               </strong>
             </div>
           </div>

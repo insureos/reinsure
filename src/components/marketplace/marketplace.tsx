@@ -5,7 +5,6 @@ import CoinBar from '@/components/marketplace/coin-bar';
 import CoinList from '@/components/marketplace/coin-list';
 import InvestForm from '@/components/marketplace/invest-form';
 import TradingChart from '@/components/marketplace/trading-chart';
-import InvestmentTab from '@/components/marketplace/investment-tab';
 
 export default function MarketPlace() {
   return (
@@ -23,7 +22,6 @@ export default function MarketPlace() {
           <CoinList />
         </div>
       </div>
-      <InvestmentTab />
     </>
   );
 }

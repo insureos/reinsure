@@ -70,6 +70,9 @@ export const authorProtocols = [
 // Profile Protocols Data
 import Bitcoin from '@/assets/images/currency/bitcoin.svg';
 import Ethereum from '@/assets/images/currency/ethereum.svg';
+import USDC from '@/assets/images/coin/usd-coin-usdc-logo.svg';
+import USDT from '@/assets/images/coin/tether-usdt-logo.svg';
+
 export const authorNetworks = [
   {
     id: 1,
@@ -92,47 +95,44 @@ import User2 from '@/assets/images/user-2.png';
 export const transactionHistory = [
   {
     id: 1,
-    name: 'Spy Thirtythree',
+    name: 'Insurance1 INSR',
     avatar: User2,
     date: 'February 7, 2022',
     time: '10:13 AM',
-    transactionType: 'credited',
+    transactionType: 'sell',
     transactionFrom: 'Stefen365',
     transactionFromAvatar: User1,
-    transactionMethodLogo: '',
-    transactionMethod: 'Verse',
-    transactionAmount: 9.85,
-    gasFee: 0.0519,
-    currencyType: 'ETH',
+    transactionMethodLogo: USDC,
+    transactionMethod: 'USDC',
+    transactionAmount: 205,
+    exchangeRate: "2.1 USDT/INSR",
   },
   {
     id: 2,
-    name: 'Spy Thirtythree',
+    name: 'StrInsurance STR',
     avatar: User2,
     date: 'February 7, 2022',
     time: '10:13 AM',
-    transactionType: 'debited',
+    transactionType: 'debitbuyed',
     transactionFrom: 'Stefen365',
     transactionFromAvatar: User1,
-    transactionMethodLogo: '',
-    transactionMethod: 'Verse',
-    transactionAmount: 3000000.0,
-    gasFee: 0.0519,
-    currencyType: 'ETH',
+    transactionMethodLogo: USDT,
+    transactionMethod: 'USDT',
+    transactionAmount: 150,
+    exchangeRate: "1.57 USDT/STR",
   },
   {
     id: 3,
-    name: 'Spy Thirtythree',
+    name: 'HelloWorld Re-assurance HWR',
     avatar: User2,
     date: 'February 7, 2022',
     time: '10:13 AM',
-    transactionType: 'credited',
+    transactionType: 'sell',
     transactionFrom: 'Stefen365',
     transactionFromAvatar: User1,
-    transactionMethodLogo: '',
-    transactionMethod: 'Verse',
-    transactionAmount: 9.85,
-    gasFee: 0.0519,
-    currencyType: 'ETH',
+    transactionMethodLogo: USDC,
+    transactionMethod: 'USDC',
+    transactionAmount: 610,
+    exchangeRate: "1.8 USDT/HWR",
   },
 ];

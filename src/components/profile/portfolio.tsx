@@ -13,21 +13,6 @@ import {
   authorProtocols,
 } from '@/data/static/author-profile';
 
-const tabMenu = [
-  {
-    title: 'Collection',
-    path: 'collection',
-  },
-  {
-    title: 'Portfolio',
-    path: 'portfolio',
-  },
-  {
-    title: 'History',
-    path: 'history',
-  },
-];
-
 export default function Portfolio() {
   return (
     <div className="flex flex-col gap-10">
@@ -74,7 +59,6 @@ export default function Portfolio() {
         <h3 className="text-sm font-medium uppercase text-white xl:text-base 3xl:text-lg">
           Transactions
         </h3>
-        <TransactionSearchForm />
         <TransactionHistory />
       </div>
     </div>

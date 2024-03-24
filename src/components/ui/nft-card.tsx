@@ -22,51 +22,23 @@ export default function NFTGrid({
   price,
 }: NFTGridProps) {
   return (
-    <div className="relative overflow-hidden rounded-lg shadow-card transition-all duration-200 hover:shadow-large bg-light-dark">
-      <div className="p-4">
-        <AnchorLink
-          href="/"
-          className="flex items-center text-sm font-medium transition text-gray-300 hover:text-white"
-        >
-          <Avatar
-            image={authorImage}
-            alt={name}
-            size="sm"
-            className="mr-3 text-ellipsis border-gray-500"
-          />
-          <span className="overflow-hidden text-ellipsis">@{author}</span>
-        </AnchorLink>
-      </div>
-      <AnchorLink href="/nft-details" className="relative block w-full pb-full">
-        <Image
-          src={image}
-          placeholder="blur"
-          layout="fill"
-          objectFit="cover"
-          alt=""
-        />
-      </AnchorLink>
-
-      <div className="p-5">
-        <AnchorLink
-          href="/nft-details"
-          className="text-sm font-medium text-white"
-        >
-          {name}
-        </AnchorLink>
-        <div className="mt-1.5 flex">
-          <AnchorLink
-            href="/"
-            className="inline-flex items-center text-xs text-gray-400"
-          >
-            {collection}
-            <Verified className="ml-1" />
-          </AnchorLink>
+    <AnchorLink href="/insurance-risk/details"  className="relative flex h-[10rem] w-full justify-between overflow-hidden rounded-lg bg-light-dark p-3 shadow-card transition-all duration-200 hover:shadow-large">
+      <div className="flex h-full w-[75%] flex-col justify-between">
+        <div className="flex flex-col gap-5">
+          <div className="text-wrap text-sm xl:text-base 3xl:text-lg">
+            Supply Chain Risk (JavaScript)
+          </div>
+          <div className="text-3xs xl:text-2xs 3xl:text-xs">
+            Au5UxjuuLLD9AQuE4QWQ1ucUqKPjaXQ8EkSBokUPCiB6
+          </div>
         </div>
-        <div className="mt-4 text-lg font-medium text-white">
-          {price}
+        <div className="text-sm xl:text-base 3xl:text-lg">
+          167 (-5% since 1hr)
         </div>
       </div>
-    </div>
+      <div className="flex h-fit w-[24%] items-center justify-center rounded-lg bg-brand py-2 text-2xs font-semibold shadow-inner shadow-[rgba(0,0,0,0.3)] xl:text-xs 3xl:text-sm">
+        3 mins ago
+      </div>
+    </AnchorLink>
   );
 }

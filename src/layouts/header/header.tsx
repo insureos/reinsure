@@ -54,19 +54,19 @@ export default function Header({ className }: { className?: string }) {
     >
       <div className="flex h-full items-center justify-between px-4 sm:px-6 lg:px-8 3xl:px-10">
         <div className="flex items-center">
-          <div
-            onClick={() => router.push(routes.home)}
-            className="flex items-center xl:hidden"
-          >
-            <LogoIcon />
-          </div>
-          <div className="mx-2 block sm:mx-4 xl:hidden">
+          <div className="mr-2 block sm:mr-4 xl:hidden">
             <Hamburger
               isOpen={false}
               variant="transparent"
               onClick={() => openDrawer('DASHBOARD_SIDEBAR')}
               className="text-white"
             />
+          </div>
+          <div
+            onClick={() => router.push(routes.reinsure)}
+            className="flex items-center xl:hidden"
+          >
+            <LogoIcon />
           </div>
         </div>
         <HeaderRightArea />
