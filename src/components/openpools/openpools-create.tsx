@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 import Input from '@/components/ui/forms/input';
+import Uploader from '@/components/ui/forms/uploader';
 import Textarea from '@/components/ui/forms/textarea';
 import Slider from 'rc-slider';
 import {
@@ -14,6 +15,13 @@ import {
 import Button from '@/components/ui/button/button';
 import cn from 'classnames';
 import AnchorLink from '@/components/ui/links/anchor-link';
+
+import { uploadMetadataToIPFS, uploadFileToIPFS } from '@/lib/helpers/metadata';
+import { registerLP } from '@/lib/helpers/contract-interact';
+import { useAppSelector, useAppDispatch } from '@/store/store';
+import { PublicKey } from '@solana/web3.js';
+import { onLoading, onFailure, onSuccess } from '@/store/callLoaderSlice';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 interface CreatePoolProps {}
 
@@ -148,10 +156,88 @@ const RangeSlider = () => {
 
 const CreatePool: React.FC<CreatePoolProps> = ({}) => {
   const router = useRouter();
-  const [poolName, setPoolName] = useState('');
+  const [tokenName, setTokenName] = useState('');
+  const [tokenSymbol, setTokenSymbol] = useState('');
+  const [imageFile, setImageFile] = useState<File | undefined>(undefined);
   const [duration, setDuration] = useState('');
   const [targetSize, setTargetSize] = useState(0);
   const [additionalConstraints, setAdditionalConstraints] = useState('');
+
+  const dispatch = useAppDispatch();
+
+  const wallet = useWallet();
+
+  const AddTokenDataToIPFS = async () => {
+    const imageHash = await uploadFileToIPFS(imageFile as File);
+    const metadataHash = await uploadMetadataToIPFS({
+      name: tokenName,
+      symbol: tokenSymbol,
+      image: `https://ipfs.io/ipfs/${imageHash}`,
+      additionalConstraints: additionalConstraints,
+    });
+    return `https://ipfs.io/ipfs/${metadataHash}`;
+  };
+
+  const createLP = async () => {
+    if (
+      tokenName === '' ||
+      tokenSymbol === '' ||
+      imageFile === undefined ||
+      duration === '' ||
+      targetSize === 0
+    )
+      return;
+    if (wallet.publicKey === null) return;
+
+    dispatch(onLoading('Creating Liquidity Pool...'));
+    let hadError = false;
+
+    const tokenIpfsHash = (await AddTokenDataToIPFS().catch((err) => {
+      hadError = false;
+      dispatch(
+        onFailure({
+          label: 'Token IPFS pinning Failed',
+          description: err.message,
+          link: '',
+          redirect: null,
+        })
+      );
+    })) as any;
+    if (hadError) return;
+
+    const durationSecs = durationMap[duration];
+
+    await registerLP(
+      wallet.publicKey,
+      targetSize,
+      durationSecs,
+      tokenName,
+      tokenSymbol,
+      tokenIpfsHash
+    )
+      .then((res) => {
+        dispatch(
+          onSuccess({
+            label: 'Liquidity Pool Registration Success',
+            description: 'check out tx at',
+            link: res
+              ? `https://solscan.io/tx/${res.toString()}?cluster=devnet`
+              : '',
+            redirect: null,
+          })
+        );
+      })
+      .catch((err) => {
+        dispatch(
+          onFailure({
+            label: 'Liquidity Pool Registration Failed',
+            description: err.message,
+            link: '',
+            redirect: null,
+          })
+        );
+      });
+  };
 
   return (
     <div className="flex h-full w-full flex-col justify-center gap-4">
@@ -161,17 +247,42 @@ const CreatePool: React.FC<CreatePoolProps> = ({}) => {
           <XMarkIcon className="h-8 w-8" />
         </AnchorLink>
       </div>
-      <div className="flex gap-20">
+      <div className="flex gap-4">
         <Input
           required
-          label="Pool Name"
+          label="Token Name"
           className="w-[30rem]"
-          placeholder="pool name"
-          value={poolName}
-          onChange={(e: any) => setPoolName(e.target.value)}
+          placeholder="token name"
+          value={tokenName}
+          onChange={(e: any) => setTokenName(e.target.value)}
+        />
+        <Input
+          required
+          label="Token Symbol"
+          className="w-[30rem]"
+          placeholder="token symbol"
+          value={tokenSymbol}
+          onChange={(e: any) => setTokenSymbol(e.target.value)}
         />
       </div>
-
+      <div className="flex flex-col">
+        <div className="mb-2 text-xs uppercase tracking-widest text-gray-100 sm:mb-3 sm:text-sm">
+          Token Icon
+        </div>
+        <div
+          className={cn('rounded-lg border border-gray-800', {
+            'w-[30rem]': imageFile === undefined,
+            'w-fit rounded-[50%] p-2': imageFile !== undefined,
+          })}
+        >
+          <Uploader
+            setFile={(file) => {
+              setImageFile(file);
+            }}
+            uploaded={imageFile}
+          />
+        </div>
+      </div>
       <div className="flex gap-20">
         <div className="flex flex-col">
           <div className="mb-2 text-xs uppercase tracking-widest text-gray-100 sm:mb-3 sm:text-sm">
@@ -208,7 +319,13 @@ const CreatePool: React.FC<CreatePoolProps> = ({}) => {
         value={additionalConstraints}
         onChange={(e) => setAdditionalConstraints(e.target.value)}
       />
-      <Button color="info" shape="rounded" size="small" className="mt-10 w-60">
+      <Button
+        onClick={createLP}
+        color="info"
+        shape="rounded"
+        size="small"
+        className="mt-10 w-60"
+      >
         Create Pool
       </Button>
     </div>

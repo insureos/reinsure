@@ -30,6 +30,7 @@ import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { setSigner, setConnection } from '@/lib/helpers/wallet';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 
+
 interface Web3ProtocolProps {}
 
 const DurationOptions = [
@@ -357,7 +358,7 @@ const Web3Protocol: React.FC<Web3ProtocolProps> = ({}) => {
 
     await registerInsurance(
       wallet.publicKey,
-      '2',
+      '3',
       coverage,
       premium,
       1,
@@ -371,7 +372,7 @@ const Web3Protocol: React.FC<Web3ProtocolProps> = ({}) => {
             label: 'Insurance Registration Success',
             description: 'check out tx at',
             link: res
-              ? `https://solscan.io/account/${res.toString()}?cluster=devnet`
+              ? `https://solscan.io/tx/${res.toString()}?cluster=devnet`
               : '',
             redirect: null,
           })

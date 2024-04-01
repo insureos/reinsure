@@ -30,12 +30,12 @@ export type Insurance = {
     {
       name: 'TWO_WEEKS';
       type: 'i64';
-      value: '2 * WEEK';
+      value: '5';
     },
     {
       name: 'MONTH';
       type: 'i64';
-      value: '30 * DAY';
+      value: '5';
     },
     {
       name: 'DEFAULT_MINT_DECIMALS';
@@ -84,12 +84,68 @@ export type Insurance = {
           isSigner: false;
         },
         {
+          name: 'tokenisedMint';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'securityMint';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'metadata';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'tokenMetadataProgram';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'associatedTokenProgram';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'tokenProgram';
+          isMut: false;
+          isSigner: false;
+        },
+        {
           name: 'systemProgram';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'rent';
           isMut: false;
           isSigner: false;
         }
       ];
-      args: [];
+      args: [
+        {
+          name: 'idealSize';
+          type: 'u64';
+        },
+        {
+          name: 'poolLifecycle';
+          type: 'i64';
+        },
+        {
+          name: 'tokenName';
+          type: 'string';
+        },
+        {
+          name: 'tokenSymbol';
+          type: 'string';
+        },
+        {
+          name: 'tokenMetadataUri';
+          type: 'string';
+        }
+      ];
     },
     {
       name: 'registerInsurance';
@@ -130,7 +186,7 @@ export type Insurance = {
         },
         {
           name: 'minimumCommission';
-          type: 'u32';
+          type: 'i64';
         },
         {
           name: 'deductible';
@@ -142,6 +198,70 @@ export type Insurance = {
         },
         {
           name: 'metadataLink';
+          type: 'string';
+        }
+      ];
+    },
+    {
+      name: 'proposeInsuranceProposal';
+      accounts: [
+        {
+          name: 'proposalProposer';
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: 'lp';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'insurance';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'proposal';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'tokenisedMint';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'proposalTokenAccount';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'associatedTokenProgram';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'tokenProgram';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'systemProgram';
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [
+        {
+          name: 'proposedCommision';
+          type: 'u64';
+        },
+        {
+          name: 'proposedUndercollaterization';
+          type: 'u64';
+        },
+        {
+          name: 'proposalDocs';
           type: 'string';
         }
       ];
@@ -181,7 +301,7 @@ export type Insurance = {
       name: 'addSecurity';
       accounts: [
         {
-          name: 'lpCreator';
+          name: 'securityAddr';
           isMut: true;
           isSigner: true;
         },
@@ -191,13 +311,28 @@ export type Insurance = {
           isSigner: false;
         },
         {
-          name: 'lpCreatorUsdcAccount';
+          name: 'securityAddrUsdcAcc';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'securityAdderTokenAddr';
           isMut: true;
           isSigner: false;
         },
         {
           name: 'lpUsdcAccount';
           isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'securityMint';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'tokenisedMint';
+          isMut: false;
           isSigner: false;
         },
         {
@@ -444,6 +579,11 @@ export type Insurance = {
           isSigner: true;
         },
         {
+          name: 'lp';
+          isMut: true;
+          isSigner: false;
+        },
+        {
           name: 'proposal';
           isMut: false;
           isSigner: false;
@@ -510,12 +650,17 @@ export type Insurance = {
           isSigner: true;
         },
         {
-          name: 'insuranceCreatorTokenAccount';
+          name: 'insuranceCreatorUsdcAccount';
           isMut: true;
           isSigner: false;
         },
         {
           name: 'insurance';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'lp';
           isMut: false;
           isSigner: false;
         },
@@ -625,7 +770,7 @@ export type Insurance = {
         },
         {
           name: 'lp';
-          isMut: false;
+          isMut: true;
           isSigner: false;
         },
         {
@@ -782,120 +927,6 @@ export type Insurance = {
       args: [];
     },
     {
-      name: 'sendInsuranceProposal';
-      accounts: [
-        {
-          name: 'lpCreator';
-          isMut: true;
-          isSigner: true;
-        },
-        {
-          name: 'lp';
-          isMut: false;
-          isSigner: false;
-        },
-        {
-          name: 'insurance';
-          isMut: false;
-          isSigner: false;
-        },
-        {
-          name: 'proposal';
-          isMut: true;
-          isSigner: false;
-        },
-        {
-          name: 'systemProgram';
-          isMut: false;
-          isSigner: false;
-        }
-      ];
-      args: [
-        {
-          name: 'proposedCommision';
-          type: 'u64';
-        },
-        {
-          name: 'proposedUndercollaterization';
-          type: 'u64';
-        },
-        {
-          name: 'proposalDocs';
-          type: 'string';
-        }
-      ];
-    },
-    {
-      name: 'tokeniseLp';
-      accounts: [
-        {
-          name: 'lpCreator';
-          isMut: true;
-          isSigner: true;
-        },
-        {
-          name: 'lp';
-          isMut: true;
-          isSigner: false;
-        },
-        {
-          name: 'tokenisedMint';
-          isMut: true;
-          isSigner: false;
-        },
-        {
-          name: 'lpCreatorTokenisedAccount';
-          isMut: true;
-          isSigner: false;
-        },
-        {
-          name: 'tokenMetadataProgram';
-          isMut: false;
-          isSigner: false;
-        },
-        {
-          name: 'associatedTokenProgram';
-          isMut: false;
-          isSigner: false;
-        },
-        {
-          name: 'tokenProgram';
-          isMut: false;
-          isSigner: false;
-        },
-        {
-          name: 'systemProgram';
-          isMut: false;
-          isSigner: false;
-        },
-        {
-          name: 'rent';
-          isMut: false;
-          isSigner: false;
-        }
-      ];
-      args: [
-        {
-          name: 'tokenName';
-          type: {
-            option: 'string';
-          };
-        },
-        {
-          name: 'tokenSymbol';
-          type: {
-            option: 'string';
-          };
-        },
-        {
-          name: 'tokenMetadataUri';
-          type: {
-            option: 'string';
-          };
-        }
-      ];
-    },
-    {
       name: 'voteClaim';
       accounts: [
         {
@@ -1030,6 +1061,280 @@ export type Insurance = {
           type: 'u64';
         }
       ];
+    },
+    {
+      name: 'voteInsuranceProposal';
+      accounts: [
+        {
+          name: 'voter';
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: 'voterTokenAccount';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'lp';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'tokenisedMint';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'voteProposalAccount';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'voteProposalTokenAccount';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'insurance';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'proposal';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'tokenProgram';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'associatedTokenProgram';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'systemProgram';
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [
+        {
+          name: 'transferAmount';
+          type: 'u64';
+        }
+      ];
+    },
+    {
+      name: 'refundProposalVote';
+      accounts: [
+        {
+          name: 'voter';
+          isMut: false;
+          isSigner: true;
+        },
+        {
+          name: 'voterTokenAccount';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'lp';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'tokenisedMint';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'voteProposalAccount';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'voteProposalTokenAccount';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'insurance';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'proposal';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'tokenProgram';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'associatedTokenProgram';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'systemProgram';
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [];
+    },
+    {
+      name: 'acceptProposal';
+      accounts: [
+        {
+          name: 'notifier';
+          isMut: false;
+          isSigner: true;
+        },
+        {
+          name: 'lp';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'proposal';
+          isMut: true;
+          isSigner: false;
+        }
+      ];
+      args: [];
+    },
+    {
+      name: 'refundSecurity';
+      accounts: [
+        {
+          name: 'securityAddr';
+          isMut: false;
+          isSigner: true;
+        },
+        {
+          name: 'lp';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'securityAddrUsdcAcc';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'securityAdderTokenAddr';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'lpUsdcAccount';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'securityMint';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'tokenisedMint';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'usdcMint';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'tokenProgram';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'associatedTokenProgram';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'systemProgram';
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [
+        {
+          name: 'refundAmount';
+          type: 'u64';
+        },
+        {
+          name: 'securityRefundAmount';
+          type: 'u64';
+        }
+      ];
+    },
+    {
+      name: 'transferToSecurity';
+      accounts: [
+        {
+          name: 'transferrer';
+          isMut: false;
+          isSigner: true;
+        },
+        {
+          name: 'lp';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'proposal';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'lpUsdcAccount';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'premiumVault';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'premiumVaultTokenAccount';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'usdcMint';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'tokenProgram';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'associatedTokenProgram';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'systemProgram';
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [];
     }
   ];
   accounts: [
@@ -1080,7 +1385,7 @@ export type Insurance = {
           },
           {
             name: 'minimumCommission';
-            type: 'u32';
+            type: 'i64';
           },
           {
             name: 'deductible';
@@ -1145,8 +1450,12 @@ export type Insurance = {
             };
           },
           {
-            name: 'tokenised';
-            type: 'bool';
+            name: 'idealSize';
+            type: 'u64';
+          },
+          {
+            name: 'poolLifecycle';
+            type: 'i64';
           }
         ];
       };
@@ -1183,6 +1492,30 @@ export type Insurance = {
           {
             name: 'proposalAccepted';
             type: 'bool';
+          },
+          {
+            name: 'proposalSent';
+            type: 'bool';
+          },
+          {
+            name: 'proposalVote';
+            type: 'u64';
+          },
+          {
+            name: 'proposalVoteStart';
+            type: 'i64';
+          }
+        ];
+      };
+    },
+    {
+      name: 'reInsuranceVoteAccount';
+      type: {
+        kind: 'struct';
+        fields: [
+          {
+            name: 'bump';
+            type: 'u8';
           }
         ];
       };
@@ -1302,9 +1635,7 @@ export type Insurance = {
           },
           {
             name: 'claimVotingStart';
-            type: {
-              option: 'i64';
-            };
+            type: 'i64';
           },
           {
             name: 'voteFor';
@@ -1361,6 +1692,11 @@ export type Insurance = {
           name: 'verifyingDocuments';
           type: 'string';
           index: false;
+        },
+        {
+          name: 'insurer';
+          type: 'publicKey';
+          index: false;
         }
       ];
     },
@@ -1389,7 +1725,7 @@ export type Insurance = {
         },
         {
           name: 'minimumCommission';
-          type: 'u32';
+          type: 'i64';
           index: false;
         },
         {
@@ -1406,6 +1742,11 @@ export type Insurance = {
           name: 'metadataLink';
           type: 'string';
           index: false;
+        },
+        {
+          name: 'insurance';
+          type: 'publicKey';
+          index: false;
         }
       ];
     },
@@ -1414,6 +1755,36 @@ export type Insurance = {
       fields: [
         {
           name: 'lpCreator';
+          type: 'publicKey';
+          index: false;
+        },
+        {
+          name: 'tokenName';
+          type: 'string';
+          index: false;
+        },
+        {
+          name: 'tokenMetadataUri';
+          type: 'string';
+          index: false;
+        },
+        {
+          name: 'tokenSymbol';
+          type: 'string';
+          index: false;
+        },
+        {
+          name: 'idealSize';
+          type: 'u64';
+          index: false;
+        },
+        {
+          name: 'poolLifecycle';
+          type: 'i64';
+          index: false;
+        },
+        {
+          name: 'lp';
           type: 'publicKey';
           index: false;
         }
@@ -1431,14 +1802,39 @@ export type Insurance = {
           name: 'assetAmount';
           type: 'u64';
           index: false;
+        },
+        {
+          name: 'securityMint';
+          type: 'publicKey';
+          index: false;
+        },
+        {
+          name: 'securityAddr';
+          type: 'publicKey';
+          index: false;
         }
       ];
     },
     {
-      name: 'ReInsuranceProposed';
+      name: 'ReInsuranceProposalAccepted';
       fields: [
         {
-          name: 'lpOwner';
+          name: 'reinsurance';
+          type: 'publicKey';
+          index: false;
+        }
+      ];
+    },
+    {
+      name: 'ReInsuranceProposalProposed';
+      fields: [
+        {
+          name: 'lp';
+          type: 'publicKey';
+          index: false;
+        },
+        {
+          name: 'proposer';
           type: 'publicKey';
           index: false;
         },
@@ -1461,14 +1857,9 @@ export type Insurance = {
           name: 'proposalDocs';
           type: 'string';
           index: false;
-        }
-      ];
-    },
-    {
-      name: 'ReInsuranceProposalAccepted';
-      fields: [
+        },
         {
-          name: 'reinsurance';
+          name: 'proposal';
           type: 'publicKey';
           index: false;
         }
@@ -1496,6 +1887,11 @@ export type Insurance = {
           name: 'prepaymentTime';
           type: 'i64';
           index: false;
+        },
+        {
+          name: 'premiumVault';
+          type: 'publicKey';
+          index: false;
         }
       ];
     },
@@ -1508,17 +1904,7 @@ export type Insurance = {
           index: false;
         },
         {
-          name: 'claimAmount';
-          type: 'u64';
-          index: false;
-        }
-      ];
-    },
-    {
-      name: 'LPTokenised';
-      fields: [
-        {
-          name: 'lp';
+          name: 'claim';
           type: 'publicKey';
           index: false;
         }
@@ -1556,6 +1942,11 @@ export type Insurance = {
           name: 'strategyId';
           type: 'string';
           index: false;
+        },
+        {
+          name: 'strategyProgram';
+          type: 'publicKey';
+          index: false;
         }
       ];
     },
@@ -1575,6 +1966,11 @@ export type Insurance = {
         {
           name: 'voteAmount';
           type: 'u64';
+          index: false;
+        },
+        {
+          name: 'proposedStrategyVoteAccount';
+          type: 'publicKey';
           index: false;
         }
       ];
@@ -1631,6 +2027,11 @@ export type Insurance = {
           name: 'claimMetadataLink';
           type: 'string';
           index: false;
+        },
+        {
+          name: 'claimId';
+          type: 'string';
+          index: false;
         }
       ];
     },
@@ -1650,6 +2051,16 @@ export type Insurance = {
         {
           name: 'voteAmount';
           type: 'u64';
+          index: false;
+        },
+        {
+          name: 'claimVoteAccount';
+          type: 'publicKey';
+          index: false;
+        },
+        {
+          name: 'voteDirection';
+          type: 'bool';
           index: false;
         }
       ];
@@ -1699,6 +2110,91 @@ export type Insurance = {
       fields: [
         {
           name: 'strategy';
+          type: 'publicKey';
+          index: false;
+        }
+      ];
+    },
+    {
+      name: 'InsuranceProposalVoted';
+      fields: [
+        {
+          name: 'voter';
+          type: 'publicKey';
+          index: false;
+        },
+        {
+          name: 'proposal';
+          type: 'publicKey';
+          index: false;
+        },
+        {
+          name: 'transferAmount';
+          type: 'u64';
+          index: false;
+        },
+        {
+          name: 'voteProposalAccount';
+          type: 'publicKey';
+          index: false;
+        }
+      ];
+    },
+    {
+      name: 'ProposalVoteRefunded';
+      fields: [
+        {
+          name: 'voter';
+          type: 'publicKey';
+          index: false;
+        },
+        {
+          name: 'proposal';
+          type: 'publicKey';
+          index: false;
+        }
+      ];
+    },
+    {
+      name: 'ProposalSent';
+      fields: [
+        {
+          name: 'proposal';
+          type: 'publicKey';
+          index: false;
+        }
+      ];
+    },
+    {
+      name: 'SecurityRefunded';
+      fields: [
+        {
+          name: 'lp';
+          type: 'publicKey';
+          index: false;
+        },
+        {
+          name: 'refundAmount';
+          type: 'u64';
+          index: false;
+        },
+        {
+          name: 'securityRefundAmount';
+          type: 'u64';
+          index: false;
+        }
+      ];
+    },
+    {
+      name: 'SecurityTransferred';
+      fields: [
+        {
+          name: 'premiumVault';
+          type: 'publicKey';
+          index: false;
+        },
+        {
+          name: 'lpUsdcAccount';
           type: 'publicKey';
           index: false;
         }
@@ -1800,6 +2296,51 @@ export type Insurance = {
       code: 6018;
       name: 'StrategyBlocked';
       msg: 'Strategy blocked due to security reasons';
+    },
+    {
+      code: 6019;
+      name: 'VoteInsuranceProposalEnded';
+      msg: 'Voting on insurance proposal ended';
+    },
+    {
+      code: 6020;
+      name: 'VotingOnInsuranceProposalOngoing';
+      msg: 'Voting on insurance proposal has not ended yet';
+    },
+    {
+      code: 6021;
+      name: 'VoteOnInsuranceProposalUnSuccessful';
+      msg: 'Voting did not accept this insurance proposal';
+    },
+    {
+      code: 6022;
+      name: 'IncorrectMetadataAccount';
+      msg: 'Incorrect metadata account sent';
+    },
+    {
+      code: 6023;
+      name: 'PoolLifecycleExceeded';
+      msg: 'Can not reinsure insurance beyond pool lifecycle';
+    },
+    {
+      code: 6024;
+      name: 'LifeCycleCanNotEndInPast';
+      msg: 'Can not have lifecycle end in past';
+    },
+    {
+      code: 6025;
+      name: 'CanNotRefundBeforePoolClose';
+      msg: 'Pool not closed yet';
+    },
+    {
+      code: 6026;
+      name: 'SecurityRefundAmountEnteredIncorrect';
+      msg: 'Security refund calc incorrect';
+    },
+    {
+      code: 6027;
+      name: 'CanNotTransferToSecurityVaultBeforeLPClose';
+      msg: 'Can not transfer before lp close';
     }
   ];
 };
@@ -1836,12 +2377,12 @@ export const IDL: Insurance = {
     {
       name: 'TWO_WEEKS',
       type: 'i64',
-      value: '2 * WEEK',
+      value: '5',
     },
     {
       name: 'MONTH',
       type: 'i64',
-      value: '30 * DAY',
+      value: '5',
     },
     {
       name: 'DEFAULT_MINT_DECIMALS',
@@ -1890,12 +2431,68 @@ export const IDL: Insurance = {
           isSigner: false,
         },
         {
+          name: 'tokenisedMint',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'securityMint',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'metadata',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'tokenMetadataProgram',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'associatedTokenProgram',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'tokenProgram',
+          isMut: false,
+          isSigner: false,
+        },
+        {
           name: 'systemProgram',
           isMut: false,
           isSigner: false,
         },
+        {
+          name: 'rent',
+          isMut: false,
+          isSigner: false,
+        },
       ],
-      args: [],
+      args: [
+        {
+          name: 'idealSize',
+          type: 'u64',
+        },
+        {
+          name: 'poolLifecycle',
+          type: 'i64',
+        },
+        {
+          name: 'tokenName',
+          type: 'string',
+        },
+        {
+          name: 'tokenSymbol',
+          type: 'string',
+        },
+        {
+          name: 'tokenMetadataUri',
+          type: 'string',
+        },
+      ],
     },
     {
       name: 'registerInsurance',
@@ -1936,7 +2533,7 @@ export const IDL: Insurance = {
         },
         {
           name: 'minimumCommission',
-          type: 'u32',
+          type: 'i64',
         },
         {
           name: 'deductible',
@@ -1948,6 +2545,70 @@ export const IDL: Insurance = {
         },
         {
           name: 'metadataLink',
+          type: 'string',
+        },
+      ],
+    },
+    {
+      name: 'proposeInsuranceProposal',
+      accounts: [
+        {
+          name: 'proposalProposer',
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: 'lp',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'insurance',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'proposal',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'tokenisedMint',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'proposalTokenAccount',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'associatedTokenProgram',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'tokenProgram',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'systemProgram',
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: 'proposedCommision',
+          type: 'u64',
+        },
+        {
+          name: 'proposedUndercollaterization',
+          type: 'u64',
+        },
+        {
+          name: 'proposalDocs',
           type: 'string',
         },
       ],
@@ -1987,7 +2648,7 @@ export const IDL: Insurance = {
       name: 'addSecurity',
       accounts: [
         {
-          name: 'lpCreator',
+          name: 'securityAddr',
           isMut: true,
           isSigner: true,
         },
@@ -1997,13 +2658,28 @@ export const IDL: Insurance = {
           isSigner: false,
         },
         {
-          name: 'lpCreatorUsdcAccount',
+          name: 'securityAddrUsdcAcc',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'securityAdderTokenAddr',
           isMut: true,
           isSigner: false,
         },
         {
           name: 'lpUsdcAccount',
           isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'securityMint',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'tokenisedMint',
+          isMut: false,
           isSigner: false,
         },
         {
@@ -2250,6 +2926,11 @@ export const IDL: Insurance = {
           isSigner: true,
         },
         {
+          name: 'lp',
+          isMut: true,
+          isSigner: false,
+        },
+        {
           name: 'proposal',
           isMut: false,
           isSigner: false,
@@ -2316,12 +2997,17 @@ export const IDL: Insurance = {
           isSigner: true,
         },
         {
-          name: 'insuranceCreatorTokenAccount',
+          name: 'insuranceCreatorUsdcAccount',
           isMut: true,
           isSigner: false,
         },
         {
           name: 'insurance',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'lp',
           isMut: false,
           isSigner: false,
         },
@@ -2431,7 +3117,7 @@ export const IDL: Insurance = {
         },
         {
           name: 'lp',
-          isMut: false,
+          isMut: true,
           isSigner: false,
         },
         {
@@ -2588,120 +3274,6 @@ export const IDL: Insurance = {
       args: [],
     },
     {
-      name: 'sendInsuranceProposal',
-      accounts: [
-        {
-          name: 'lpCreator',
-          isMut: true,
-          isSigner: true,
-        },
-        {
-          name: 'lp',
-          isMut: false,
-          isSigner: false,
-        },
-        {
-          name: 'insurance',
-          isMut: false,
-          isSigner: false,
-        },
-        {
-          name: 'proposal',
-          isMut: true,
-          isSigner: false,
-        },
-        {
-          name: 'systemProgram',
-          isMut: false,
-          isSigner: false,
-        },
-      ],
-      args: [
-        {
-          name: 'proposedCommision',
-          type: 'u64',
-        },
-        {
-          name: 'proposedUndercollaterization',
-          type: 'u64',
-        },
-        {
-          name: 'proposalDocs',
-          type: 'string',
-        },
-      ],
-    },
-    {
-      name: 'tokeniseLp',
-      accounts: [
-        {
-          name: 'lpCreator',
-          isMut: true,
-          isSigner: true,
-        },
-        {
-          name: 'lp',
-          isMut: true,
-          isSigner: false,
-        },
-        {
-          name: 'tokenisedMint',
-          isMut: true,
-          isSigner: false,
-        },
-        {
-          name: 'lpCreatorTokenisedAccount',
-          isMut: true,
-          isSigner: false,
-        },
-        {
-          name: 'tokenMetadataProgram',
-          isMut: false,
-          isSigner: false,
-        },
-        {
-          name: 'associatedTokenProgram',
-          isMut: false,
-          isSigner: false,
-        },
-        {
-          name: 'tokenProgram',
-          isMut: false,
-          isSigner: false,
-        },
-        {
-          name: 'systemProgram',
-          isMut: false,
-          isSigner: false,
-        },
-        {
-          name: 'rent',
-          isMut: false,
-          isSigner: false,
-        },
-      ],
-      args: [
-        {
-          name: 'tokenName',
-          type: {
-            option: 'string',
-          },
-        },
-        {
-          name: 'tokenSymbol',
-          type: {
-            option: 'string',
-          },
-        },
-        {
-          name: 'tokenMetadataUri',
-          type: {
-            option: 'string',
-          },
-        },
-      ],
-    },
-    {
       name: 'voteClaim',
       accounts: [
         {
@@ -2837,6 +3409,280 @@ export const IDL: Insurance = {
         },
       ],
     },
+    {
+      name: 'voteInsuranceProposal',
+      accounts: [
+        {
+          name: 'voter',
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: 'voterTokenAccount',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'lp',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'tokenisedMint',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'voteProposalAccount',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'voteProposalTokenAccount',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'insurance',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'proposal',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'tokenProgram',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'associatedTokenProgram',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'systemProgram',
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: 'transferAmount',
+          type: 'u64',
+        },
+      ],
+    },
+    {
+      name: 'refundProposalVote',
+      accounts: [
+        {
+          name: 'voter',
+          isMut: false,
+          isSigner: true,
+        },
+        {
+          name: 'voterTokenAccount',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'lp',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'tokenisedMint',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'voteProposalAccount',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'voteProposalTokenAccount',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'insurance',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'proposal',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'tokenProgram',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'associatedTokenProgram',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'systemProgram',
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: 'acceptProposal',
+      accounts: [
+        {
+          name: 'notifier',
+          isMut: false,
+          isSigner: true,
+        },
+        {
+          name: 'lp',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'proposal',
+          isMut: true,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: 'refundSecurity',
+      accounts: [
+        {
+          name: 'securityAddr',
+          isMut: false,
+          isSigner: true,
+        },
+        {
+          name: 'lp',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'securityAddrUsdcAcc',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'securityAdderTokenAddr',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'lpUsdcAccount',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'securityMint',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'tokenisedMint',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'usdcMint',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'tokenProgram',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'associatedTokenProgram',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'systemProgram',
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: 'refundAmount',
+          type: 'u64',
+        },
+        {
+          name: 'securityRefundAmount',
+          type: 'u64',
+        },
+      ],
+    },
+    {
+      name: 'transferToSecurity',
+      accounts: [
+        {
+          name: 'transferrer',
+          isMut: false,
+          isSigner: true,
+        },
+        {
+          name: 'lp',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'proposal',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'lpUsdcAccount',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'premiumVault',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'premiumVaultTokenAccount',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'usdcMint',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'tokenProgram',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'associatedTokenProgram',
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: 'systemProgram',
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
   ],
   accounts: [
     {
@@ -2886,7 +3732,7 @@ export const IDL: Insurance = {
           },
           {
             name: 'minimumCommission',
-            type: 'u32',
+            type: 'i64',
           },
           {
             name: 'deductible',
@@ -2951,8 +3797,12 @@ export const IDL: Insurance = {
             },
           },
           {
-            name: 'tokenised',
-            type: 'bool',
+            name: 'idealSize',
+            type: 'u64',
+          },
+          {
+            name: 'poolLifecycle',
+            type: 'i64',
           },
         ],
       },
@@ -2989,6 +3839,30 @@ export const IDL: Insurance = {
           {
             name: 'proposalAccepted',
             type: 'bool',
+          },
+          {
+            name: 'proposalSent',
+            type: 'bool',
+          },
+          {
+            name: 'proposalVote',
+            type: 'u64',
+          },
+          {
+            name: 'proposalVoteStart',
+            type: 'i64',
+          },
+        ],
+      },
+    },
+    {
+      name: 'reInsuranceVoteAccount',
+      type: {
+        kind: 'struct',
+        fields: [
+          {
+            name: 'bump',
+            type: 'u8',
           },
         ],
       },
@@ -3108,9 +3982,7 @@ export const IDL: Insurance = {
           },
           {
             name: 'claimVotingStart',
-            type: {
-              option: 'i64',
-            },
+            type: 'i64',
           },
           {
             name: 'voteFor',
@@ -3168,6 +4040,11 @@ export const IDL: Insurance = {
           type: 'string',
           index: false,
         },
+        {
+          name: 'insurer',
+          type: 'publicKey',
+          index: false,
+        },
       ],
     },
     {
@@ -3195,7 +4072,7 @@ export const IDL: Insurance = {
         },
         {
           name: 'minimumCommission',
-          type: 'u32',
+          type: 'i64',
           index: false,
         },
         {
@@ -3213,6 +4090,11 @@ export const IDL: Insurance = {
           type: 'string',
           index: false,
         },
+        {
+          name: 'insurance',
+          type: 'publicKey',
+          index: false,
+        },
       ],
     },
     {
@@ -3220,6 +4102,36 @@ export const IDL: Insurance = {
       fields: [
         {
           name: 'lpCreator',
+          type: 'publicKey',
+          index: false,
+        },
+        {
+          name: 'tokenName',
+          type: 'string',
+          index: false,
+        },
+        {
+          name: 'tokenMetadataUri',
+          type: 'string',
+          index: false,
+        },
+        {
+          name: 'tokenSymbol',
+          type: 'string',
+          index: false,
+        },
+        {
+          name: 'idealSize',
+          type: 'u64',
+          index: false,
+        },
+        {
+          name: 'poolLifecycle',
+          type: 'i64',
+          index: false,
+        },
+        {
+          name: 'lp',
           type: 'publicKey',
           index: false,
         },
@@ -3238,13 +4150,38 @@ export const IDL: Insurance = {
           type: 'u64',
           index: false,
         },
+        {
+          name: 'securityMint',
+          type: 'publicKey',
+          index: false,
+        },
+        {
+          name: 'securityAddr',
+          type: 'publicKey',
+          index: false,
+        },
       ],
     },
     {
-      name: 'ReInsuranceProposed',
+      name: 'ReInsuranceProposalAccepted',
       fields: [
         {
-          name: 'lpOwner',
+          name: 'reinsurance',
+          type: 'publicKey',
+          index: false,
+        },
+      ],
+    },
+    {
+      name: 'ReInsuranceProposalProposed',
+      fields: [
+        {
+          name: 'lp',
+          type: 'publicKey',
+          index: false,
+        },
+        {
+          name: 'proposer',
           type: 'publicKey',
           index: false,
         },
@@ -3268,13 +4205,8 @@ export const IDL: Insurance = {
           type: 'string',
           index: false,
         },
-      ],
-    },
-    {
-      name: 'ReInsuranceProposalAccepted',
-      fields: [
         {
-          name: 'reinsurance',
+          name: 'proposal',
           type: 'publicKey',
           index: false,
         },
@@ -3303,6 +4235,11 @@ export const IDL: Insurance = {
           type: 'i64',
           index: false,
         },
+        {
+          name: 'premiumVault',
+          type: 'publicKey',
+          index: false,
+        },
       ],
     },
     {
@@ -3314,17 +4251,7 @@ export const IDL: Insurance = {
           index: false,
         },
         {
-          name: 'claimAmount',
-          type: 'u64',
-          index: false,
-        },
-      ],
-    },
-    {
-      name: 'LPTokenised',
-      fields: [
-        {
-          name: 'lp',
+          name: 'claim',
           type: 'publicKey',
           index: false,
         },
@@ -3363,6 +4290,11 @@ export const IDL: Insurance = {
           type: 'string',
           index: false,
         },
+        {
+          name: 'strategyProgram',
+          type: 'publicKey',
+          index: false,
+        },
       ],
     },
     {
@@ -3381,6 +4313,11 @@ export const IDL: Insurance = {
         {
           name: 'voteAmount',
           type: 'u64',
+          index: false,
+        },
+        {
+          name: 'proposedStrategyVoteAccount',
+          type: 'publicKey',
           index: false,
         },
       ],
@@ -3438,6 +4375,11 @@ export const IDL: Insurance = {
           type: 'string',
           index: false,
         },
+        {
+          name: 'claimId',
+          type: 'string',
+          index: false,
+        },
       ],
     },
     {
@@ -3456,6 +4398,16 @@ export const IDL: Insurance = {
         {
           name: 'voteAmount',
           type: 'u64',
+          index: false,
+        },
+        {
+          name: 'claimVoteAccount',
+          type: 'publicKey',
+          index: false,
+        },
+        {
+          name: 'voteDirection',
+          type: 'bool',
           index: false,
         },
       ],
@@ -3505,6 +4457,91 @@ export const IDL: Insurance = {
       fields: [
         {
           name: 'strategy',
+          type: 'publicKey',
+          index: false,
+        },
+      ],
+    },
+    {
+      name: 'InsuranceProposalVoted',
+      fields: [
+        {
+          name: 'voter',
+          type: 'publicKey',
+          index: false,
+        },
+        {
+          name: 'proposal',
+          type: 'publicKey',
+          index: false,
+        },
+        {
+          name: 'transferAmount',
+          type: 'u64',
+          index: false,
+        },
+        {
+          name: 'voteProposalAccount',
+          type: 'publicKey',
+          index: false,
+        },
+      ],
+    },
+    {
+      name: 'ProposalVoteRefunded',
+      fields: [
+        {
+          name: 'voter',
+          type: 'publicKey',
+          index: false,
+        },
+        {
+          name: 'proposal',
+          type: 'publicKey',
+          index: false,
+        },
+      ],
+    },
+    {
+      name: 'ProposalSent',
+      fields: [
+        {
+          name: 'proposal',
+          type: 'publicKey',
+          index: false,
+        },
+      ],
+    },
+    {
+      name: 'SecurityRefunded',
+      fields: [
+        {
+          name: 'lp',
+          type: 'publicKey',
+          index: false,
+        },
+        {
+          name: 'refundAmount',
+          type: 'u64',
+          index: false,
+        },
+        {
+          name: 'securityRefundAmount',
+          type: 'u64',
+          index: false,
+        },
+      ],
+    },
+    {
+      name: 'SecurityTransferred',
+      fields: [
+        {
+          name: 'premiumVault',
+          type: 'publicKey',
+          index: false,
+        },
+        {
+          name: 'lpUsdcAccount',
           type: 'publicKey',
           index: false,
         },
@@ -3606,6 +4643,51 @@ export const IDL: Insurance = {
       code: 6018,
       name: 'StrategyBlocked',
       msg: 'Strategy blocked due to security reasons',
+    },
+    {
+      code: 6019,
+      name: 'VoteInsuranceProposalEnded',
+      msg: 'Voting on insurance proposal ended',
+    },
+    {
+      code: 6020,
+      name: 'VotingOnInsuranceProposalOngoing',
+      msg: 'Voting on insurance proposal has not ended yet',
+    },
+    {
+      code: 6021,
+      name: 'VoteOnInsuranceProposalUnSuccessful',
+      msg: 'Voting did not accept this insurance proposal',
+    },
+    {
+      code: 6022,
+      name: 'IncorrectMetadataAccount',
+      msg: 'Incorrect metadata account sent',
+    },
+    {
+      code: 6023,
+      name: 'PoolLifecycleExceeded',
+      msg: 'Can not reinsure insurance beyond pool lifecycle',
+    },
+    {
+      code: 6024,
+      name: 'LifeCycleCanNotEndInPast',
+      msg: 'Can not have lifecycle end in past',
+    },
+    {
+      code: 6025,
+      name: 'CanNotRefundBeforePoolClose',
+      msg: 'Pool not closed yet',
+    },
+    {
+      code: 6026,
+      name: 'SecurityRefundAmountEnteredIncorrect',
+      msg: 'Security refund calc incorrect',
+    },
+    {
+      code: 6027,
+      name: 'CanNotTransferToSecurityVaultBeforeLPClose',
+      msg: 'Can not transfer before lp close',
     },
   ],
 };
