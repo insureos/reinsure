@@ -1,14 +1,12 @@
 import React, {useState} from 'react';
-import {
-  CurrencyDollarIcon,
-  LightBulbIcon,
-  GlobeAsiaAustraliaIcon,
-  PlusCircleIcon,
-  FaceSmileIcon,
-  DocumentTextIcon,
-} from '@heroicons/react/24/outline';
 import Image from '@/components/ui/image';
 import dappLogo from '@/assets/images/dapp.png';
+import fintech from "@/assets/images/fintech.svg";
+import L1 from "@/assets/images/L1.png";
+import multi_chain from "@/assets/images/multi_chain_bridge.webp";
+import software_vensor from "@/assets/images/software_vendor.svg"
+import {WalletIcon} from "@/components/icons/wallet";
+
 interface FeatureCardProps {
   body: string;
   title: string;
@@ -64,23 +62,29 @@ export const Features: React.FC<FeaturesProps> = ({ scrollRef }) => {
             width={0}
             height={0}
             sizes="100vw"
-            style={{ width: 'auto', height: '100%' }} // optional
+            style={{ width: '100%', height: '100%' }} // optional
             src={dappLogo}
           />}
           title={'Consumer Dapps'}
           body={''}
         />
         <FeatureCard
-          element={<LightBulbIcon className="h-10 w-10 text-indigo-300" />}
+          element={<Image
+            className="h-10 w-10 text-indigo-300"
+            alt="image"
+            width={0}
+            height={0}
+            sizes="100vw"
+            style={{ width: '100%', height: '100%' }} // optional
+            src={fintech}
+          />}
           title={'Fintech Apps'}
           body={
             ''
           }
         />
         <FeatureCard
-          element={
-            <GlobeAsiaAustraliaIcon className="h-10 w-10 text-indigo-300" />
-          }
+          element={<WalletIcon/>}
           title={'Web3 Wallets'}
           body={
             ''
@@ -89,21 +93,45 @@ export const Features: React.FC<FeaturesProps> = ({ scrollRef }) => {
       </div>
       <div className="flex w-full flex-wrap items-center justify-center gap-5 xl:gap-6 3xl:gap-8">
         <FeatureCard
-          element={<PlusCircleIcon className="h-10 w-10 text-indigo-300" />}
+          element={<Image
+            className="h-10 w-10 text-indigo-300"
+            alt="image"
+            width={0}
+            height={0}
+            sizes="100vw"
+            style={{ width: '100%', height: '100%' }} // optional
+            src={L1}
+          />}
           title={'L1s'}
           body={
             ''
           }
         />
         <FeatureCard
-          element={<FaceSmileIcon className="h-10 w-10 text-indigo-300" />}
+                    element={<Image
+                      className="h-10 w-10 text-indigo-300"
+                      alt="image"
+                      width={0}
+                      height={0}
+                      sizes="100vw"
+                      style={{ width: '100%', height: '100%' }} // optional
+                      src={software_vensor}
+                    />}
           title={'Software Vendors'}
           body={
             ''
           }
         />
         <FeatureCard
-          element={<DocumentTextIcon className="h-10 w-10 text-indigo-300" />}
+          element={<Image
+            className="h-10 w-10 text-indigo-300"
+            alt="image"
+            width={0}
+            height={0}
+            sizes="100vw"
+            style={{ width: '100%', height: '100%' }} // optional
+            src={multi_chain}
+          />}
           title={'Multi-chain Bridges'}
           body={
             ''

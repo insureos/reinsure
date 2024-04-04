@@ -23,7 +23,7 @@ export const LandingFooter: React.FC<LandingFooterProps> = ({}) => {
           src={LogoTransparent}
         />
       </AnchorLink>
-        <div className="flex gap-10">
+        <div className="flex gap-10 mt-4">
           <AnchorLink
             href={'https://twitter.com/insureos'}
             target="_blank"
