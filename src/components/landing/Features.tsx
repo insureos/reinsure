@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   CurrencyDollarIcon,
   LightBulbIcon,
@@ -7,7 +7,8 @@ import {
   FaceSmileIcon,
   DocumentTextIcon,
 } from '@heroicons/react/24/outline';
-
+import Image from '@/components/ui/image';
+import dappLogo from '@/assets/images/dapp.png';
 interface FeatureCardProps {
   body: string;
   title: string;
@@ -15,8 +16,15 @@ interface FeatureCardProps {
 }
 
 const FeatureCard: React.FC<FeatureCardProps> = ({ body, title, element }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
-    <div className="flex w-[21rem] flex-col items-start justify-center gap-4 rounded-2xl bg-gray-900 p-6 shadow-xl xl:w-[23rem] xl:p-7 3xl:w-[25rem] 3xl:p-8">
+    // State to manage hover effect
+    <div
+      className={`flex w-[21rem] flex-col items-start justify-center gap-4 rounded-2xl bg-gray-900 p-6 shadow-xl transition-transform duration-200 ease-in-out ${isHovered ? 'transform -translate-y-2' : ''} xl:w-[23rem] xl:p-7 3xl:w-[25rem] 3xl:p-8`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="flex h-10 w-10 items-center justify-start pr-2">
         {element}
       </div>
@@ -24,7 +32,14 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ body, title, element }) => {
       <div className="whitespace-pre text-base text-gray-400 xl:text-lg 3xl:text-xl">
         {body}
       </div>
+      {/* Conditional rendering based on hover state */}
+      {isHovered && (
+        <div className="mt-2 px-4 py-2 text-center text-sm text-white bg-indigo-600 rounded-lg">
+          Check use case video
+        </div>
+      )}
     </div>
+
   );
 };
 
@@ -39,51 +54,59 @@ export const Features: React.FC<FeaturesProps> = ({ scrollRef }) => {
         ref={scrollRef}
         className="pt-16 text-center text-4xl font-black tracking-tight text-white 2xl:text-5xl mb-8"
       >
-        People we work with
+        Our areas of interest: 
       </div>
       <div className="mb-2 flex w-full flex-wrap items-center justify-center gap-5 xl:gap-6 3xl:gap-8">
         <FeatureCard
-          element={<CurrencyDollarIcon className="h-10 w-10 text-indigo-300" />}
-          title={'earn for your contributions'}
-          body={'solve issues, get paid in \nUSDC and/or tokens \ndirectly.'}
+          element={<Image
+            className="h-10 w-10 text-indigo-300"
+            alt="image"
+            width={0}
+            height={0}
+            sizes="100vw"
+            style={{ width: 'auto', height: '100%' }} // optional
+            src={dappLogo}
+          />}
+          title={'Consumer Dapps'}
+          body={''}
         />
         <FeatureCard
           element={<LightBulbIcon className="h-10 w-10 text-indigo-300" />}
-          title={'prioritize any feature request'}
+          title={'Fintech Apps'}
           body={
-            'want a new feature or a \nnagging bug fixed? Simply \nstake tokens or USDC on it'
+            ''
           }
         />
         <FeatureCard
           element={
             <GlobeAsiaAustraliaIcon className="h-10 w-10 text-indigo-300" />
           }
-          title={'built for the future of work'}
+          title={'Web3 Wallets'}
           body={
-            'work on your favourite \nsoftware from anywhere in \nthe world and get paid for it'
+            ''
           }
         />
       </div>
       <div className="flex w-full flex-wrap items-center justify-center gap-5 xl:gap-6 3xl:gap-8">
         <FeatureCard
           element={<PlusCircleIcon className="h-10 w-10 text-indigo-300" />}
-          title={'tokenize your repositories '}
+          title={'L1s'}
           body={
-            'transform early contributors \nto high-conviction holders by \nrewarding them with tokens.'
+            ''
           }
         />
         <FeatureCard
           element={<FaceSmileIcon className="h-10 w-10 text-indigo-300" />}
-          title={'build what the people want'}
+          title={'Software Vendors'}
           body={
-            'know the priority of issues \nand features by the amount \nstaked on them'
+            ''
           }
         />
         <FeatureCard
           element={<DocumentTextIcon className="h-10 w-10 text-indigo-300" />}
-          title={'learn by building in public'}
+          title={'Multi-chain Bridges'}
           body={
-            'defiOS Learn’s AI suggests \nissues based on exactly what \nyou’re learning'
+            ''
           }
         />
       </div>

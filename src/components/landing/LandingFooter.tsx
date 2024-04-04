@@ -1,6 +1,6 @@
 import React from 'react';
 
-import LogoFull from '@/assets/images/logo-full.png';
+import LogoTransparent from '@/assets/images/logo-transparent.png';
 import Image from '@/components/ui/image';
 
 import AnchorLink from '@/components/ui/links/anchor-link';
@@ -20,7 +20,7 @@ export const LandingFooter: React.FC<LandingFooterProps> = ({}) => {
           height={0}
           sizes="100vw"
           style={{ width: 'auto', height: '100%' }} // optional
-          src={LogoFull}
+          src={LogoTransparent}
         />
       </AnchorLink>
         <div className="flex gap-10">
