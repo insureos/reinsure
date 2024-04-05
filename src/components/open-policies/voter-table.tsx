@@ -1,170 +1,215 @@
-import { useMemo, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useTable, usePagination } from 'react-table';
-import cn from 'classnames';
-import Button from '@/components/ui/button';
-import { LongArrowRight } from '@/components/icons/long-arrow-right';
-import { LongArrowLeft } from '@/components/icons/long-arrow-left';
-import { ExportIcon } from '@/components/icons/export-icon';
+import { useState, useEffect } from 'react';
+import Button from '@/components/ui/button/button';
 
-const COLUMNS = [
-  {
-    Header: 'Voter',
-    accessor: 'voter',
-    // @ts-ignore
-    Cell: ({ cell: { value } }) => (
-      <a
-        href={value.link}
-        className="inline-flex items-center gap-2 hover:underline hover:opacity-90 focus:underline focus:opacity-90"
-      >
-        {value.id}
-        <ExportIcon className="h-auto w-3" />
-      </a>
-    ),
-  },
-  {
-    Header: 'Voting weight',
-    accessor: 'voting_weight',
-  },
-  {
-    Header: 'Decision',
-    accessor: 'status',
-    // @ts-ignore
-    Cell: ({ cell: { value } }) => (
-      <div
-        className={cn(
-          'text-[13px] uppercase sm:text-right sm:text-inherit',
-          value.toLowerCase() === 'accepted'
-            ? 'text-green-600'
-            : 'text-red-600'
-        )}
-      >
-        {value}
-      </div>
-    ),
-  },
-];
+import {
+  sendAcceptProposal,
+  AcceptInsuranceProposal,
+} from '@/lib/helpers/contract-interact';
+import { useAppSelector, useAppDispatch } from '@/store/store';
+import { PublicKey } from '@solana/web3.js';
+import { onLoading, onFailure, onSuccess } from '@/store/callLoaderSlice';
+import { useWallet } from '@solana/wallet-adapter-react';
+import AnchorLink from '../ui/links/anchor-link';
+import { useDispatch } from 'react-redux';
 
-interface VoterTableTypes {
-  votes: {
-    voter: {
-      id: string;
-      link: string;
-    };
-    voting_weight: number;
-    status: string[];
-  }[];
+interface VoteTableListProps {
+  listData: any;
+  insurance: any;
+  getProposals: any;
 }
 
-export default function VoterTable({ votes }: VoterTableTypes) {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const data = useMemo(() => votes, []);
-  const columns = useMemo(() => COLUMNS, []);
-  const {
-    getTableProps,
-    getTableBodyProps,
-    canPreviousPage,
-    canNextPage,
-    pageOptions,
-    state,
-    headerGroups,
-    page,
-    nextPage,
-    setPageSize,
-    previousPage,
-    prepareRow,
-  } = useTable(
-    {
-      // @ts-ignore
-      columns,
-      data,
-    },
-    usePagination
-  ) as any;
-  let { pageIndex } = state;
-  useEffect(() => {
-    setPageSize(5);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+const VoterTableList: React.FC<VoteTableListProps> = ({
+  listData,
+  insurance,
+  getProposals,
+}) => {
+  const wallet = useWallet();
+
+  const dispatch = useDispatch();
+
+  const sendProposal = async (lp: string, proposal: string) => {
+    if (wallet.publicKey === null || lp === '' || proposal === '') return;
+
+    dispatch(onLoading('Sending Proposal...'));
+
+    await sendAcceptProposal(
+      wallet.publicKey,
+      new PublicKey(lp),
+      new PublicKey(proposal)
+    )
+      .then((res) => {
+        dispatch(
+          onSuccess({
+            label: 'Sending Proposal Success',
+            description: 'check out tx at',
+            link: res
+              ? `https://solscan.io/tx/${res.toString()}?cluster=devnet`
+              : '',
+            redirect: null,
+          })
+        );
+        getProposals();
+      })
+      .catch((err) => {
+        dispatch(
+          onFailure({
+            label: 'Sending Proposal Failed',
+            description: err.message,
+            link: '',
+            redirect: null,
+          })
+        );
+      });
+  };
+
+  const acceptProposal = async (
+    insuranceCreator: string,
+    insurance: string,
+    lp: string,
+    proposal: string
+  ) => {
+    if (
+      wallet.publicKey === null ||
+      insurance === '' ||
+      lp === '' ||
+      proposal === ''
+    )
+      return;
+    if (wallet.publicKey.toString() !== insuranceCreator) return;
+
+    dispatch(onLoading('Accepting Proposal...'));
+
+    await AcceptInsuranceProposal(
+      wallet.publicKey,
+      new PublicKey(insurance),
+      new PublicKey(lp),
+      new PublicKey(proposal)
+    )
+      .then((res) => {
+        dispatch(
+          onSuccess({
+            label: 'Accepting Proposal Success',
+            description: 'check out tx at',
+            link: res
+              ? `https://solscan.io/tx/${res.toString()}?cluster=devnet`
+              : '',
+            redirect: null,
+          })
+        );
+        getProposals();
+      })
+      .catch((err) => {
+        dispatch(
+          onFailure({
+            label: 'Accepting Proposal Failed',
+            description: err.message,
+            link: '',
+            redirect: null,
+          })
+        );
+      });
+  };
+
   return (
-    <motion.div
-      layout
-      className="mb-4 border-b border-dashed border-gray-700 px-4 pb-6"
-    >
-      <table
-        {...getTableProps()}
-        className="w-full border-separate border-0 sm:pb-2"
-      >
-        <thead className="hidden sm:table-header-group">
-          {headerGroups.map((headerGroup: any, idx: any) => (
-            <tr {...headerGroup.getHeaderGroupProps()} key={idx}>
-              {headerGroup.headers.map((column: any, idx: any) => (
-                <th
-                  {...column.getHeaderProps()}
-                  key={idx}
-                  className={cn(
-                    'pb-2 font-normal text-gray-300',
-                    column.id === 'status' ? 'text-right' : 'text-left',
-                    column.id === 'voting_weight' && 'w-2/5'
-                  )}
-                >
-                  {column.render('Header')}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()} className="text-sm text-gray-100">
-          {page.map((row: any, idx: any) => {
-            prepareRow(row);
-            return (
-              <tr
-                {...row.getRowProps()}
-                key={idx}
-                className="mb-3 grid border-b border-gray-700 pb-3 sm:mb-0 sm:table-row sm:border-b-0 sm:pb-0"
-              >
-                {row.cells.map((cell: any, idx: any) => {
-                  return (
-                    <td
-                      {...cell.getCellProps()}
-                      key={idx}
-                      className="px-0 py-1 sm:py-2"
-                    >
-                      {cell.render('Cell')}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <div className="flex w-full items-center justify-center text-sm xs:justify-end sm:mt-3">
-        <div className="flex items-center gap-4">
-          <Button
-            size="mini"
-            shape="rounded"
-            variant="transparent"
-            disabled={!canPreviousPage}
-            onClick={() => previousPage()}
-          >
-            <LongArrowLeft className="h-auto w-4" />
-          </Button>
-          <div className="uppercase text-gray-100">
-            Page {pageIndex + 1}{' '}
-            <span className="text-gray-400">of {pageOptions.length}</span>
-          </div>
-          <Button
-            size="mini"
-            shape="rounded"
-            variant="transparent"
-            disabled={!canNextPage}
-            onClick={() => nextPage()}
-          >
-            <LongArrowRight className="h-auto w-4" />
-          </Button>
-        </div>
+    <div className="my-4 grid w-full grid-cols-5 items-center gap-3 text-xs xl:text-sm 3xl:text-base">
+      <div className="px-4">{listData?.lp?.pool_name}</div>
+      <div className="px-4 text-center">{listData?.proposed_commision}</div>
+      <div className="px-4 text-center">
+        {listData?.proposed_undercollaterization}
       </div>
-    </motion.div>
+      <div className="px-4 text-center">
+        {listData?.proposal_votes / 10 ** 6}/
+        {listData?.lp?.total_assets / 10 ** 6}
+      </div>
+      {listData.sent && !listData.accepted && (
+        <>
+          {(wallet.publicKey === null ||
+            wallet.publicKey.toString() !== insurance.insurance_insurer) && (
+            <div className="px-4 text-center font-medium tracking-wider text-green-400">
+              PROPOSAL SENT
+            </div>
+          )}
+          {wallet.publicKey !== null &&
+            wallet.publicKey.toString() === insurance.insurance_insurer && (
+              <Button
+                onClick={() =>
+                  acceptProposal(
+                    insurance.insurance_insurer,
+                    insurance.insurance_pubkey,
+                    listData.lp.pool_pubkey,
+                    listData.proposal_pubkey
+                  )
+                }
+                size="mini"
+                shape="rounded"
+                color="info"
+              >
+                Accept
+              </Button>
+            )}
+        </>
+      )}
+      {listData.accepted && (
+        <div className="px-4 text-center font-medium tracking-wider text-red-400">
+          ACCEPTED
+        </div>
+      )}
+      {!listData.sent &&
+        !listData.accepted &&
+        listData?.proposal_votes <= listData?.lp?.total_assets / 2 && (
+          <div className="px-4 text-center font-medium tracking-wider text-blue-400">
+            VOTING IN PROGRESS
+          </div>
+        )}
+      {!listData.sent &&
+        listData?.proposal_votes > listData?.lp?.total_assets / 2 && (
+          <Button
+            onClick={() =>
+              sendProposal(listData.lp.pool_pubkey, listData.proposal_pubkey)
+            }
+            size="mini"
+            shape="rounded"
+            color="info"
+          >
+            Send
+          </Button>
+        )}
+    </div>
   );
+};
+
+interface VoteTableProps {
+  data: any[];
+  insurance: any;
+  getProposals: any;
 }
+
+const VoterTable: React.FC<VoteTableProps> = ({
+  data,
+  insurance,
+  getProposals,
+}) => {
+  return (
+    <div className="flex w-full flex-col p-4 px-8">
+      <div className="mb-5 grid w-full grid-cols-5 gap-3 text-sm font-semibold xl:text-base 3xl:text-lg">
+        <div className="px-4">Pool Name</div>
+        <div className="px-4 text-center">Commission</div>
+        <div className="px-4 text-center">Undercollaterization</div>
+        <div className="px-4 text-center">Votes</div>
+        <div className="px-4 text-center">Status</div>
+      </div>
+      {data.map((item) => {
+        return (
+          <VoterTableList
+            insurance={insurance}
+            listData={item}
+            getProposals={getProposals}
+            key={item.proposal_pubkey}
+          />
+        );
+      })}
+    </div>
+  );
+};
+
+export default VoterTable;

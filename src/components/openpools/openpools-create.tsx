@@ -223,7 +223,7 @@ const CreatePool: React.FC<CreatePoolProps> = ({}) => {
             link: res
               ? `https://solscan.io/tx/${res.toString()}?cluster=devnet`
               : '',
-            redirect: null,
+            redirect: '/open-pools',
           })
         );
       })

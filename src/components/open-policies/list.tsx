@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CurrencySwapIcons from '@/components/ui/currency-swap-icons';
 import { CoinList } from '@/components/ui/currency-swap-icons';
@@ -9,91 +9,242 @@ import cn from 'classnames';
 import VotePoll from '@/components/open-policies/vote-poll';
 import VoterTable from '@/components/open-policies/voter-table';
 import { getVotesByStatus } from '@/data/static/vote-data';
-import { XMarkIcon } from '@heroicons/react/24/solid';
+import {
+  ChevronDownIcon,
+  CheckIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline';
+
+import axios from '@/lib/axiosClient';
 
 import { useLockBodyScroll } from '@/lib/hooks/use-lock-body-scroll';
 
-interface SupportBidProps {
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  submitFunc: () => void;
+import { uploadMetadataToIPFS, uploadFileToIPFS } from '@/lib/helpers/metadata';
+import {
+  proposeProposal,
+  getLpTokenBalance,
+  voteOnProposal,
+} from '@/lib/helpers/contract-interact';
+import { useAppSelector, useAppDispatch } from '@/store/store';
+import { PublicKey } from '@solana/web3.js';
+import { onLoading, onFailure, onSuccess } from '@/store/callLoaderSlice';
+import { useWallet } from '@solana/wallet-adapter-react';
+import AnchorLink from '../ui/links/anchor-link';
+
+import CreateBid from '@/components/open-policies/create-bid';
+
+import SupportBid from '@/components/open-policies/support-bid';
+
+interface PolicyListTypes {
+  data: any;
 }
 
-const SupportBid: React.FC<SupportBidProps> = ({ setIsOpen, submitFunc }) => {
-  return (
-    <div className="absolute bottom-0 left-0 right-0 top-0 z-[100] flex items-center justify-center bg-[rgba(255,255,255,0.08)]">
-      <div className="flex h-[20rem] w-[32rem] flex-col justify-between rounded-[1.5rem] bg-gray-900 p-8 pt-5 shadow-xl">
-        <div className="flex w-full justify-between">
-          <div></div>
-          <XMarkIcon className="h-8 w-8" onClick={() => setIsOpen(false)} />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-interface CreateBidProps {
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  submitFunc: () => void;
-}
-
-const CreateBid: React.FC<CreateBidProps> = ({ setIsOpen, submitFunc }) => {
-  return (
-    <div className="absolute bottom-0 left-0 right-0 top-0 z-[100] flex items-center justify-center bg-[rgba(255,255,255,0.08)]">
-      <div className="flex h-[25rem] w-[35rem] flex-col justify-between rounded-[1.5rem] bg-gray-900 p-8 pt-5 shadow-xl">
-        <div className="flex w-full justify-between">
-          <div className="text-base xl:text-lg 3xl:text-xl font-semibold">Create Bid</div>
-          <XMarkIcon className="h-8 w-8" onClick={() => setIsOpen(false)} />
-        </div>
-        <Input
-          type="number"
-          placeholder="enter commission"
-          label="Commission ( in % )"
-        />
-        <Textarea
-          placeholder="policy payout details"
-          label="Policy Payout Details"
-        />
-        <Button shape="rounded" size="small">
-          Submit
-        </Button>
-      </div>
-    </div>
-  );
-};
-
-interface FarmListTypes {
-  from: string;
-  to: string;
-  earned: string;
-  apr: string;
-  liquidity: string;
-  multiplier: string;
-}
-
-const FarmList: React.FC<FarmListTypes> = ({
-  from,
-  to,
-  earned,
-  apr,
-  liquidity,
-  multiplier,
-}) => {
+const PolicyList: React.FC<PolicyListTypes> = ({ data }) => {
   const [isExpand, setIsExpand] = useState(false);
-  const setFrom = from as CoinList;
-  const setTo = to as CoinList;
+
+  const dispatch = useAppDispatch();
+
+  const wallet = useWallet();
+
+  // const setFrom = from as CoinList;
+  // const setTo = to as CoinList;
   const { votes, totalVote } = getVotesByStatus('active');
   const [supportBidModal, setSupportBidModal] = useState(false);
   const [createBidModal, setCreateBidModal] = useState(false);
+
+  const [poolsData, setPoolsData] = useState<any[]>([]);
+  const [proposals, setProposals] = useState<any[]>([]);
+
+  const [proposalPools, setProposalPools] = useState<any[]>([]);
+
+  function removeDuplicates(array: any, property: any) {
+    return array.filter(
+      (obj: any, index: any, self: any) =>
+        index === self.findIndex((t: any) => t[property] === obj[property])
+    );
+  }
+
+  const filterPools = (data: any) => {
+    const pools = data.map((item: any) => item.lp);
+    const noDup = removeDuplicates(pools, 'pool_pubkey');
+    setProposalPools(noDup);
+  };
+
+  const AddDataToIPFS = async (data: string) => {
+    const metadataHash = await uploadMetadataToIPFS({
+      policyDetails: data,
+    });
+    return `https://ipfs.io/ipfs/${metadataHash}`;
+  };
+
+  const proposePropose = async (
+    lp: string,
+    proposedCommission: number,
+    proposedUndercollaterization: number,
+    policyDetails: string
+  ) => {
+    if (wallet.publicKey === null || lp === '') return;
+
+    dispatch(onLoading('Proposing Proposal...'));
+    let hadError = false;
+
+    const IpfsHash = (await AddDataToIPFS(policyDetails).catch((err) => {
+      hadError = false;
+      dispatch(
+        onFailure({
+          label: 'IPFS pinning Failed',
+          description: err.message,
+          link: '',
+          redirect: null,
+        })
+      );
+    })) as any;
+    if (hadError) return;
+
+    await proposeProposal(
+      wallet.publicKey,
+      new PublicKey(lp),
+      new PublicKey(data.insurance_pubkey),
+      proposedCommission,
+      proposedUndercollaterization,
+      IpfsHash
+    )
+      .then((res) => {
+        dispatch(
+          onSuccess({
+            label: 'Proposing Proposal Success',
+            description: 'check out tx at',
+            link: res
+              ? `https://solscan.io/tx/${res.toString()}?cluster=devnet`
+              : '',
+            redirect: null,
+          })
+        );
+        setCreateBidModal(false);
+        getProposals();
+      })
+      .catch((err) => {
+        dispatch(
+          onFailure({
+            label: 'Proposing Proposal Failed',
+            description: err.message,
+            link: '',
+            redirect: null,
+          })
+        );
+      });
+  };
+
+  const votingOnProposal = async (
+    lp: string,
+    proposal: string,
+    amount: number
+  ) => {
+    if (wallet.publicKey === null || lp === '') return;
+
+    dispatch(onLoading('Voting on Proposal...'));
+
+    await voteOnProposal(
+      wallet.publicKey,
+      new PublicKey(lp),
+      new PublicKey(data.insurance_pubkey),
+      new PublicKey(proposal),
+      amount
+    )
+      .then((res) => {
+        dispatch(
+          onSuccess({
+            label: 'Voting on Proposal Success',
+            description: 'check out tx at',
+            link: res
+              ? `https://solscan.io/tx/${res.toString()}?cluster=devnet`
+              : '',
+            redirect: null,
+          })
+        );
+        setSupportBidModal(false);
+        getProposals();
+      })
+      .catch((err) => {
+        dispatch(
+          onFailure({
+            label: 'Voting on Proposal Failed',
+            description: err.message,
+            link: '',
+            redirect: null,
+          })
+        );
+      });
+  };
+
+  const getPoolData = () => {
+    let config = {
+      method: 'GET',
+      url: 'https://api.insure-os.com/python/lp?page_no=1&page_size=10',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    axios(config)
+      .then((res) => {
+        const insuranceExpiry = data.expiry * 1000;
+        const filteredPools1 = res.data.filter((item: any) => {
+          const dateString = item.pool_lifecycle;
+          const dateMilliseconds = new Date(dateString).getTime();
+          return insuranceExpiry < dateMilliseconds;
+        });
+        // console.log(filteredPools1);
+        setPoolsData(filteredPools1);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const getProposals = () => {
+    let config = {
+      method: 'GET',
+      url: `https://api.insure-os.com/python/insurance/detail?insurance_pubkey=${data.insurance_pubkey}`,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    axios(config)
+      .then((res) => {
+        setProposals(res.data);
+        filterPools(res.data);
+        // console.log(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    getProposals();
+    getPoolData();
+  }, []);
 
   useLockBodyScroll(supportBidModal || createBidModal);
 
   return (
     <>
       {supportBidModal && (
-        <SupportBid setIsOpen={setSupportBidModal} submitFunc={() => {}} />
+        <SupportBid
+          proposals={proposals}
+          proposalPools={proposalPools}
+          setIsOpen={setSupportBidModal}
+          submitFunc={votingOnProposal}
+        />
       )}
       {createBidModal && (
-        <CreateBid setIsOpen={setCreateBidModal} submitFunc={() => {}} />
+        <CreateBid
+          setIsOpen={setCreateBidModal}
+          poolsData={poolsData}
+          submitFunc={proposePropose}
+        />
       )}
 
       <div className="relative mb-3 overflow-hidden rounded-lg bg-light-dark shadow-card transition-all last:mb-0 hover:shadow-large">
@@ -101,23 +252,19 @@ const FarmList: React.FC<FarmListTypes> = ({
           onClick={() => setIsExpand(!isExpand)}
           className="relative grid h-auto cursor-pointer grid-cols-7 items-center gap-3 py-4 sm:h-20 sm:gap-6 sm:py-0"
         >
-          <div className="col-span-2 px-4">
-            <CurrencySwapIcons from={setFrom} to={setTo} />
+          <div className="col-span-2 px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
+            {/* <CurrencySwapIcons from={setFrom} to={setTo} /> */}
           </div>
           <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
-            {earned}
+            {data.coverage}
           </div>
           <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
-            {apr}
+            {data.premium}
           </div>
+          <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base"></div>
+          <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base"></div>
           <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
-            {liquidity}
-          </div>
-          <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
-            {multiplier}
-          </div>
-          <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
-            {multiplier}
+            {data.deductible}
           </div>
         </div>
         <AnimatePresence initial={false}>
@@ -163,7 +310,11 @@ const FarmList: React.FC<FarmListTypes> = ({
                 accepted={votes[0]?.accepted}
                 rejected={votes[0]?.rejected}
               />
-              <VoterTable votes={votes[0]?.votes as any} />
+              <VoterTable
+                getProposals={getProposals}
+                insurance={data}
+                data={proposals}
+              />
               <div className="mb-4 flex w-full items-center justify-center">
                 <Button
                   shape="rounded"
@@ -183,4 +334,4 @@ const FarmList: React.FC<FarmListTypes> = ({
   );
 };
 
-export default FarmList;
+export default PolicyList;

@@ -1,11 +1,40 @@
+import { useState, useEffect } from 'react';
 import Button from '@/components/ui/button';
-import FarmList from '@/components/openpools/list';
+import PoolList from '@/components/openpools/list';
 import ActiveLink from '@/components/ui/links/active-link';
 import { FarmsData } from '@/data/static/farms-data';
 import cn from 'classnames';
 import AnchorLink from '@/components/ui/links/anchor-link';
 
+import axios from '@/lib/axiosClient';
+
 export default function OpenPools() {
+  const [poolsData, setPoolsData] = useState<any[]>([]);
+
+  const [trigger,setTrigger] = useState(0);
+
+  const getPoolData = () => {
+    let config = {
+      method: 'GET',
+      url: 'https://api.insure-os.com/python/lp?page_no=1&page_size=10',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    axios(config)
+      .then((res) => {
+        setPoolsData(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    getPoolData();
+  }, [trigger]);
+
   return (
     <div className="mx-auto w-full">
       <div className="mb-4 flex w-full justify-end">
@@ -33,17 +62,15 @@ export default function OpenPools() {
         </span>
       </div>
 
-      {FarmsData.map((farm) => (
-        <FarmList
-          key={farm.id}
-          from={farm.from}
-          to={farm.to}
-          earned={farm.earned}
-          apr={farm.apr}
-          liquidity={farm.liquidity}
-          multiplier={farm.multiplier}
-        />
-      ))}
+      {poolsData !== undefined &&
+        poolsData !== null &&
+        poolsData.map((item: any) => (
+          <PoolList
+            setTrigger={setTrigger}
+            key={item.pool_pubkey}
+            data={item}
+          />
+        ))}
     </div>
   );
 }

@@ -30,12 +30,12 @@ export type Insurance = {
     {
       name: 'TWO_WEEKS';
       type: 'i64';
-      value: '5';
+      value: '10 * MINUTE';
     },
     {
       name: 'MONTH';
       type: 'i64';
-      value: '5';
+      value: '10 * MINUTE';
     },
     {
       name: 'DEFAULT_MINT_DECIMALS';
@@ -253,16 +253,20 @@ export type Insurance = {
       ];
       args: [
         {
+          name: 'proposalId';
+          type: 'string';
+        },
+        {
+          name: 'proposalDocs';
+          type: 'string';
+        },
+        {
           name: 'proposedCommision';
           type: 'u64';
         },
         {
           name: 'proposedUndercollaterization';
           type: 'u64';
-        },
-        {
-          name: 'proposalDocs';
-          type: 'string';
         }
       ];
     },
@@ -513,6 +517,7 @@ export type Insurance = {
         }
       ];
       args: [];
+      returns: 'bool';
     },
     {
       name: 'claimVotingReward';
@@ -1490,6 +1495,10 @@ export type Insurance = {
             type: 'string';
           },
           {
+            name: 'proposalId';
+            type: 'string';
+          },
+          {
             name: 'proposalAccepted';
             type: 'bool';
           },
@@ -1861,6 +1870,11 @@ export type Insurance = {
         {
           name: 'proposal';
           type: 'publicKey';
+          index: false;
+        },
+        {
+          name: 'proposalId';
+          type: 'string';
           index: false;
         }
       ];
@@ -2377,12 +2391,12 @@ export const IDL: Insurance = {
     {
       name: 'TWO_WEEKS',
       type: 'i64',
-      value: '5',
+      value: '10 * MINUTE',
     },
     {
       name: 'MONTH',
       type: 'i64',
-      value: '5',
+      value: '10 * MINUTE',
     },
     {
       name: 'DEFAULT_MINT_DECIMALS',
@@ -2600,16 +2614,20 @@ export const IDL: Insurance = {
       ],
       args: [
         {
+          name: 'proposalId',
+          type: 'string',
+        },
+        {
+          name: 'proposalDocs',
+          type: 'string',
+        },
+        {
           name: 'proposedCommision',
           type: 'u64',
         },
         {
           name: 'proposedUndercollaterization',
           type: 'u64',
-        },
-        {
-          name: 'proposalDocs',
-          type: 'string',
         },
       ],
     },
@@ -2860,6 +2878,7 @@ export const IDL: Insurance = {
         },
       ],
       args: [],
+      returns: 'bool',
     },
     {
       name: 'claimVotingReward',
@@ -3837,6 +3856,10 @@ export const IDL: Insurance = {
             type: 'string',
           },
           {
+            name: 'proposalId',
+            type: 'string',
+          },
+          {
             name: 'proposalAccepted',
             type: 'bool',
           },
@@ -4208,6 +4231,11 @@ export const IDL: Insurance = {
         {
           name: 'proposal',
           type: 'publicKey',
+          index: false,
+        },
+        {
+          name: 'proposalId',
+          type: 'string',
           index: false,
         },
       ],
