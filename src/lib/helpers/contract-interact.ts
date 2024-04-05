@@ -8,6 +8,7 @@ import {
   Idl,
   BN,
 } from '@project-serum/anchor';
+import { hash } from '@project-serum/anchor/dist/cjs/utils/sha256';
 import {
   clusterApiUrl,
   Keypair,
@@ -24,8 +25,11 @@ import {
   createInitializeMintInstruction,
   createMintToCheckedInstruction,
   getAssociatedTokenAddress,
+  getOrCreateAssociatedTokenAccount,
   MintLayout,
   TOKEN_PROGRAM_ID,
+  mintTo,
+  createMint,
 } from '@solana/spl-token';
 
 import {
@@ -108,7 +112,10 @@ export const registerLP = (
     try {
       const program = await getInsuranceProgram(Connection, Signer);
 
-      const [lp] = await get_pda_from_seeds([lpCreator.toBuffer()], program);
+      const [lp] = await get_pda_from_seeds(
+        [lpCreator.toBuffer(), Buffer.from('LP')],
+        program
+      );
 
       const [tokenisedMint] = await get_pda_from_seeds(
         [
@@ -126,12 +133,11 @@ export const registerLP = (
       );
 
       const metadataAddress = await get_metadata_account(tokenisedMint);
-      console.log(metadataAddress.toString(), securityMint.toString());
 
       await program.methods
         .registerLp(
-          new BN(idealSize),
-          new BN(poolLifecycle),
+          new BN(idealSize * 10 ** 6),
+          new BN(poolLifecycle / 1000),
           tokenName,
           tokenSymbol,
           tokenMetadata
@@ -162,7 +168,6 @@ export const registerLP = (
 
 export const registerInsurance = (
   insuranceCreator: PublicKey,
-  insuranceId: string,
   coverage: number,
   premium: number,
   minimumCommission: number,
@@ -173,6 +178,21 @@ export const registerInsurance = (
   return new Promise(async (resolve, reject) => {
     try {
       const program = await getInsuranceProgram(Connection, Signer);
+
+      const expiryTime = (new Date().getTime() + expiry) / 1000;
+
+      const data1 = {
+        insuranceCreator: insuranceCreator,
+        coverage: coverage,
+        premium: premium,
+        minimumCommission: minimumCommission,
+        deductible: deductible,
+        expiry: expiryTime,
+        insuranceMetadataLink: insuranceMetadataLink,
+      };
+      const txt = JSON.stringify(data1);
+      const insuranceId = hash(txt).slice(0, 32);
+
       const [insurer] = await get_pda_from_seeds(
         [insuranceCreator.toBuffer()],
         program
@@ -183,8 +203,6 @@ export const registerInsurance = (
         program
       );
 
-      console.log('in interact');
-
       await program.methods
         .registerInsurance(
           insuranceId,
@@ -192,7 +210,7 @@ export const registerInsurance = (
           new BN(premium),
           new BN(minimumCommission),
           new BN(deductible),
-          new BN(expiry),
+          new BN(expiryTime),
           insuranceMetadataLink
         )
         .accounts({
@@ -206,7 +224,373 @@ export const registerInsurance = (
           resolve(insurance);
         })
         .catch((e) => {
-          console.log('insde catch');
+          reject(e);
+        });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+export const proposeProposal = (
+  proposalProposer: PublicKey,
+  lp: PublicKey,
+  insurance: PublicKey,
+  proposedCommission: number,
+  proposedUndercollaterization: number,
+  proposalMetadataLink: string
+) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const program = await getInsuranceProgram(Connection, Signer);
+
+      const data1 = {
+        lp: lp,
+        insurance: insurance,
+        proposedCommission: proposedCommission,
+        proposedUndercollaterization: proposedUndercollaterization,
+        proposalMetadataLink: proposalMetadataLink,
+      };
+      console.log(data1);
+      const txt = JSON.stringify(data1);
+      const proposalId = hash(txt).slice(0, 16);
+
+      const [proposal] = await get_pda_from_seeds(
+        [lp.toBuffer(), insurance.toBuffer(), Buffer.from(proposalId)],
+        program
+      );
+
+      const [tokenisedMint] = await get_pda_from_seeds(
+        [
+          Buffer.from('i_am_in_love'),
+          Buffer.from('withacriminl'),
+          lp.toBuffer(),
+        ],
+        program
+      );
+
+      const proposalTokenAccount = await getAssociatedTokenAddress(
+        tokenisedMint,
+        proposal,
+        true
+      );
+
+      await program.methods
+        .proposeInsuranceProposal(
+          proposalId,
+          proposalMetadataLink,
+          new BN(proposedCommission),
+          new BN(proposedUndercollaterization)
+        )
+        .accounts({
+          proposalProposer: proposalProposer,
+          lp: lp,
+          insurance: insurance,
+          proposal: proposal,
+          tokenisedMint: tokenisedMint,
+          proposalTokenAccount: proposalTokenAccount,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+          systemProgram: web3.SystemProgram.programId,
+        })
+        .rpc({ skipPreflight: true, maxRetries: 3 })
+        .then((res) => {
+          resolve(proposal);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+export const getLpTokenBalance = (Addr: PublicKey, lp: PublicKey) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const program = await getInsuranceProgram(Connection, Signer);
+
+      const [tokenisedMint] = await get_pda_from_seeds(
+        [
+          Buffer.from('i_am_in_love'),
+          Buffer.from('withacriminl'),
+          lp.toBuffer(),
+        ],
+        program
+      );
+
+      const tokenAccount = await getAssociatedTokenAddress(
+        tokenisedMint,
+        Addr,
+        true
+      );
+
+      await Connection.getTokenAccountBalance(tokenAccount)
+        .then((res) => {
+          resolve(res.value);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+export const addSecurity = (
+  securityAddr: PublicKey,
+  lp: PublicKey,
+  amount: number
+) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const program = await getInsuranceProgram(Connection, Signer);
+
+      const [tokenisedMint] = await get_pda_from_seeds(
+        [
+          Buffer.from('i_am_in_love'),
+          Buffer.from('withacriminl'),
+          lp.toBuffer(),
+        ],
+        program
+      );
+
+      const securityMint = await getAssociatedTokenAddress(
+        tokenisedMint,
+        lp,
+        true
+      );
+
+      const mintAddress = new PublicKey(
+        '9z6gCi1qjiv599YXS1EYtSvbWGQtcV67PnBk1GfrF3RF'
+      );
+
+      const securityAddrUSDCAccount = await getAssociatedTokenAddress(
+        mintAddress,
+        securityAddr,
+        true
+      );
+
+      const LpUSDCAccount = await getAssociatedTokenAddress(
+        mintAddress,
+        lp,
+        true
+      );
+
+      const securityAdrrTokenAccount = await getAssociatedTokenAddress(
+        tokenisedMint,
+        securityAddr,
+        true
+      );
+
+      await program.methods
+        .addSecurity(new BN(amount * 10 ** 6))
+        .accounts({
+          securityAddr: securityAddr,
+          securityAddrUsdcAcc: securityAddrUSDCAccount,
+          securityAdderTokenAddr: securityAdrrTokenAccount,
+          securityMint: securityMint,
+          lp: lp,
+          tokenisedMint: tokenisedMint,
+          lpUsdcAccount: LpUSDCAccount,
+          usdcMint: mintAddress,
+          systemProgram: web3.SystemProgram.programId,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        })
+        .rpc({ skipPreflight: true, maxRetries: 3 })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+export const voteOnProposal = (
+  securityAddr: PublicKey,
+  lp: PublicKey,
+  insurance: PublicKey,
+  proposal: PublicKey,
+  amount: number
+) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const program = await getInsuranceProgram(Connection, Signer);
+
+      const [tokenisedMint] = await get_pda_from_seeds(
+        [
+          Buffer.from('i_am_in_love'),
+          Buffer.from('withacriminl'),
+          lp.toBuffer(),
+        ],
+        program
+      );
+
+      const securityAdrrTokenAccount = await getAssociatedTokenAddress(
+        tokenisedMint,
+        securityAddr,
+        true
+      );
+
+      const [voteProposalAccount] = await get_pda_from_seeds(
+        [Buffer.from('vote'), proposal.toBuffer(), securityAddr.toBuffer()],
+        program
+      );
+
+      const voteProposalTokenAccount = await getAssociatedTokenAddress(
+        tokenisedMint,
+        voteProposalAccount,
+        true
+      );
+
+      await program.methods
+        .voteInsuranceProposal(new BN(amount * 10 ** 6))
+        .accounts({
+          voter: securityAddr,
+          voterTokenAccount: securityAdrrTokenAccount,
+          tokenisedMint: tokenisedMint,
+          voteProposalAccount: voteProposalAccount,
+          voteProposalTokenAccount: voteProposalTokenAccount,
+          insurance: insurance,
+          proposal: proposal,
+          lp: lp,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+          systemProgram: web3.SystemProgram.programId,
+        })
+        .rpc({ skipPreflight: true, maxRetries: 3 })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+export const sendAcceptProposal = (
+  notifier: PublicKey,
+  lp: PublicKey,
+  proposal: PublicKey
+) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const program = await getInsuranceProgram(Connection, Signer);
+
+      await program.methods
+        .acceptProposal()
+        .accounts({
+          notifier: notifier,
+          lp: lp,
+          proposal: proposal,
+        })
+        .rpc({ skipPreflight: false, maxRetries: 3 })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+export const AcceptInsuranceProposal = (
+  insuranceCreator: PublicKey,
+  insurance: PublicKey,
+  lp: PublicKey,
+  proposal: PublicKey
+) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const program = await getInsuranceProgram(Connection, Signer);
+
+      await program.methods
+        .acceptReinsuranceProposal()
+        .accounts({
+          insuranceCreator: insuranceCreator,
+          insurance: insurance,
+          lp: lp,
+          proposal: proposal,
+          systemProgram: web3.SystemProgram.programId,
+        })
+        .rpc({ skipPreflight: false, maxRetries: 3 })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+export const PayPremium = (
+  insuranceCreator: PublicKey,
+  insurance: PublicKey,
+  lp: PublicKey,
+  proposal: PublicKey
+) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const program = await getInsuranceProgram(Connection, Signer);
+
+      const [premiumVault] = await get_pda_from_seeds([
+        Buffer.from('premium'),
+        insurance.toBuffer(),
+        proposal.toBuffer(),
+      ],program);
+
+      const mintAddress = new PublicKey(
+        '9z6gCi1qjiv599YXS1EYtSvbWGQtcV67PnBk1GfrF3RF'
+      );
+
+      const premiumVaultTokenAccount = await getAssociatedTokenAddress(
+        mintAddress,
+        premiumVault,
+        true
+      );
+
+      const insuranceCreatorUsdcAccount = await getAssociatedTokenAddress(
+        mintAddress,
+        insuranceCreator,
+        true
+      );
+
+      await program.methods
+        .payPremium(new BN(1))
+        .accounts({
+          insuranceCreator: insuranceCreator,
+          insurance: insurance,
+          premiumVault: premiumVault,
+          premiumVaultTokenAccount: premiumVaultTokenAccount,
+          insuranceCreatorUsdcAccount: insuranceCreatorUsdcAccount,
+          proposal: proposal,
+          lp: lp,
+          usdcMint: mintAddress,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          systemProgram: web3.SystemProgram.programId,
+        })
+        .rpc({ skipPreflight: false, maxRetries: 3 })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((e) => {
           reject(e);
         });
     } catch (e) {

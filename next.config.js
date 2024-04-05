@@ -16,10 +16,10 @@ const nextConfig = withPWA({
       process.env.NEXT_PUBLIC_INFURA_IPFS_API_SECRET,
   },
   typescript: {
-    ignoreBuildErrors: true,
+    // ignoreBuildErrors: true,
   },
   eslint: {
-    ignoreDuringBuilds: true,
+    // ignoreDuringBuilds: true,
   },
 });
 module.exports = nextConfig;

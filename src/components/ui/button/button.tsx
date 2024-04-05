@@ -28,7 +28,7 @@ const variants: Record<VariantNames, string[]> = {
 const colors: Record<ColorNames, string[]> = {
   primary: ['text-brand', 'bg-brand', 'border-brand'],
   white: ['text-black', 'bg-white', 'border-white'],
-  gray: ['text-black', 'bg-gray-100', 'border-gray-100'],
+  gray: ['text-black', 'bg-gray-400', 'border-gray-100'],
   success: ['text-green-500', 'bg-green-500', 'border-green-500'],
   info: ['text-blue-500', 'bg-blue-500', 'border-blue-500'],
   warning: ['text-yellow-500', 'bg-yellow-500', 'border-yellow-500'],
@@ -106,9 +106,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
       case 'transparent':
         buttonColorClassNames = `${colorClassNames[0]} ${
-          disabled || isLoading
-            ? ''
-            : 'hover:bg-gray-800 focus:bg-gray-800'
+          disabled || isLoading ? '' : 'hover:bg-gray-800 focus:bg-gray-800'
         } `;
         buttonDripColor = 'rgba(0, 0, 0, 0.1)';
         break;
@@ -127,14 +125,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           'relative inline-flex shrink-0 items-center justify-center overflow-hidden text-center text-xs font-medium tracking-wider outline-none transition-all sm:text-sm',
           !disabled
             ? buttonColorClassNames
-            : 'cursor-not-allowed bg-gray-100 text-gray-400',
+            : 'cursor-not-allowed bg-gray-100 !text-gray-600',
           disabled || isLoading || variant === 'transparent'
             ? ''
             : 'hover:-translate-y-0.5 hover:shadow-large focus:-translate-y-0.5 focus:shadow-large focus:outline-none',
           isLoading && 'pointer-events-auto cursor-default focus:outline-none',
           fullWidth && 'w-full',
           color === 'white' || color === 'gray'
-            ? 'text-white'
+            ? 'text-black'
             : variants[variant],
           shapes[shape],
           shape === 'circle' ? `${sizeClassNames[1]}` : `${sizeClassNames[0]}`,

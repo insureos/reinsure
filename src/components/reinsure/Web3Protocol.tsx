@@ -358,7 +358,6 @@ const Web3Protocol: React.FC<Web3ProtocolProps> = ({}) => {
 
     await registerInsurance(
       wallet.publicKey,
-      '3',
       coverage,
       premium,
       1,
@@ -374,7 +373,7 @@ const Web3Protocol: React.FC<Web3ProtocolProps> = ({}) => {
             link: res
               ? `https://solscan.io/tx/${res.toString()}?cluster=devnet`
               : '',
-            redirect: null,
+            redirect: '/open-policies',
           })
         );
       })
