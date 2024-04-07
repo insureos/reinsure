@@ -27,16 +27,16 @@ export const Nav: React.FC<NavProps> = ({ handleFeatureClick }) => {
         />
       </AnchorLink>
       <div className="mr-20 flex items-center justify-center gap-7 text-sm font-normal leading-[21px] tracking-tight text-white xl:text-base 3xl:text-lg">
-        <div onClick={handleFeatureClick} className="cursor-pointer">
-        why us?
-        </div>
-        <AnchorLink href={'#'}>
+      <AnchorLink href={'#codeSecured'}>
+          <div className="cursor-pointer">why us?</div>
+        </AnchorLink>
+        <AnchorLink href={'#riskManagment'}>
           <div className="cursor-pointer">risk management</div>
         </AnchorLink>
-        <AnchorLink href={'#'}>
+        <AnchorLink href={'https://github.com/insureos/reinsurance-contracts/tree/master/docs'}>
           <div className="cursor-pointer">docs</div>
         </AnchorLink>
-        <AnchorLink href={'#'}>
+        <AnchorLink href={'#claimSettled'}>
           <div className="cursor-pointer">claims</div>
         </AnchorLink>
       </div>

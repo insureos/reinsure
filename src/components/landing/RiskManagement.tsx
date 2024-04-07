@@ -6,7 +6,7 @@ interface RiskManagementProps {}
 
 export const RiskManagement: React.FC<RiskManagementProps> = ({}) => {
   return (
-    <div className="flex w-screen flex-col items-center justify-center gap-6 bg-[#181E2D] py-32">
+    <div className="flex w-screen flex-col items-center justify-center gap-6 bg-[#181E2D] py-32" id="riskManagment">
       <div className="text-4xl font-black tracking-tight text-white 2xl:text-5xl">
       Best in class risk-management for codebases
       </div>

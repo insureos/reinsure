@@ -10,7 +10,7 @@ export const JoinCommunityBtn: React.FC<JoinCommunityBtnProps> = ({}) => {
   return (
     <div className="relative flex items-center justify-center">
       <AnchorLink
-        href={"/marketplace"}
+        href={"https://cal.com/insureos"}
         className="absolute z-[20] flex cursor-pointer items-center justify-start gap-3 whitespace-nowrap rounded-lg bg-[#0a0a0a] px-[18px] py-3 text-xs xl:text-sm 3xl:text-base"
       >
         <div className="relative h-6 w-6 overflow-hidden rounded-full xl:h-7 xl:w-7 3xl:h-8 3xl:w-8">

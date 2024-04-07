@@ -6,10 +6,10 @@ interface CodeSecuredProps {}
 
 export const CodeSecured: React.FC<CodeSecuredProps> = ({}) => {
   return (
-    <div className="flex justify-between bg-[#060606] py-32">
+    <div className="flex justify-between bg-[#060606] py-32" id="codeSecured">
       <div className="flex flex-col gap-8 pl-32 mr-80">
         <div className="text-5xl font-black text-white 2xl:text-6xl">
-        Your Code,
+        Your Codebase,
           <br /> Secured.
         </div>
         <div className="text-base text-gray-400 xl:text-lg 3xl:text-xl">

@@ -8,7 +8,7 @@ interface LandingPreFooterProps {}
 
 export const LandingPreFooter: React.FC<LandingPreFooterProps> = ({}) => {
   return (
-    <div className="flex w-screen flex-col items-center justify-center gap-6 bg-[#060606] py-20">
+    <div className="flex w-screen flex-col items-center justify-center gap-6 bg-[#060606] py-20" id="claimSettled">
       <div className="relative h-20 w-20 overflow-hidden rounded-full xl:h-24 xl:w-24 3xl:h-28 3xl:w-28">
         <Image className="object-cover" src={Logo} alt="logo" fill />
       </div>
