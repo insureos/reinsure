@@ -24,7 +24,7 @@ export const Landing: React.FC<LandingProps> = ({}) => {
   return (
     <>
       <Head>
-        <title>InsureOS - Insurance against codebase attacks.</title>
+        <title>InsureOS - Insure your code.</title>
       </Head>
       <div className="landing-font flex min-h-screen w-screen flex-col items-center overflow-y-auto overflow-x-hidden bg-[#060606]">
         <Nav handleFeatureClick={handleFeatureClick} />
