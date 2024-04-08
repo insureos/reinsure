@@ -6,7 +6,7 @@ import Test from '@/components/test';
 const TestPage: NextPageWithLayout = () => {
   return (
     <>
-      <NextSeo title="MarketPlace" description="reAssure.fi" />
+      <NextSeo title="MarketPlace" description="InsureOS" />
       <Test />
     </>
   );

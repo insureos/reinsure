@@ -7,8 +7,8 @@ import ClaimPage from '@/components/claim-payouts/claim-page';
 const ClaimsPage: NextPageWithLayout = () => {
   return (
     <>
-      <NextSeo title="Proposal" description="reAssure.fi" />
-      <ClaimPage/>
+      <NextSeo title="Claim Payouts" description="InsureOS" />
+      <ClaimPage />
     </>
   );
 };

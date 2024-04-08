@@ -6,7 +6,7 @@ import CreatePool from '@/components/openpools/openpools-create';
 const OpenPoolsCreatePage: NextPageWithLayout = () => {
   return (
     <>
-      <NextSeo title="Open Pools" description="reAssure.fi" />
+      <NextSeo title="Open Pools" description="InsureOS" />
       <CreatePool />
     </>
   );

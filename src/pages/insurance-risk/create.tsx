@@ -6,7 +6,7 @@ import Create from '@/components/insurance-risk/create';
 const InsuranceRiskCreatePage: NextPageWithLayout = () => {
   return (
     <>
-      <NextSeo title="Insurance Risk" description="reAssure.fi" />
+      <NextSeo title="Insurance Risk" description="InsureOS" />
       <Create />
     </>
   );

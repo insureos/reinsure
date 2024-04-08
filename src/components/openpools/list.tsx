@@ -80,9 +80,9 @@ const PoolList: React.FC<PoolListTypes> = ({ data, setTrigger }) => {
     <div className="relative mb-3 overflow-hidden rounded-lg bg-light-dark shadow-card transition-all last:mb-0 hover:shadow-large">
       <div
         onClick={() => setIsExpand(!isExpand)}
-        className="relative grid h-auto cursor-pointer grid-cols-6 items-center gap-3 py-4 sm:h-20 sm:gap-6 sm:py-0"
+        className="relative grid h-auto cursor-pointer grid-cols-5 items-center gap-3 py-4 sm:h-20 sm:gap-6 sm:py-0"
       >
-        <div className="col-span-2 px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
+        <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
           {/* <CurrencySwapIcons from={setFrom} to={setTo} /> */}
           {data.pool_name}
         </div>

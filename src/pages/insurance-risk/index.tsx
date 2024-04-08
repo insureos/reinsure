@@ -6,7 +6,7 @@ import Search from '@/components/insurance-risk/search';
 const InsuranceRiskPage: NextPageWithLayout = () => {
   return (
     <>
-      <NextSeo title="Insurance Risk" description="reAssure.fi" />
+      <NextSeo title="Insurance Risk" description="InsureOS" />
       <Search />
     </>
   );

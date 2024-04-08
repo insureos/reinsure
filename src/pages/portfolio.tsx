@@ -17,10 +17,10 @@ const PortfolioPage: NextPageWithLayout<
 > = () => {
   return (
     <>
-      <NextSeo title="Portfolio" description="reAssure.fi" />
+      <NextSeo title="Portfolio" description="InsureOS" />
       <div className="mx-auto flex w-full shrink-0 flex-col md:px-4 xl:px-6 3xl:max-w-[1700px] 3xl:px-12">
         <Portfolio />
-        <SidebarTwo className="right-0 left-auto  xl:block" />
+        <SidebarTwo className="left-auto right-0  xl:block" />
       </div>
     </>
   );

@@ -6,7 +6,7 @@ import Reinsure from '@/components/reinsure/Reinsure';
 const ReinsurePage: NextPageWithLayout = () => {
   return (
     <>
-      <NextSeo title="Reinsure" description="reAssure.fi" />
+      <NextSeo title="Reinsure" description="InsureOS" />
       <Reinsure />
     </>
   );

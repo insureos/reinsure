@@ -44,8 +44,8 @@ export default function OpenPools() {
           </Button>
         </AnchorLink>
       </div>
-      <div className="test-xs mb-3 grid grid-cols-6 gap-6 rounded-lg bg-light-dark font-semibold shadow-card xl:text-sm 3xl:text-base">
-        <span className="col-span-2 px-6 py-6 tracking-wider text-gray-300">
+      <div className="test-xs mb-3 grid grid-cols-5 gap-6 items-center rounded-lg bg-light-dark font-semibold shadow-card xl:text-sm 3xl:text-base">
+        <span className="px-6 py-6 text-center tracking-wider text-gray-300">
           Pool Name
         </span>
         <span className="px-6 py-6 text-center tracking-wider text-gray-300">

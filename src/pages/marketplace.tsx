@@ -6,7 +6,7 @@ import Marketplace from '@/components/marketplace/marketplace';
 const MarketplacePage: NextPageWithLayout = () => {
   return (
     <>
-      <NextSeo title="MarketPlace" description="reAssure.fi" />
+      <NextSeo title="MarketPlace" description="InsureOS" />
       <Marketplace />
     </>
   );

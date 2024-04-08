@@ -711,3 +711,31 @@ export const ClaimVote = (
     }
   });
 };
+
+export const sendClaimDecision = (
+  notifier:PublicKey,
+  claim: PublicKey,
+) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const program = await getInsuranceProgram(Connection, Signer);
+
+      await program.methods
+        .claimDecision()
+        .accounts({
+          decisionAsker: notifier,
+          claim: claim,
+          systemProgram: web3.SystemProgram.programId,
+        })
+        .rpc({ skipPreflight: false, maxRetries: 3 })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
