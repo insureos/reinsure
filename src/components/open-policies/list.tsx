@@ -1,28 +1,15 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import CurrencySwapIcons from '@/components/ui/currency-swap-icons';
-import { CoinList } from '@/components/ui/currency-swap-icons';
 import Button from '@/components/ui/button/button';
-import Input from '@/components/ui/forms/input';
-import Textarea from '@/components/ui/forms/textarea';
 import cn from 'classnames';
-import VotePoll from '@/components/open-policies/vote-poll';
 import VoterTable from '@/components/open-policies/voter-table';
-import { getVotesByStatus } from '@/data/static/vote-data';
-import {
-  ChevronDownIcon,
-  CheckIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
-
 import axios from '@/lib/axiosClient';
 
 import { useLockBodyScroll } from '@/lib/hooks/use-lock-body-scroll';
 
-import { uploadMetadataToIPFS, uploadFileToIPFS } from '@/lib/helpers/metadata';
+import { uploadMetadataToIPFS } from '@/lib/helpers/metadata';
 import {
   proposeProposal,
-  getLpTokenBalance,
   voteOnProposal,
 } from '@/lib/helpers/contract-interact';
 import { useAppSelector, useAppDispatch } from '@/store/store';
@@ -34,6 +21,9 @@ import AnchorLink from '../ui/links/anchor-link';
 import CreateBid from '@/components/open-policies/create-bid';
 
 import SupportBid from '@/components/open-policies/support-bid';
+import Spinner from '@/components/custom/spinner';
+
+import PremiumPay from '@/components/open-policies/premium-pay';
 
 interface PolicyListTypes {
   data: any;
@@ -45,10 +35,8 @@ const PolicyList: React.FC<PolicyListTypes> = ({ data }) => {
   const dispatch = useAppDispatch();
 
   const wallet = useWallet();
+  const [loading, setLoading] = useState(false);
 
-  // const setFrom = from as CoinList;
-  // const setTo = to as CoinList;
-  const { votes, totalVote } = getVotesByStatus('active');
   const [supportBidModal, setSupportBidModal] = useState(false);
   const [createBidModal, setCreateBidModal] = useState(false);
 
@@ -56,6 +44,8 @@ const PolicyList: React.FC<PolicyListTypes> = ({ data }) => {
   const [proposals, setProposals] = useState<any[]>([]);
 
   const [proposalPools, setProposalPools] = useState<any[]>([]);
+
+  const [acceptedProposal, setAcceptedProposal] = useState<any>(null);
 
   function removeDuplicates(array: any, property: any) {
     return array.filter(
@@ -68,6 +58,13 @@ const PolicyList: React.FC<PolicyListTypes> = ({ data }) => {
     const pools = data.map((item: any) => item.lp);
     const noDup = removeDuplicates(pools, 'pool_pubkey');
     setProposalPools(noDup);
+  };
+
+  const checkAccepted = (data: any) => {
+    const accepted = data.filter((item: any) => item.accepted === true);
+    if (accepted.length > 0) {
+      setAcceptedProposal(accepted[0]);
+    }
   };
 
   const AddDataToIPFS = async (data: string) => {
@@ -203,6 +200,7 @@ const PolicyList: React.FC<PolicyListTypes> = ({ data }) => {
   };
 
   const getProposals = () => {
+    setLoading(true);
     let config = {
       method: 'GET',
       url: `https://api.insure-os.com/python/insurance/detail?insurance_pubkey=${data.insurance_pubkey}`,
@@ -214,24 +212,29 @@ const PolicyList: React.FC<PolicyListTypes> = ({ data }) => {
     axios(config)
       .then((res) => {
         setProposals(res.data);
+        checkAccepted(res.data);
         filterPools(res.data);
         // console.log(res.data);
+        setLoading(false);
       })
       .catch((error) => {
         console.log(error);
+        setLoading(false);
       });
   };
 
   useEffect(() => {
-    getProposals();
-    getPoolData();
-  }, []);
+    if (isExpand === true) {
+      getProposals();
+      getPoolData();
+    }
+  }, [data, isExpand]);
 
   useLockBodyScroll(supportBidModal || createBidModal);
 
   return (
     <>
-      {supportBidModal && (
+      {!loading && acceptedProposal === null && supportBidModal && (
         <SupportBid
           proposals={proposals}
           proposalPools={proposalPools}
@@ -239,21 +242,30 @@ const PolicyList: React.FC<PolicyListTypes> = ({ data }) => {
           submitFunc={votingOnProposal}
         />
       )}
-      {createBidModal && (
+      {!loading && acceptedProposal === null && createBidModal && (
         <CreateBid
           setIsOpen={setCreateBidModal}
           poolsData={poolsData}
           submitFunc={proposePropose}
         />
       )}
-
       <div className="relative mb-3 overflow-hidden rounded-lg bg-light-dark shadow-card transition-all last:mb-0 hover:shadow-large">
         <div
-          onClick={() => setIsExpand(!isExpand)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsExpand(!isExpand);
+          }}
           className="relative grid h-auto cursor-pointer grid-cols-7 items-center gap-3 py-4 sm:h-20 sm:gap-6 sm:py-0"
         >
-          <div className="col-span-2 px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
-            {/* <CurrencySwapIcons from={setFrom} to={setTo} /> */}
+          <div className="col-span-2 px-8 text-xs font-medium text-white xl:text-sm 3xl:text-base">
+            <AnchorLink
+              href={`https://explorer.solana.com/address/${data?.insurance_insurer}`}
+              target="_blank"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {data?.insurance_insurer.slice(0, 8)}...
+              {data?.insurance_insurer.slice(24, 32)}
+            </AnchorLink>
           </div>
           <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
             {data.coverage}
@@ -262,13 +274,15 @@ const PolicyList: React.FC<PolicyListTypes> = ({ data }) => {
             {data.premium}
           </div>
           <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base"></div>
-          <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base"></div>
+          <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
+            {data?.minimum_commision}
+          </div>
           <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
             {data.deductible}
           </div>
         </div>
         <AnimatePresence initial={false}>
-          {isExpand && (
+          {!loading && acceptedProposal === null && isExpand && (
             <motion.div
               key="content"
               initial="collapsed"
@@ -306,25 +320,47 @@ const PolicyList: React.FC<PolicyListTypes> = ({ data }) => {
                   </Button>
                 </div>
               </div>
-              <VotePoll
-                accepted={votes[0]?.accepted}
-                rejected={votes[0]?.rejected}
-              />
               <VoterTable
                 getProposals={getProposals}
                 insurance={data}
                 data={proposals}
               />
-              <div className="mb-4 flex w-full items-center justify-center">
-                <Button
-                  shape="rounded"
-                  fullWidth={true}
-                  size="small"
-                  onClick={() => setIsExpand(!isExpand)}
-                  className={cn('sm:w-4/6 md:w-3/6 xl:w-2/6')}
-                >
-                  Collapse
-                </Button>
+            </motion.div>
+          )}
+          {!loading && acceptedProposal !== null && isExpand && (
+            <motion.div
+              key="content"
+              initial="collapsed"
+              animate="open"
+              exit="collapsed"
+              variants={{
+                open: { opacity: 1, height: 'auto' },
+                collapsed: { opacity: 0, height: 0 },
+              }}
+              transition={{ duration: 0.4, ease: 'easeInOut' }}
+            >
+              <div className="mb-6 flex w-full items-center justify-between border-y border-dashed border-gray-700 px-4 py-6 text-gray-400">
+                <PremiumPay
+                  insurance={data}
+                  proposalAccepted={acceptedProposal}
+                />
+              </div>
+            </motion.div>
+          )}
+          {loading && (
+            <motion.div
+              key="content"
+              initial="collapsed"
+              animate="open"
+              exit="collapsed"
+              variants={{
+                open: { opacity: 1, height: 'auto' },
+                collapsed: { opacity: 0, height: 0 },
+              }}
+              transition={{ duration: 0.4, ease: 'easeInOut' }}
+            >
+              <div className="mb-6 flex w-full items-center justify-between border-y border-dashed border-gray-700 px-4 py-6 text-gray-400">
+                <Spinner label={'Fetching Data'} />
               </div>
             </motion.div>
           )}

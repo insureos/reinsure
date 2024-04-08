@@ -1,157 +1,108 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import cn from 'classnames';
+import { useRouter } from 'next/router';
+import routes from '@/config/routes';
 import Button from '@/components/ui/button';
-import AuctionCountdown from '@/components/insurance-risk-oracle/auction-countdown';
-import VotePoll from '@/components/claim-payouts/vote-details/vote-poll';
-import { getVotesByStatus } from '@/data/static/vote-data';
-import AnchorLink from '@/components/ui/links/anchor-link';
-import { ExportIcon } from '@/components/icons/export-icon';
-import axios from '@/lib/axiosClient';
-
 import Image from '@/components/ui/image';
 import Input from '@/components/ui/forms/input';
 import Textarea from '@/components/ui/forms/textarea';
 import votePool from '@/assets/images/vote-pool.svg';
+import AnchorLink from '../ui/links/anchor-link';
+import { ExportIcon } from '@/components/icons/export-icon';
+
 import { Tab, TabItem, TabPanel, TabPanels } from '@/components/ui/tab';
 
-import { ClaimVote } from '@/lib/helpers/contract-interact';
+import cn from 'classnames';
+import {
+  ChevronDownIcon,
+  CheckIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline';
+
+import axios from '@/lib/axiosClient';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { uploadMetadataToIPFS } from '@/lib/helpers/metadata';
+import { RaiseClaim } from '@/lib/helpers/contract-interact';
 import { useAppSelector, useAppDispatch } from '@/store/store';
 import { PublicKey } from '@solana/web3.js';
 import { onLoading, onFailure, onSuccess } from '@/store/callLoaderSlice';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { useDispatch } from 'react-redux';
 
-interface VoteActionButtonProps {
-  data: any;
-  getClaimData: any;
+interface DropdownProps {
+  active: any;
+  setActive: React.Dispatch<React.SetStateAction<any>>;
+  Options: any[];
+  placeholder?: string;
 }
 
-const VoteActionButton: React.FC<VoteActionButtonProps> = ({
-  data,
-  getClaimData,
+const Dropdown: React.FC<DropdownProps> = ({
+  active,
+  setActive,
+  Options,
+  placeholder = 'select',
 }) => {
-  const [voteAmt, setVoteAmt] = useState(0);
-  const wallet = useWallet();
-  const dispatch = useDispatch();
-
-  const payVoteClaim = async (voteState: boolean) => {
-    if (
-      wallet.publicKey === null ||
-      data.claim_addr === null ||
-      data.claim_addr === undefined ||
-      data.claim_addr === '' ||
-      voteAmt === 0
-    )
-      return;
-
-    dispatch(onLoading('Voting on Claim...'));
-
-    await ClaimVote(
-      wallet.publicKey,
-      new PublicKey(data?.claim_addr),
-      voteAmt,
-      voteState
-    )
-      .then((res) => {
-        dispatch(
-          onSuccess({
-            label: 'Claim Voting Success',
-            description: 'check out tx at',
-            link: res
-              ? `https://solscan.io/tx/${res.toString()}?cluster=devnet`
-              : '',
-            redirect: null,
-          })
-        );
-        getClaimData();
-      })
-      .catch((err) => {
-        dispatch(
-          onFailure({
-            label: 'Claim Voting Failed',
-            description: err.message,
-            link: '',
-            redirect: null,
-          })
-        );
-      });
-    setVoteAmt(0);
+  const [isOpen, setIsOpen] = useState(false);
+  const handleChoose = (option: any) => {
+    setActive(option);
+    setIsOpen(false);
   };
 
   return (
-    <div className="mt-10 flex items-end gap-3">
-      <Input
-        type="number"
-        value={voteAmt}
-        placeholder="vote amount"
-        label="Vote Amount ($)"
-        className="w-[50%]"
-        onChange={(e) => setVoteAmt(parseFloat(e.target.value))}
-      />
-      <Button
-        onClick={() => payVoteClaim(true)}
-        shape="rounded"
-        color="success"
-        className="w-[20%]"
+    <div className="relative w-[32rem]">
+      <div
+        className="flex cursor-pointer items-center justify-between rounded-lg border border-gray-700 bg-[#171E2E] px-6 py-3 text-xs hover:scale-[1.01] xl:text-sm 3xl:text-base"
+        onClick={() => setIsOpen(!isOpen)}
       >
-        Accept
-      </Button>
-      <Button
-        onClick={() => payVoteClaim(false)}
-        shape="rounded"
-        color="danger"
-        className="w-[20%]"
-      >
-        Reject
-      </Button>
+        <div>
+          {active !== null
+            ? `Coverage $${active?.coverage} , premium $${active?.premium} , deductible: $${active?.deductible}`
+            : placeholder}
+        </div>
+        <ChevronDownIcon
+          className={cn('h-5 w-5 transition-all', isOpen ? 'rotate-180' : '')}
+        />
+      </div>
+      {isOpen && (
+        <div className="absolute left-0 top-[115%] z-[10] flex w-[32rem] flex-col rounded-lg bg-gray-800 px-1 shadow-xl">
+          {Options.map((item, idx) => {
+            return (
+              <div
+                key={idx}
+                onClick={() => handleChoose(item)}
+                className="my-1 flex w-full cursor-pointer items-center justify-between rounded-lg px-6 py-2 text-xs hover:bg-gray-900 xl:text-sm 3xl:text-base"
+              >
+                {`Coverage $${item?.coverage} , premium $${item?.premium} , deductible: $${item?.deductible}`}
+                {active !== null &&
+                  active.insurance_pubkey === item.insurance_pubkey && (
+                    <CheckIcon className="h-5 w-5" />
+                  )}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
 
-interface VoteDetailsCardProps {
-  claimData: any;
-  getClaimData: any;
-}
+interface CreateClaimProps {}
 
-const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
-  claimData,
-  getClaimData,
-}) => {
-  const [isExpand, setIsExpand] = useState(false);
-  const { votes, totalVote } = getVotesByStatus('active');
+const CreateClaim: React.FC<CreateClaimProps> = ({}) => {
+  const wallet = useWallet();
+  const router = useRouter();
+  const dispatch = useAppDispatch();
 
+  const [allInsurances, setAllInsurances] = useState<any[]>([]);
+  const [myInsurances, setMyInsurances] = useState<any[]>([]);
+
+  const [chosenInsurance, setChosenInsurance] = useState<any>(null);
   const [proposal, setProposal] = useState<any>(null);
-  const [insurance, setInsurance] = useState<any>(null);
+
+  const [claimAmount, setClaimAmount] = useState(0);
+  const [claimDetails, setClaimDetails] = useState('');
+  const [claimTitle, setClaimTitle] = useState('');
 
   const [payoutDetails, setPayoutDetails] = useState('');
   const [redemPolicy, setRedemPolicy] = useState('');
-  const [claimDesc, setClaimDesc] = useState('');
-
-  const parseDateToMilliseconds = (dateStr: string) => {
-    const dateParts = dateStr.split(', ');
-    const daysPart = dateParts[0].split(' ')[0];
-    const timePart = dateParts[1];
-
-    const days = parseInt(daysPart);
-    const [hours, minutes, seconds, milliseconds] = timePart
-      .split(/[:,.]/)
-      .map(Number);
-
-    const totalMilliseconds =
-      days * 24 * 60 * 60 * 1000 +
-      hours * 60 * 60 * 1000 +
-      minutes * 60 * 1000 +
-      seconds * 1000 +
-      parseInt((milliseconds / 1000).toString());
-
-    return totalMilliseconds;
-  };
-
-  const milliseconds = parseDateToMilliseconds(claimData?.voting_ending_in);
-  const startTime = new Date(claimData?.voting_start).getTime();
-  const endTime = startTime + milliseconds;
-
   const fetchIpfs = async (link: string, type: string) => {
     axios
       .get(
@@ -164,52 +115,11 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
         if (type === 'insurance') {
           setRedemPolicy(res.data?.redemptionPolicy);
         }
-        if (type === 'claim') {
-          setClaimDesc(res.data?.claimDetails);
-        }
       })
       .catch((e) => console.log(e));
   };
-
-  const getProposalData = async () => {
-    let config = {
-      method: 'GET',
-      url: `https://api.insure-os.com/python/insurance/detail?insurance_pubkey=${claimData.insurance}`,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
-
-    axios(config)
-      .then((res) => {
-        setProposal(res.data[0]);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const getInsuranceData = async () => {
-    let config = {
-      method: 'GET',
-      url: `https://api.insure-os.com/python/insurance?page_no=1&page_size=10&insurance_pubkey=${claimData.insurance}`,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
-
-    axios(config)
-      .then((res) => {
-        setInsurance(res.data[0]);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   useEffect(() => {
     if (
-      !isExpand ||
       proposal === null ||
       proposal === undefined ||
       proposal.proposal_docs === null ||
@@ -218,148 +128,205 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
     )
       return;
     fetchIpfs(proposal.proposal_docs, 'proposal');
-  }, [proposal, isExpand]);
+  }, [proposal]);
 
   useEffect(() => {
     if (
-      !isExpand ||
-      insurance === null ||
-      insurance === undefined ||
-      insurance.metadata_link === null ||
-      insurance.metadata_link === undefined ||
-      !insurance.metadata_link.startsWith('https://ipfs')
+      chosenInsurance === null ||
+      chosenInsurance === undefined ||
+      chosenInsurance.metadata_link === null ||
+      chosenInsurance.metadata_link === undefined ||
+      !chosenInsurance.metadata_link.startsWith('https://ipfs')
     )
       return;
-    fetchIpfs(insurance.metadata_link, 'insurance');
-  }, [insurance, isExpand]);
+    fetchIpfs(chosenInsurance.metadata_link, 'insurance');
+  }, [chosenInsurance]);
+
+  const getPoliciesData = () => {
+    let config = {
+      method: 'GET',
+      url: 'https://api.insure-os.com/python/insurance?page_no=1&page_size=20',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    axios(config)
+      .then((res) => {
+        setAllInsurances(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const getMyInsurances = (data: any) => {
+    const fils = data.filter((item: any) => {
+      return (
+        item.reinsured === true &&
+        item.insurance_insurer === wallet.publicKey?.toString()
+      );
+    });
+    setMyInsurances(fils);
+  };
+
+  const getProposals = () => {
+    let config = {
+      method: 'GET',
+      url: `https://api.insure-os.com/python/insurance/detail?insurance_pubkey=${chosenInsurance.insurance_pubkey}`,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    axios(config)
+      .then((res) => {
+        const dat = res.data;
+        const prop = dat.filter((item: any) => item.accepted === true);
+        setProposal(prop[0]);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   useEffect(() => {
+    getPoliciesData();
+  }, []);
+
+  useEffect(() => {
+    if (wallet.publicKey === null) return;
+    getMyInsurances(allInsurances);
+  }, [wallet.publicKey, allInsurances]);
+
+  useEffect(() => {
+    if (chosenInsurance === null) return;
+    getProposals();
+  }, [chosenInsurance]);
+
+  const AddDataToIPFS = async () => {
+    const metadataHash = await uploadMetadataToIPFS({
+      claimTitle: claimTitle,
+      claimAmount: claimAmount,
+      claimDetails: claimDetails,
+    });
+    return `https://ipfs.io/ipfs/${metadataHash}`;
+  };
+
+  const raiseClaim = async () => {
     if (
-      !isExpand ||
-      claimData === null ||
-      claimData === undefined ||
-      claimData.claim_description === null ||
-      claimData.claim_description === undefined ||
-      !claimData.claim_description.startsWith('https://ipfs')
+      wallet.publicKey === null ||
+      proposal === null ||
+      chosenInsurance === null ||
+      claimTitle === '' ||
+      claimDetails === '' ||
+      claimAmount === 0
     )
       return;
-    fetchIpfs(claimData.claim_description, 'claim');
-  }, [claimData, isExpand]);
+    if (chosenInsurance.insurance_insurer !== wallet.publicKey.toString())
+      return;
 
-  useEffect(() => {
-    if (isExpand === true) {
-      getInsuranceData();
-      getProposalData();
-    }
-  }, [claimData, isExpand]);
+    dispatch(onLoading('Raising Claim...'));
+    let hadError = false;
+
+    const IpfsHash = (await AddDataToIPFS().catch((err) => {
+      hadError = false;
+      dispatch(
+        onFailure({
+          label: 'IPFS pinning Failed',
+          description: err.message,
+          link: '',
+          redirect: null,
+        })
+      );
+    })) as any;
+    if (hadError) return;
+
+    await RaiseClaim(
+      wallet.publicKey,
+      new PublicKey(chosenInsurance.insurance_pubkey),
+      new PublicKey(proposal?.lp?.pool_pubkey),
+      new PublicKey(proposal?.proposal_pubkey),
+      claimAmount,
+      IpfsHash
+    )
+      .then((res) => {
+        dispatch(
+          onSuccess({
+            label: 'Claim Raising Success',
+            description: 'check out tx at',
+            link: res
+              ? `https://solscan.io/tx/${res.toString()}?cluster=devnet`
+              : '',
+            redirect: '/claim-payouts',
+          })
+        );
+      })
+      .catch((err) => {
+        dispatch(
+          onFailure({
+            label: 'Claim Raising Failed',
+            description: err.message,
+            link: '',
+            redirect: null,
+          })
+        );
+      });
+  };
 
   return (
-    <div
-      className={cn(
-        'mb-3 rounded-lg bg-light-dark p-5 transition-shadow duration-200 xs:p-6 xl:p-4',
-        isExpand ? 'shadow-large' : 'shadow-card hover:shadow-large'
-      )}
-    >
-      <div
-        className={cn(
-          'flex w-full flex-col-reverse justify-between ',
-          'md:grid md:grid-cols-3'
+    <section className="mx-auto w-full max-w-[1160px] text-sm">
+      <header className="mb-10 flex flex-col gap-4 rounded-lg bg-light-dark p-5 py-6 shadow-card xs:p-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-4 xs:gap-3 xl:gap-4">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-dark">
+            <Image alt="Vote Pool" src={votePool} width={32} height={32} />
+          </div>
+          <div>
+            <h2 className="mb-2 font-medium text-gray-100 xl:text-lg">
+              Vote on claim filed by others
+            </h2>
+            <p className="leading-[1.8] text-gray-400">
+              Verify their claim authenticity!
+            </p>
+          </div>
+        </div>
+        <div className="shrink-0">
+          <Button
+            shape="rounded"
+            fullWidth={true}
+            onClick={() => router.push(routes.claimPayouts)}
+          >
+            All Filed Claims
+          </Button>
+        </div>
+      </header>
+
+      <h2 className="mb-5 text-base font-medium text-gray-100 xl:text-lg 3xl:text-xl">
+        Create a new claim proposal
+      </h2>
+      <div className="mb-6 rounded-lg bg-light-dark  p-6 pb-8 shadow-card transition-shadow duration-200 hover:shadow-large">
+        <h3 className="mb-2 text-base font-medium text-gray-100 xl:text-lg 3xl:text-xl">
+          Choose Insurance & Review Claim Conditions
+        </h3>
+        {wallet.publicKey === null && (
+          <div className="mt-5 flex items-center gap-8 text-sm xl:text-base 3xl:text-lg">
+            <div>Connect Wallet to File a Claim</div>
+            <WalletMultiButton className="rounded-full" />
+          </div>
         )}
-      >
-        <div className="self-start md:col-span-2">
-          <div
-            onClick={() => setIsExpand(!isExpand)}
-            className="cursor-pointer text-lg font-medium leading-normal xl:text-xl 3xl:text-2xl"
-          >
-            {claimData?.claim_title}
-          </div>
-          <div className="mt-5 flex gap-2 text-sm xl:text-base 3xl:text-lg">
-            <div>Claim Address - </div>
-            <AnchorLink
-              href={`https://explorer.solana.com/address/${claimData?.claim_addr}`}
-              className="flex gap-3 items-center"
-              target="_blank"
-            >
-              <div>
-                {claimData?.claim_addr?.slice(0, 5)}...
-                {claimData?.claim_addr?.slice(27, 32)}
-              </div>
-              <ExportIcon className="h-4 w-4" />
-            </AnchorLink>
-          </div>
-
-          {!isExpand ? (
-            <Button
-              onClick={() => setIsExpand(!isExpand)}
-              className="mt-4 w-full xs:mt-6 xs:w-auto md:mt-10"
-              shape="rounded"
-            >
-              Vote Now
-            </Button>
-          ) : (
-            <VoteActionButton data={claimData} getClaimData={getClaimData} />
-          )}
-        </div>
-
-        <div
-          className={cn(
-            "before:content-[' '] relative grid h-full gap-2 border-gray-700 before:absolute before:bottom-0 before:left-0 before:border-b before:border-r  before:border-dashed before:border-gray-700 xs:gap-2.5 ",
-            'mb-5 pb-5 before:h-[1px] before:w-full md:mb-0 md:pb-0 md:pl-5 md:before:h-full md:before:w-[1px] xl:pl-3'
-          )}
-        >
-          <div className="flex items-center gap-3">
-            <div className="uppercase">Expected Compensation :</div>
-            <div className="xl:text-cl text-base xl:text-lg">
-              $ {claimData?.claim_amount}
-            </div>
-          </div>
-          <h3 className="flex flex-col gap-2 text-xs font-medium md:uppercase xl:text-sm 3xl:text-base ">
-            <div>Voting ends in :</div>
-            <AuctionCountdown date={new Date(endTime)} />
-          </h3>
-        </div>
-      </div>
-      <AnimatePresence initial={false}>
-        {isExpand && (
-          <motion.div
-            key="content"
-            initial="collapsed"
-            animate="open"
-            exit="collapsed"
-            variants={{
-              open: { opacity: 1, height: 'auto' },
-              collapsed: { opacity: 0, height: 0 },
-            }}
-            transition={{ duration: 0.4, ease: 'easeInOut' }}
-          >
-            <div className="my-6 border-t border-dashed border-gray-700" />
-            <VotePoll
-              title={'Votes'}
-              accepted={{
-                vote: claimData?.vote_positive / 10 ** 6,
-                percentage:
-                  claimData?.vote_positive + claimData?.vote_negative !== 0
-                    ? (claimData?.vote_positive /
-                        (claimData?.vote_positive + claimData?.vote_negative)) *
-                      100
-                    : 0,
-              }}
-              rejected={{
-                vote: claimData?.vote_negative / 10 ** 6,
-                percentage:
-                  claimData?.vote_positive + claimData?.vote_negative !== 0
-                    ? (claimData?.vote_negative /
-                        (claimData?.vote_positive + claimData?.vote_negative)) *
-                      100
-                    : 0,
-              }}
+        {wallet.publicKey !== null && (
+          <div className="mt-6 flex flex-col gap-4">
+            <Dropdown
+              active={chosenInsurance}
+              setActive={setChosenInsurance}
+              Options={myInsurances}
+              placeholder="choose insurance for claim"
             />
-            <div className="my-6 flex flex-col gap-4 border-y border-dashed border-gray-700 py-6">
-              <div className="text-lg font-semibold xl:text-xl 3xl:text-2xl">
-                Claim Description
-              </div>
-              <div>{claimDesc}</div>
-            </div>
+          </div>
+        )}
+        {wallet.publicKey !== null &&
+          chosenInsurance !== null &&
+          proposal !== null && (
             <div className="my-6 flex gap-6">
               <Tab.Group key={'list-tabs'}>
                 <div className="flex h-[30rem] w-[60%] flex-col justify-between rounded-xl bg-light-dark">
@@ -389,7 +356,7 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                             <div>Proposal Address</div>
                             <AnchorLink
                               href={`https://explorer.solana.com/address/${proposal?.proposal_pubkey}`}
-                              className="flex gap-3 items-center"
+                              className="flex items-center gap-3"
                               target="_blank"
                             >
                               <div>
@@ -432,7 +399,7 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                             <div>Pool Address</div>
                             <AnchorLink
                               href={`https://explorer.solana.com/address/${proposal?.lp?.pool_pubkey}`}
-                              className="flex gap-3 items-center"
+                              className="flex items-center gap-3"
                               target="_blank"
                             >
                               <div>
@@ -446,7 +413,7 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                             <div>Created by</div>
                             <AnchorLink
                               href={`https://explorer.solana.com/address/${proposal?.lp?.created_by}`}
-                              className="flex gap-3 items-center"
+                              className="flex items-center gap-3"
                               target="_blank"
                             >
                               <div>
@@ -498,14 +465,17 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Insurance Address</div>
                             <AnchorLink
-                              href={`https://explorer.solana.com/address/${insurance?.insurance_pubkey}`}
-                              className="flex gap-3 items-center"
+                              href={`https://explorer.solana.com/address/${chosenInsurance?.insurance_pubkey}`}
+                              className="flex items-center gap-3"
                               target="_blank"
                             >
                               <div>
-                                {insurance?.insurance_pubkey.slice(0, 5)}
+                                {chosenInsurance?.insurance_pubkey.slice(0, 5)}
                                 ...
-                                {insurance?.insurance_pubkey.slice(27, 32)}
+                                {chosenInsurance?.insurance_pubkey.slice(
+                                  27,
+                                  32
+                                )}
                               </div>
                               <ExportIcon className="h-4 w-4" />
                             </AnchorLink>
@@ -513,39 +483,42 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Created by</div>
                             <AnchorLink
-                              href={`https://explorer.solana.com/address/${insurance?.insurance_insurer}`}
-                              className="flex gap-3 items-center"
+                              href={`https://explorer.solana.com/address/${chosenInsurance?.insurance_insurer}`}
+                              className="flex items-center gap-3"
                               target="_blank"
                             >
                               <div>
-                                {insurance?.insurance_insurer.slice(0, 5)}
+                                {chosenInsurance?.insurance_insurer.slice(0, 5)}
                                 ...
-                                {insurance?.insurance_insurer.slice(27, 32)}
+                                {chosenInsurance?.insurance_insurer.slice(
+                                  27,
+                                  32
+                                )}
                               </div>
                               <ExportIcon className="h-4 w-4" />
                             </AnchorLink>
                           </div>
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Maximum Coverage</div>
-                            <div>$ {insurance?.coverage}</div>
+                            <div>$ {chosenInsurance?.coverage}</div>
                           </div>
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Minimum Commission</div>
-                            <div>{insurance?.minimum_commision}%</div>
+                            <div>{chosenInsurance?.minimum_commision}%</div>
                           </div>
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Premium (bi-weekly)</div>
-                            <div>$ {insurance?.premium}</div>
+                            <div>$ {chosenInsurance?.premium}</div>
                           </div>
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Deductible</div>
-                            <div>$ {insurance?.deductible}</div>
+                            <div>$ {chosenInsurance?.deductible}</div>
                           </div>
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Insurance Expiry</div>
                             <div>
                               {new Date(
-                                insurance?.expiry * 1000
+                                chosenInsurance?.expiry * 1000
                               ).toLocaleDateString()}
                             </div>
                           </div>
@@ -566,25 +539,76 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                     value={redemPolicy}
                     className="w-full overflow-y-auto overflow-x-hidden rounded-xl"
                   />
-                  <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
-                    <div>Premium Due Date</div>
-                    <div>
-                      {new Date(
-                        proposal?.premium_due_date
-                      ).toLocaleDateString()}{' '}
-                      {new Date(
-                        proposal?.premium_due_date
-                      ).toLocaleTimeString()}
-                    </div>
+                </div>
+                <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
+                  <div>Premium Due Date</div>
+                  <div>
+                    {new Date(proposal?.premium_due_date).toLocaleDateString()}{' '}
+                    {new Date(proposal?.premium_due_date).toLocaleTimeString()}
                   </div>
                 </div>
               </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+          )}
+      </div>
+      <div className="mb-6 rounded-lg bg-light-dark p-6 pb-8 shadow-card transition-shadow duration-200 hover:shadow-large">
+        <h3 className="mb-2 text-base font-medium text-gray-100 xl:text-lg 3xl:text-xl">
+          Claim Title
+        </h3>
+        <p className="mb-5 leading-[1.8] text-gray-300">
+          Your title introduces your proposal to the voters. Make sure it is
+          clear and to the point.
+        </p>
+        <Input
+          value={claimTitle}
+          onChange={(e) => setClaimTitle(e.target.value)}
+          placeholder="Enter claim title"
+        />
+      </div>
+      <div className="mb-6 rounded-lg bg-light-dark p-6 pb-8 shadow-card transition-shadow duration-200 hover:shadow-large">
+        <h3 className="mb-2 text-base font-medium text-gray-100 xl:text-lg 3xl:text-xl">
+          Claim Amount
+        </h3>
+        <p className="mb-5 leading-[1.8] text-gray-300">
+          Amount you think is appropriate for your insurance claim as per your
+          contract.
+        </p>
+        <Input
+          value={claimAmount}
+          onChange={(e) => setClaimAmount(parseInt(e.target.value))}
+          type="number"
+          placeholder="Enter Claim Amount (In USD)"
+        />
+      </div>
+      <div className="mb-6 rounded-lg bg-light-dark p-5 shadow-card transition-shadow duration-200 hover:shadow-large xs:p-6 xs:pb-8">
+        <h3 className="mb-2 text-base font-medium text-gray-100 xl:text-lg 3xl:text-xl">
+          Description
+        </h3>
+        <p className="mb-5 leading-[1.8] text-gray-300">
+          Your description should present in full detail what the actions of the
+          proposal will do. This is where voters will educate themselves on what
+          they are voting on.
+        </p>
+        <Textarea
+          value={claimDetails}
+          onChange={(e) => setClaimDetails(e.target.value)}
+          placeholder="Add the proposal details here"
+          inputClassName="h-36"
+        />
+      </div>
+      <div className="mt-6">
+        <Button
+          onClick={raiseClaim}
+          size="large"
+          shape="rounded"
+          fullWidth={true}
+          className="w-72"
+        >
+          Create Claim Proposal
+        </Button>
+      </div>
+    </section>
   );
 };
 
-export default VoteDetailsCard;
+export default CreateClaim;

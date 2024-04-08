@@ -18,14 +18,23 @@ export default function VotePoll({ title, accepted, rejected }: VotePollTypes) {
       <h4 className="mb-3 uppercase text-gray-100">{title}</h4>
       <div className="mb-3">
         <svg width="100%" height="8">
-          <rect x="0" y="0" width="100%" height="8" fill="#FA606A" />
-          <rect
-            x="0"
-            y="0"
-            height="8"
-            fill="#28D294"
-            width={`${accepted?.percentage}%`}
-          />
+          {accepted !== undefined &&
+          rejected !== undefined &&
+          accepted.percentage === 0 &&
+          rejected.percentage === 0 ? (
+            <rect x="0" y="0" width="100%" height="8" fill="#222c44" />
+          ) : (
+            <>
+              <rect x="0" y="0" width="100%" height="8" fill="#FA606A" />
+              <rect
+                x="0"
+                y="0"
+                height="8"
+                fill="#28D294"
+                width={`${accepted?.percentage}%`}
+              />
+            </>
+          )}
         </svg>
       </div>
       <div className="flex items-start justify-between">

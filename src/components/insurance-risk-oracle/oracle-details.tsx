@@ -6,7 +6,6 @@ import { ArrowLinkIcon } from '@/components/icons/arrow-link-icon';
 import { nftData } from '@/data/static/single-nft';
 import Avatar from '@/components/ui/avatar';
 import { Tab, TabItem, TabPanel, TabPanels } from '@/components/ui/tab';
-import { useScrollableSlider } from '@/lib/hooks/use-scrollable-slider';
 import { ChevronDown } from '../icons/chevron-down';
 
 type Avatar = {
@@ -48,14 +47,6 @@ export default function OracleDetails({
     block_chains,
   } = product;
 
-  const {
-    sliderEl,
-    sliderPrevBtn,
-    sliderNextBtn,
-    scrollToTheRight,
-    scrollToTheLeft,
-  } = useScrollableSlider();
-
   return (
     <div className="flex h-full w-full transition-all">
       <Tab.Group key={'list-tabs'}>
@@ -74,16 +65,8 @@ export default function OracleDetails({
             </TabPanels>
           </div>
           <div className="mx-3 mb-3 flex items-start rounded-xl bg-dark px-3">
-            <button
-              ref={sliderPrevBtn}
-              onClick={() => scrollToTheLeft()}
-              className="flex h-8 w-6 items-center justify-center bg-gradient-to-r from-gray-800 to-transparent text-dark xs:hidden"
-            >
-              <ChevronDown className="w-4 rotate-90 text-white" />
-            </button>
             <div className="-mb-4 flex h-full min-h-[36px] w-full items-start overflow-hidden xs:mb-0">
               <Tab.List
-                ref={sliderEl}
                 className="coin-list-scrollbar relative flex w-full justify-evenly overflow-x-auto scroll-smooth text-sm"
               >
                 <TabItem className="whitespace-nowrap capitalize text-gray-600 2xl:uppercase [&>span]:px-0">
@@ -97,13 +80,6 @@ export default function OracleDetails({
                 </TabItem>
               </Tab.List>
             </div>
-            <button
-              ref={sliderNextBtn}
-              onClick={() => scrollToTheRight()}
-              className="flex h-8 w-6 items-center justify-center bg-gradient-to-l from-gray-800 to-transparent text-dark xs:hidden"
-            >
-              <ChevronDown className="w-4 -rotate-90 text-white" />
-            </button>
           </div>
         </div>
       </Tab.Group>

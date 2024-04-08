@@ -63,7 +63,7 @@ export const registerInsurer = (
         })
         .rpc({ skipPreflight: false, maxRetries: 3 })
         .then((res) => {
-          resolve(insurer);
+          resolve(res);
         })
         .catch((e) => {
           reject(e);
@@ -155,7 +155,7 @@ export const registerLP = (
         })
         .rpc({ skipPreflight: true, maxRetries: 3 })
         .then((res) => {
-          resolve(lp);
+          resolve(res);
         })
         .catch((e) => {
           reject(e);
@@ -206,10 +206,10 @@ export const registerInsurance = (
       await program.methods
         .registerInsurance(
           insuranceId,
-          new BN(coverage),
-          new BN(premium),
+          new BN(coverage * 10 ** 6),
+          new BN(premium * 10 ** 6),
           new BN(minimumCommission),
-          new BN(deductible),
+          new BN(deductible * 10 ** 6),
           new BN(expiryTime),
           insuranceMetadataLink
         )
@@ -221,7 +221,7 @@ export const registerInsurance = (
         })
         .rpc({ skipPreflight: false, maxRetries: 3 })
         .then((res) => {
-          resolve(insurance);
+          resolve(res);
         })
         .catch((e) => {
           reject(e);
@@ -295,7 +295,7 @@ export const proposeProposal = (
         })
         .rpc({ skipPreflight: true, maxRetries: 3 })
         .then((res) => {
-          resolve(proposal);
+          resolve(res);
         })
         .catch((e) => {
           reject(e);
@@ -543,17 +543,17 @@ export const PayPremium = (
   insuranceCreator: PublicKey,
   insurance: PublicKey,
   lp: PublicKey,
-  proposal: PublicKey
+  proposal: PublicKey,
+  multiplier: number
 ) => {
   return new Promise(async (resolve, reject) => {
     try {
       const program = await getInsuranceProgram(Connection, Signer);
 
-      const [premiumVault] = await get_pda_from_seeds([
-        Buffer.from('premium'),
-        insurance.toBuffer(),
-        proposal.toBuffer(),
-      ],program);
+      const [premiumVault] = await get_pda_from_seeds(
+        [Buffer.from('premium'), insurance.toBuffer(), proposal.toBuffer()],
+        program
+      );
 
       const mintAddress = new PublicKey(
         '9z6gCi1qjiv599YXS1EYtSvbWGQtcV67PnBk1GfrF3RF'
@@ -572,7 +572,7 @@ export const PayPremium = (
       );
 
       await program.methods
-        .payPremium(new BN(1))
+        .payPremium(new BN(multiplier))
         .accounts({
           insuranceCreator: insuranceCreator,
           insurance: insurance,
@@ -581,6 +581,119 @@ export const PayPremium = (
           insuranceCreatorUsdcAccount: insuranceCreatorUsdcAccount,
           proposal: proposal,
           lp: lp,
+          usdcMint: mintAddress,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          systemProgram: web3.SystemProgram.programId,
+        })
+        .rpc({ skipPreflight: false, maxRetries: 3 })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+export const RaiseClaim = (
+  insuranceCreator: PublicKey,
+  insurance: PublicKey,
+  lp: PublicKey,
+  proposal: PublicKey,
+  claimAmount: number,
+  claimMetadataLink: string
+) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const program = await getInsuranceProgram(Connection, Signer);
+
+      const data1 = {
+        lp: lp,
+        insurance: insurance,
+        proposal: proposal,
+        insuranceCreator: insuranceCreator,
+        claimAmount: claimAmount,
+        claimMetadataLink: claimMetadataLink,
+      };
+      console.log(data1);
+      const txt = JSON.stringify(data1);
+      const claimId = hash(txt).slice(0, 16);
+
+      const [claim] = await get_pda_from_seeds(
+        [Buffer.from('claim'), proposal.toBuffer(), Buffer.from(claimId)],
+        program
+      );
+
+      await program.methods
+        .raiseClaim(claimId, new BN(claimAmount), claimMetadataLink)
+        .accounts({
+          insuranceCreator: insuranceCreator,
+          insurance: insurance,
+          lp: lp,
+          proposal: proposal,
+          claim: claim,
+          systemProgram: web3.SystemProgram.programId,
+        })
+        .rpc({ skipPreflight: false, maxRetries: 3 })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+export const ClaimVote = (
+  securityAddr: PublicKey,
+  claim: PublicKey,
+  securityAmount: number,
+  voteState: boolean
+) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const program = await getInsuranceProgram(Connection, Signer);
+
+      const mintAddress = new PublicKey(
+        '9z6gCi1qjiv599YXS1EYtSvbWGQtcV67PnBk1GfrF3RF'
+      );
+
+      const securityAddrUSDCAccount = await getAssociatedTokenAddress(
+        mintAddress,
+        securityAddr,
+        true
+      );
+
+      const claimTokenAccount = await getAssociatedTokenAddress(
+        mintAddress,
+        claim,
+        true
+      );
+
+      const [claimVoteAccount] = await get_pda_from_seeds(
+        [
+          Buffer.from('vote_account'),
+          claim.toBuffer(),
+          securityAddr.toBuffer(),
+        ],
+        program
+      );
+
+      await program.methods
+        .voteClaim(new BN(securityAmount * 10 ** 6), voteState)
+        .accounts({
+          voter: securityAddr,
+          voterTokenAccount: securityAddrUSDCAccount,
+          claim: claim,
+          claimTokenAccount: claimTokenAccount,
+          claimVoteAccount: claimVoteAccount,
           usdcMint: mintAddress,
           associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
           tokenProgram: TOKEN_PROGRAM_ID,
