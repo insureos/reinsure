@@ -125,7 +125,7 @@ const VoterTableList: React.FC<VoteTableListProps> = ({
         <>
           {(wallet.publicKey === null ||
             wallet.publicKey.toString() !== insurance.insurance_insurer) && (
-            <div className="px-4 text-center font-medium tracking-wider text-green-400">
+            <div className="px-4 text-center font-medium tracking-wider text-blue-400">
               PROPOSAL SENT
             </div>
           )}
@@ -142,7 +142,7 @@ const VoterTableList: React.FC<VoteTableListProps> = ({
                 }
                 size="mini"
                 shape="rounded"
-                color="info"
+                color="success"
               >
                 Accept
               </Button>
@@ -150,14 +150,14 @@ const VoterTableList: React.FC<VoteTableListProps> = ({
         </>
       )}
       {listData.accepted && (
-        <div className="px-4 text-center font-medium tracking-wider text-red-400">
+        <div className="px-4 text-center font-medium tracking-wider text-green-400">
           ACCEPTED
         </div>
       )}
       {!listData.sent &&
         !listData.accepted &&
         listData?.proposal_votes <= listData?.lp?.total_assets / 2 && (
-          <div className="px-4 text-center font-medium tracking-wider text-blue-400">
+          <div className="px-4 text-center font-medium tracking-wider text-yellow-400">
             VOTING IN PROGRESS
           </div>
         )}
@@ -198,16 +198,22 @@ const VoterTable: React.FC<VoteTableProps> = ({
         <div className="px-4 text-center">Votes</div>
         <div className="px-4 text-center">Status</div>
       </div>
-      {data.map((item) => {
-        return (
-          <VoterTableList
-            insurance={insurance}
-            listData={item}
-            getProposals={getProposals}
-            key={item.proposal_pubkey}
-          />
-        );
-      })}
+      {data.length === 0 && (
+        <div className="my-6 w-full text-center text-lg xl:text-xl 3xl:text-2xl">
+          No Data
+        </div>
+      )}
+      {data.length > 0 &&
+        data.map((item) => {
+          return (
+            <VoterTableList
+              insurance={insurance}
+              listData={item}
+              getProposals={getProposals}
+              key={item.proposal_pubkey}
+            />
+          );
+        })}
     </div>
   );
 };

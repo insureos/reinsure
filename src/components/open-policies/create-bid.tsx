@@ -78,7 +78,7 @@ const CreateBid: React.FC<CreateBidProps> = ({
   const [undercollaterization, setUndercollaterization] = useState(0);
   const [policyDetails, setPolicyDetails] = useState('');
   return (
-    <div className="absolute bottom-0 left-0 right-0 top-0 z-[100] flex items-center justify-center bg-[rgba(255,255,255,0.08)]">
+    <div className="fixed bottom-0 left-0 right-0 top-0 z-[100] flex items-center justify-center bg-[rgba(255,255,255,0.08)]">
       <div className="flex h-[35rem] w-[40rem] flex-col justify-between rounded-[1.5rem] bg-gray-900 p-8 pt-5 shadow-xl">
         <div className="flex w-full justify-between">
           <div className="text-base font-semibold xl:text-lg 3xl:text-xl">
