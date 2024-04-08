@@ -15,7 +15,7 @@ import Textarea from '@/components/ui/forms/textarea';
 import votePool from '@/assets/images/vote-pool.svg';
 import { Tab, TabItem, TabPanel, TabPanels } from '@/components/ui/tab';
 
-import { ClaimVote } from '@/lib/helpers/contract-interact';
+import { ClaimVote, sendClaimDecision } from '@/lib/helpers/contract-interact';
 import { useAppSelector, useAppDispatch } from '@/store/store';
 import { PublicKey } from '@solana/web3.js';
 import { onLoading, onFailure, onSuccess } from '@/store/callLoaderSlice';
@@ -118,6 +118,9 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
   claimData,
   getClaimData,
 }) => {
+  const wallet = useWallet();
+  const dispatch = useDispatch();
+
   const [isExpand, setIsExpand] = useState(false);
   const { votes, totalVote } = getVotesByStatus('active');
 
@@ -151,6 +154,7 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
   const milliseconds = parseDateToMilliseconds(claimData?.voting_ending_in);
   const startTime = new Date(claimData?.voting_start).getTime();
   const endTime = startTime + milliseconds;
+  const dateNow = new Date();
 
   const fetchIpfs = async (link: string, type: string) => {
     axios
@@ -253,6 +257,46 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
     }
   }, [claimData, isExpand]);
 
+  const claimDecision = async () => {
+    if (
+      wallet.publicKey === null ||
+      claimData.claim_addr === null ||
+      claimData.claim_addr === undefined ||
+      claimData.claim_addr === ''
+    )
+      return;
+
+    dispatch(onLoading('Make Claim Decision...'));
+
+    await sendClaimDecision(
+      wallet.publicKey,
+      new PublicKey(claimData?.claim_addr)
+    )
+      .then((res) => {
+        dispatch(
+          onSuccess({
+            label: 'Claim Decision Success',
+            description: 'check out tx at',
+            link: res
+              ? `https://solscan.io/tx/${res.toString()}?cluster=devnet`
+              : '',
+            redirect: null,
+          })
+        );
+        getClaimData();
+      })
+      .catch((err) => {
+        dispatch(
+          onFailure({
+            label: 'Claim Decision Failed',
+            description: err.message,
+            link: '',
+            redirect: null,
+          })
+        );
+      });
+  };
+
   return (
     <div
       className={cn(
@@ -277,7 +321,7 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
             <div>Claim Address - </div>
             <AnchorLink
               href={`https://explorer.solana.com/address/${claimData?.claim_addr}`}
-              className="flex gap-3 items-center"
+              className="flex items-center gap-3"
               target="_blank"
             >
               <div>
@@ -288,17 +332,44 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
             </AnchorLink>
           </div>
 
-          {!isExpand ? (
-            <Button
-              onClick={() => setIsExpand(!isExpand)}
-              className="mt-4 w-full xs:mt-6 xs:w-auto md:mt-10"
-              shape="rounded"
-            >
-              Vote Now
-            </Button>
-          ) : (
-            <VoteActionButton data={claimData} getClaimData={getClaimData} />
-          )}
+          {!isExpand &&
+            !claimData.claim_accepted &&
+            new Date(endTime).getTime() - dateNow.getTime() > 0 && (
+              <Button
+                onClick={() => setIsExpand(!isExpand)}
+                className="mt-4 w-full xs:mt-6 xs:w-auto md:mt-10"
+                shape="rounded"
+              >
+                Vote Now
+              </Button>
+            )}
+          {isExpand &&
+            !claimData.claim_accepted &&
+            new Date(endTime).getTime() - dateNow.getTime() > 0 && (
+              <VoteActionButton data={claimData} getClaimData={getClaimData} />
+            )}
+          {!isExpand &&
+            !claimData.claim_accepted &&
+            new Date(endTime).getTime() - dateNow.getTime() < 0 && (
+              <div className="mt-4 flex w-full items-center justify-between pr-4 xs:mt-6 md:mt-10">
+                <Button onClick={() => setIsExpand(!isExpand)} shape="rounded">
+                  Vote Now
+                </Button>
+                <Button shape="rounded" onClick={claimDecision}>
+                  Accept Vote Result
+                </Button>
+              </div>
+            )}
+          {isExpand &&
+            !claimData.claim_accepted &&
+            new Date(endTime).getTime() - dateNow.getTime() < 0 && (
+              <div className="mt-4 flex w-full items-center justify-between pr-4 xs:mt-6 md:mt-10">
+                <div />
+                <Button shape="rounded" onClick={claimDecision}>
+                  Accept Vote Result
+                </Button>
+              </div>
+            )}
         </div>
 
         <div
@@ -389,7 +460,7 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                             <div>Proposal Address</div>
                             <AnchorLink
                               href={`https://explorer.solana.com/address/${proposal?.proposal_pubkey}`}
-                              className="flex gap-3 items-center"
+                              className="flex items-center gap-3"
                               target="_blank"
                             >
                               <div>
@@ -432,7 +503,7 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                             <div>Pool Address</div>
                             <AnchorLink
                               href={`https://explorer.solana.com/address/${proposal?.lp?.pool_pubkey}`}
-                              className="flex gap-3 items-center"
+                              className="flex items-center gap-3"
                               target="_blank"
                             >
                               <div>
@@ -446,7 +517,7 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                             <div>Created by</div>
                             <AnchorLink
                               href={`https://explorer.solana.com/address/${proposal?.lp?.created_by}`}
-                              className="flex gap-3 items-center"
+                              className="flex items-center gap-3"
                               target="_blank"
                             >
                               <div>
@@ -499,7 +570,7 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                             <div>Insurance Address</div>
                             <AnchorLink
                               href={`https://explorer.solana.com/address/${insurance?.insurance_pubkey}`}
-                              className="flex gap-3 items-center"
+                              className="flex items-center gap-3"
                               target="_blank"
                             >
                               <div>
@@ -514,7 +585,7 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                             <div>Created by</div>
                             <AnchorLink
                               href={`https://explorer.solana.com/address/${insurance?.insurance_insurer}`}
-                              className="flex gap-3 items-center"
+                              className="flex items-center gap-3"
                               target="_blank"
                             >
                               <div>

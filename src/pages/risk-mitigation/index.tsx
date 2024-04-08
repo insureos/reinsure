@@ -6,7 +6,7 @@ import RiskMitigation from '@/components/risk-mitigation/risk-mitigation';
 const RiskMitigationPage: NextPageWithLayout = () => {
   return (
     <>
-      <NextSeo title="Risk Mitigation" description="reAssure.fi" />
+      <NextSeo title="Risk Mitigation" description="InsureOS" />
       <RiskMitigation />
     </>
   );

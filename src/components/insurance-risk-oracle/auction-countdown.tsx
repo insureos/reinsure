@@ -66,7 +66,7 @@ function CountdownDisplayWrapper({ days, hours, minutes, seconds }: any) {
 
 const renderer = ({ days, hours, minutes, seconds, completed }: any) => {
   if (completed) {
-    return null;
+    return <div className="text-base xl:text-lg 3xl:text-xl mt-2 font-semibold">Voting Ended</div>;
   } else {
     return (
       <CountdownDisplayWrapper

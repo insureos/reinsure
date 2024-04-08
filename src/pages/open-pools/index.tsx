@@ -6,7 +6,7 @@ import OpenPools from '@/components/openpools/openpools';
 const OpenPoolsPage: NextPageWithLayout = () => {
   return (
     <>
-      <NextSeo title="Open Pools" description="reAssure.fi" />
+      <NextSeo title="Open Pools" description="InsureOS" />
       <OpenPools />
     </>
   );

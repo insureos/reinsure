@@ -7,11 +7,8 @@ import CreateClaim from '@/components/claim-payouts/create-claim';
 const CreateProposalPage: NextPageWithLayout = () => {
   return (
     <>
-      <NextSeo
-        title="Create Claim Proposal"
-        description="Criptic - React Next Web3 NFT Crypto Dashboard Template"
-      />
-      <CreateClaim/>
+      <NextSeo title="Create Claim Proposal" description="InsureOS" />
+      <CreateClaim />
     </>
   );
 };

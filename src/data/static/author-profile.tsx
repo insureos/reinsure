@@ -89,8 +89,8 @@ export const authorNetworks = [
 ];
 
 // Author Transaction History Data
-import User1 from '@/assets/images/user-1.png';
-import User2 from '@/assets/images/user-2.png';
+import User1 from '@/assets/images/avatar/user-1.png';
+import User2 from '@/assets/images/avatar/user-2.png';
 
 export const transactionHistory = [
   {

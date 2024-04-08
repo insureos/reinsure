@@ -6,7 +6,7 @@ import Web3Protocol from '@/components/reinsure/Web3Protocol';
 const Web3ProtocolPage: NextPageWithLayout = () => {
   return (
     <>
-      <NextSeo title="Reinsure" description="reAssure.fi" />
+      <NextSeo title="Reinsure" description="InsureOS" />
       <Web3Protocol />
     </>
   );

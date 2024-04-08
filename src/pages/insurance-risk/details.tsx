@@ -8,7 +8,7 @@ import { nftData } from '@/data/static/single-nft';
 const InsuranceRiskDetailsPage: NextPageWithLayout = () => {
   return (
     <>
-      <NextSeo title="Insurance Risk" description="reAssure.fi" />
+      <NextSeo title="Insurance Risk" description="InsureOS" />
       <OracleDetails product={nftData} />
     </>
   );

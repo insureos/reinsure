@@ -1,1 +1,558 @@
-if(!self.define){let e,s={};const a=(a,c)=>(a=new URL(a+".js",c).href,s[a]||new Promise((s=>{if("document"in self){const e=document.createElement("script");e.src=a,e.onload=s,document.head.appendChild(e)}else e=a,importScripts(a),s()})).then((()=>{let e=s[a];if(!e)throw new Error(`Module ${a} didn’t register its module`);return e})));self.define=(c,i)=>{const t=e||("document"in self?document.currentScript.src:"")||location.href;if(s[t])return;let n={};const d=e=>a(e,t),r={module:{uri:t},exports:n,require:d};s[t]=Promise.all(c.map((e=>r[e]||d(e)))).then((e=>(i(...e),n)))}}define(["./workbox-07a7b4f2"],(function(e){"use strict";importScripts(),self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"/_next/static/chunks/117-d4890fa606255aad.js",revision:"d4890fa606255aad"},{url:"/_next/static/chunks/11e07bb4-de2e81bc22a17376.js",revision:"de2e81bc22a17376"},{url:"/_next/static/chunks/126-b1d354456203cc1d.js",revision:"b1d354456203cc1d"},{url:"/_next/static/chunks/138.327c018c7e191970.js",revision:"327c018c7e191970"},{url:"/_next/static/chunks/174-efc7d41becc6ebb0.js",revision:"efc7d41becc6ebb0"},{url:"/_next/static/chunks/205.b258226620ad6139.js",revision:"b258226620ad6139"},{url:"/_next/static/chunks/316-0ba76821f1f5c690.js",revision:"0ba76821f1f5c690"},{url:"/_next/static/chunks/343-21d92895186bc379.js",revision:"21d92895186bc379"},{url:"/_next/static/chunks/365-59b2482c7447fa91.js",revision:"59b2482c7447fa91"},{url:"/_next/static/chunks/414.d0b698df847258d2.js",revision:"d0b698df847258d2"},{url:"/_next/static/chunks/43-c4e1c15d94215fee.js",revision:"c4e1c15d94215fee"},{url:"/_next/static/chunks/461-cddec2388425afb7.js",revision:"cddec2388425afb7"},{url:"/_next/static/chunks/54-f1bc447b0497f394.js",revision:"f1bc447b0497f394"},{url:"/_next/static/chunks/557.9daf002ea87f13ec.js",revision:"9daf002ea87f13ec"},{url:"/_next/static/chunks/562-609d5907a5e8044b.js",revision:"609d5907a5e8044b"},{url:"/_next/static/chunks/568-61a5b9e6a313224e.js",revision:"61a5b9e6a313224e"},{url:"/_next/static/chunks/601-851c23556152ddbf.js",revision:"851c23556152ddbf"},{url:"/_next/static/chunks/664-37d3607a5fbabc86.js",revision:"37d3607a5fbabc86"},{url:"/_next/static/chunks/675-7310a2e3678c0d85.js",revision:"7310a2e3678c0d85"},{url:"/_next/static/chunks/69.d78c14218ad4b468.js",revision:"d78c14218ad4b468"},{url:"/_next/static/chunks/71-6077837b3b363df9.js",revision:"6077837b3b363df9"},{url:"/_next/static/chunks/772-4f5a34f57bf60abd.js",revision:"4f5a34f57bf60abd"},{url:"/_next/static/chunks/783-656c455b0966dde4.js",revision:"656c455b0966dde4"},{url:"/_next/static/chunks/948-95ca05aa9c6b0f9f.js",revision:"95ca05aa9c6b0f9f"},{url:"/_next/static/chunks/967.76cb096c41034fa3.js",revision:"76cb096c41034fa3"},{url:"/_next/static/chunks/b8b506e4-bdb7dfcea9aca38b.js",revision:"bdb7dfcea9aca38b"},{url:"/_next/static/chunks/framework-73b8966a3c579ab0.js",revision:"73b8966a3c579ab0"},{url:"/_next/static/chunks/main-cc873818bafb81b4.js",revision:"cc873818bafb81b4"},{url:"/_next/static/chunks/pages/404-5023d1a6f319f0d0.js",revision:"5023d1a6f319f0d0"},{url:"/_next/static/chunks/pages/_app-e680fc51e17f93e9.js",revision:"e680fc51e17f93e9"},{url:"/_next/static/chunks/pages/_error-409f831d3504c8f5.js",revision:"409f831d3504c8f5"},{url:"/_next/static/chunks/pages/claim-payouts-245c5c7541b72f45.js",revision:"245c5c7541b72f45"},{url:"/_next/static/chunks/pages/claim-payouts/create-38dd427fcb1487c5.js",revision:"38dd427fcb1487c5"},{url:"/_next/static/chunks/pages/index-3fe2c22b8c95a3c4.js",revision:"3fe2c22b8c95a3c4"},{url:"/_next/static/chunks/pages/insurance-risk-45e34eabcd45ecba.js",revision:"45e34eabcd45ecba"},{url:"/_next/static/chunks/pages/insurance-risk/create-c25774b9c2f76e7e.js",revision:"c25774b9c2f76e7e"},{url:"/_next/static/chunks/pages/insurance-risk/details-51b3454c65c5a2fc.js",revision:"51b3454c65c5a2fc"},{url:"/_next/static/chunks/pages/marketplace-632d10e04c27a0fb.js",revision:"632d10e04c27a0fb"},{url:"/_next/static/chunks/pages/open-policies-a85bd21e477bd10b.js",revision:"a85bd21e477bd10b"},{url:"/_next/static/chunks/pages/open-pools-a86666772b58e59e.js",revision:"a86666772b58e59e"},{url:"/_next/static/chunks/pages/open-pools/create-28cf405a7c72ff9c.js",revision:"28cf405a7c72ff9c"},{url:"/_next/static/chunks/pages/portfolio-1aff2cb5b3434384.js",revision:"1aff2cb5b3434384"},{url:"/_next/static/chunks/pages/reinsure-4d19f4a1b061e30f.js",revision:"4d19f4a1b061e30f"},{url:"/_next/static/chunks/pages/reinsure/web3protocol-20e2e21ac5af0544.js",revision:"20e2e21ac5af0544"},{url:"/_next/static/chunks/pages/risk-mitigation-cdaa8d7b806939d9.js",revision:"cdaa8d7b806939d9"},{url:"/_next/static/chunks/pages/test-3f9a0cc25b0db771.js",revision:"3f9a0cc25b0db771"},{url:"/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js",revision:"837c0df77fd5009c9e46d446188ecfd0"},{url:"/_next/static/chunks/webpack-7c2afc3b5a82d334.js",revision:"7c2afc3b5a82d334"},{url:"/_next/static/css/bcbaf05f758f0b4b.css",revision:"bcbaf05f758f0b4b"},{url:"/_next/static/css/bfbc09307378af05.css",revision:"bfbc09307378af05"},{url:"/_next/static/kmNRtuDBxt-FyhjfKBtWQ/_buildManifest.js",revision:"57e28a475daac0b155379aa23963fdc1"},{url:"/_next/static/kmNRtuDBxt-FyhjfKBtWQ/_ssgManifest.js",revision:"b6652df95db52feb4daf4eca35380933"},{url:"/_next/static/media/1.4dbca401.png",revision:"d67969903f203227c18bff2812f5b51a"},{url:"/_next/static/media/2.3e7881c0.png",revision:"71812b8f50456b98783fc78a0cfcf1e7"},{url:"/_next/static/media/3.270c90c0.png",revision:"6a35b214d45ed58c4de1bfd97f978960"},{url:"/_next/static/media/4.482c53fb.png",revision:"103d27c8d26e89bab96674bfe118caa0"},{url:"/_next/static/media/404-dark.88f7f707.svg",revision:"9946c2eac18c520941269bc63fe32c8f"},{url:"/_next/static/media/5.69fc4f70.png",revision:"35fbead9203f8cebc08874612db6f02d"},{url:"/_next/static/media/6.af406fae.png",revision:"1accbcd6285e73d2375a045650f3de79"},{url:"/_next/static/media/CodeSecuredImage.b21b889b.png",revision:"56adf6390ca95af7445b901240122f10"},{url:"/_next/static/media/L1.f3d60a8b.png",revision:"8ed9ca4df50f996340c1b57b97b598ac"},{url:"/_next/static/media/LandingScreen1.81ea490d.png",revision:"5e54ba5c68f619c0abb90da6cae83511"},{url:"/_next/static/media/author.67e99d23.jpg",revision:"3094dd694f05fb77263bbb29593cb119"},{url:"/_next/static/media/bitcoin.478c0c84.svg",revision:"7621b5d99802f3db51b5a47b29b835b0"},{url:"/_next/static/media/bitcoin.81bd702b.svg",revision:"947cd95b0c1dd8d9d8b819166dd9cdbb"},{url:"/_next/static/media/claimable.58babc2f.svg",revision:"4dfea92ed4728771f17103933a609851"},{url:"/_next/static/media/curve.846ed970.svg",revision:"3d487e6fa3bdbb81b23fed17fb2f67e7"},{url:"/_next/static/media/dapp.87c48639.png",revision:"b026ccd2a6476482bcbbe445e5c45ed4"},{url:"/_next/static/media/deposit.32fbbfad.svg",revision:"becd1c168d12fef51da297324270ee63"},{url:"/_next/static/media/ethereum.86228b51.svg",revision:"51171a5b732e737d80a6121fad3ef065"},{url:"/_next/static/media/fintech.26a7e069.svg",revision:"e718caff0fe5f7f9a0c92e782ff7b301"},{url:"/_next/static/media/logo-transparent.a6d4d4cd.png",revision:"e805966ca4b7c854a594a4e782552fe5"},{url:"/_next/static/media/logo.aec1eba1.png",revision:"19fd74c006d8a03949cf61d51035a628"},{url:"/_next/static/media/logo_website_dark.94b3a581.png",revision:"8300d707372eb67ed43eaad98d806518"},{url:"/_next/static/media/multi_chain_bridge.9d3db27d.webp",revision:"2df0407437053044430c155243eede22"},{url:"/_next/static/media/nft-1.35139713.jpg",revision:"7c20fd9c46a7cdf82a5a89760b296c1e"},{url:"/_next/static/media/nft-2.c1c5fed8.jpg",revision:"c681f6e9baefd72f36b8284aecc6f576"},{url:"/_next/static/media/nft-3.906f9ce2.jpg",revision:"9ae6662be4a369208bd3b475b5116056"},{url:"/_next/static/media/nft-4.e9c10886.jpg",revision:"9d6cb2a72e479fe533a4505401757e25"},{url:"/_next/static/media/nft.d91683d5.svg",revision:"03fd8b644e3b914e415fedc2b328c64d"},{url:"/_next/static/media/pancake.3978dfae.svg",revision:"33a17510e5cd4941467064c5ad798f4f"},{url:"/_next/static/media/poolto-gether.7f67a4c8.svg",revision:"d4280beb3891eaf46bea973eec6ad601"},{url:"/_next/static/media/single-nft.d4224f48.jpg",revision:"91ae2ed26ada3b60a45a7c6f3cb880a7"},{url:"/_next/static/media/software_vendor.f6dbcd6b.svg",revision:"7feb8ebe961314c721deb8577195479d"},{url:"/_next/static/media/tether-usdt-logo.dcef1ab2.svg",revision:"43f688a0313c926433ef60c377c7cc51"},{url:"/_next/static/media/trusted1.dabb2cb4.png",revision:"cb23932e2f35315d80c7210faedd162c"},{url:"/_next/static/media/trusted2.a799cebc.png",revision:"352f6c01f95ff361f1739edca12fc582"},{url:"/_next/static/media/trusted3.c4f73040.png",revision:"aa203c9bdc5d9f0dff5b32da48e2932c"},{url:"/_next/static/media/trusted4.80ebf329.png",revision:"ae8ca3e29053caacd4fdfe41561fa782"},{url:"/_next/static/media/undraw_contract_re_ves9.2dfc42fa.svg",revision:"2426419c3cb2d7faa20e6839199230ce"},{url:"/_next/static/media/undraw_programmer_re_owql.2608def0.svg",revision:"bfb3219d86cf9e48bb44d1a9521e2a1f"},{url:"/_next/static/media/undraw_security_re_a2rk.e998cb7b.svg",revision:"a3b25c8bc3ba356773092e1b6add8f2e"},{url:"/_next/static/media/uniswap.c61798be.svg",revision:"54492b4ffce3741c4a80451d3183ddbd"},{url:"/_next/static/media/usd-coin-usdc-logo.74c6aa75.svg",revision:"3b5972c16a9795dcf6e2e2d7e3125d21"},{url:"/_next/static/media/user-1.d4b43d77.png",revision:"ddf3e4622304fda97b504081c06de271"},{url:"/_next/static/media/user-2.83edef50.png",revision:"d278930bbc7843dc9a7e389b1f3d26b1"},{url:"/_next/static/media/vote-pool.b7007dec.svg",revision:"9b9ccca42e873dff5b5fa0b5f9f766a8"},{url:"/_next/static/media/wallet.8a45e058.svg",revision:"c0de0d847ae00cb60c88bcefb58fde89"},{url:"/favicon.ico",revision:"c11236c3f9b5a82f7352cfc97b8869d3"},{url:"/next.svg",revision:"8e061864f388b47f33a1c3780831193e"},{url:"/thirteen.svg",revision:"53f96b8290673ef9d2895908e69b2f92"},{url:"/vercel.svg",revision:"61c6b19abff40ea7acd577be818f3976"}],{ignoreURLParametersMatching:[]}),e.cleanupOutdatedCaches(),e.registerRoute("/",new e.NetworkFirst({cacheName:"start-url",plugins:[{cacheWillUpdate:async({request:e,response:s,event:a,state:c})=>s&&"opaqueredirect"===s.type?new Response(s.body,{status:200,statusText:"OK",headers:s.headers}):s}]}),"GET"),e.registerRoute(/^https:\/\/fonts\.(?:gstatic)\.com\/.*/i,new e.CacheFirst({cacheName:"google-fonts-webfonts",plugins:[new e.ExpirationPlugin({maxEntries:4,maxAgeSeconds:31536e3})]}),"GET"),e.registerRoute(/^https:\/\/fonts\.(?:googleapis)\.com\/.*/i,new e.StaleWhileRevalidate({cacheName:"google-fonts-stylesheets",plugins:[new e.ExpirationPlugin({maxEntries:4,maxAgeSeconds:604800})]}),"GET"),e.registerRoute(/\.(?:eot|otf|ttc|ttf|woff|woff2|font.css)$/i,new e.StaleWhileRevalidate({cacheName:"static-font-assets",plugins:[new e.ExpirationPlugin({maxEntries:4,maxAgeSeconds:604800})]}),"GET"),e.registerRoute(/\.(?:jpg|jpeg|gif|png|svg|ico|webp)$/i,new e.StaleWhileRevalidate({cacheName:"static-image-assets",plugins:[new e.ExpirationPlugin({maxEntries:64,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\/_next\/image\?url=.+$/i,new e.StaleWhileRevalidate({cacheName:"next-image",plugins:[new e.ExpirationPlugin({maxEntries:64,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:mp3|wav|ogg)$/i,new e.CacheFirst({cacheName:"static-audio-assets",plugins:[new e.RangeRequestsPlugin,new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:mp4)$/i,new e.CacheFirst({cacheName:"static-video-assets",plugins:[new e.RangeRequestsPlugin,new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:js)$/i,new e.StaleWhileRevalidate({cacheName:"static-js-assets",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:css|less)$/i,new e.StaleWhileRevalidate({cacheName:"static-style-assets",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\/_next\/data\/.+\/.+\.json$/i,new e.StaleWhileRevalidate({cacheName:"next-data",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:json|xml|csv)$/i,new e.NetworkFirst({cacheName:"static-data-assets",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute((({url:e})=>{if(!(self.origin===e.origin))return!1;const s=e.pathname;return!s.startsWith("/api/auth/")&&!!s.startsWith("/api/")}),new e.NetworkFirst({cacheName:"apis",networkTimeoutSeconds:10,plugins:[new e.ExpirationPlugin({maxEntries:16,maxAgeSeconds:86400})]}),"GET"),e.registerRoute((({url:e})=>{if(!(self.origin===e.origin))return!1;return!e.pathname.startsWith("/api/")}),new e.NetworkFirst({cacheName:"others",networkTimeoutSeconds:10,plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute((({url:e})=>!(self.origin===e.origin)),new e.NetworkFirst({cacheName:"cross-origin",networkTimeoutSeconds:10,plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:3600})]}),"GET")}));
+if (!self.define) {
+  let e,
+    s = {};
+  const a = (a, c) => (
+    (a = new URL(a + '.js', c).href),
+    s[a] ||
+      new Promise((s) => {
+        if ('document' in self) {
+          const e = document.createElement('script');
+          (e.src = a), (e.onload = s), document.head.appendChild(e);
+        } else (e = a), importScripts(a), s();
+      }).then(() => {
+        let e = s[a];
+        if (!e) throw new Error(`Module ${a} didn’t register its module`);
+        return e;
+      })
+  );
+  self.define = (c, i) => {
+    const t =
+      e ||
+      ('document' in self ? document.currentScript.src : '') ||
+      location.href;
+    if (s[t]) return;
+    let n = {};
+    const d = (e) => a(e, t),
+      r = { module: { uri: t }, exports: n, require: d };
+    s[t] = Promise.all(c.map((e) => r[e] || d(e))).then((e) => (i(...e), n));
+  };
+}
+define(['./workbox-588899ac'], function (e) {
+  'use strict';
+  importScripts(),
+    self.skipWaiting(),
+    e.clientsClaim(),
+    e.precacheAndRoute(
+      [
+        {
+          url: '/_next/static/chunks/0a6e12db.d0957c59944d3552.js',
+          revision: 'd0957c59944d3552',
+        },
+        {
+          url: '/_next/static/chunks/145-2bed1a88c17eaaad.js',
+          revision: '2bed1a88c17eaaad',
+        },
+        {
+          url: '/_next/static/chunks/240.8b1f4c6bfecba013.js',
+          revision: '8b1f4c6bfecba013',
+        },
+        {
+          url: '/_next/static/chunks/243.84366c84f81dc11c.js',
+          revision: '84366c84f81dc11c',
+        },
+        {
+          url: '/_next/static/chunks/251.528c130717d888c6.js',
+          revision: '528c130717d888c6',
+        },
+        {
+          url: '/_next/static/chunks/311-82cb75d0042793ed.js',
+          revision: '82cb75d0042793ed',
+        },
+        {
+          url: '/_next/static/chunks/320.c54c85d49955a90c.js',
+          revision: 'c54c85d49955a90c',
+        },
+        {
+          url: '/_next/static/chunks/336.5fa76fd239c20e47.js',
+          revision: '5fa76fd239c20e47',
+        },
+        {
+          url: '/_next/static/chunks/349.a7f3e3e94e3943bd.js',
+          revision: 'a7f3e3e94e3943bd',
+        },
+        {
+          url: '/_next/static/chunks/402-289376f615938115.js',
+          revision: '289376f615938115',
+        },
+        {
+          url: '/_next/static/chunks/454-665edf4ac8466e12.js',
+          revision: '665edf4ac8466e12',
+        },
+        {
+          url: '/_next/static/chunks/507.ba45465aab9e03aa.js',
+          revision: 'ba45465aab9e03aa',
+        },
+        {
+          url: '/_next/static/chunks/509.3cdf6bee3e362189.js',
+          revision: '3cdf6bee3e362189',
+        },
+        {
+          url: '/_next/static/chunks/512-31aae59e78130135.js',
+          revision: '31aae59e78130135',
+        },
+        {
+          url: '/_next/static/chunks/531-f87191b42cdfbf3b.js',
+          revision: 'f87191b42cdfbf3b',
+        },
+        {
+          url: '/_next/static/chunks/55.cc89725becee2ab2.js',
+          revision: 'cc89725becee2ab2',
+        },
+        {
+          url: '/_next/static/chunks/570.05a3547481360961.js',
+          revision: '05a3547481360961',
+        },
+        {
+          url: '/_next/static/chunks/592-ff3916ceb25f2999.js',
+          revision: 'ff3916ceb25f2999',
+        },
+        {
+          url: '/_next/static/chunks/5a3f41a5-36d69aeaff133d21.js',
+          revision: '36d69aeaff133d21',
+        },
+        {
+          url: '/_next/static/chunks/664-37d3607a5fbabc86.js',
+          revision: '37d3607a5fbabc86',
+        },
+        {
+          url: '/_next/static/chunks/71-9ab22ded6eb88e16.js',
+          revision: '9ab22ded6eb88e16',
+        },
+        {
+          url: '/_next/static/chunks/72-e2499649b36ed72e.js',
+          revision: 'e2499649b36ed72e',
+        },
+        {
+          url: '/_next/static/chunks/750-80e40db56be2b68b.js',
+          revision: '80e40db56be2b68b',
+        },
+        {
+          url: '/_next/static/chunks/772.11c68e5e5968b395.js',
+          revision: '11c68e5e5968b395',
+        },
+        {
+          url: '/_next/static/chunks/853.0bce7a046fab7ce8.js',
+          revision: '0bce7a046fab7ce8',
+        },
+        {
+          url: '/_next/static/chunks/868-5c6a6ab66295346a.js',
+          revision: '5c6a6ab66295346a',
+        },
+        {
+          url: '/_next/static/chunks/88.bf57dfbb77b44024.js',
+          revision: 'bf57dfbb77b44024',
+        },
+        {
+          url: '/_next/static/chunks/962-fb806769b8a10266.js',
+          revision: 'fb806769b8a10266',
+        },
+        {
+          url: '/_next/static/chunks/framework-73b8966a3c579ab0.js',
+          revision: '73b8966a3c579ab0',
+        },
+        {
+          url: '/_next/static/chunks/main-9db040eb1ed363da.js',
+          revision: '9db040eb1ed363da',
+        },
+        {
+          url: '/_next/static/chunks/pages/404-13bbdf7eddd4350d.js',
+          revision: '13bbdf7eddd4350d',
+        },
+        {
+          url: '/_next/static/chunks/pages/_app-758391987f42b073.js',
+          revision: '758391987f42b073',
+        },
+        {
+          url: '/_next/static/chunks/pages/_error-409f831d3504c8f5.js',
+          revision: '409f831d3504c8f5',
+        },
+        {
+          url: '/_next/static/chunks/pages/enterprise-b948b171d6b3c681.js',
+          revision: 'b948b171d6b3c681',
+        },
+        {
+          url: '/_next/static/chunks/pages/incentivize-contributors-1921d0c7511655b6.js',
+          revision: '1921d0c7511655b6',
+        },
+        {
+          url: '/_next/static/chunks/pages/index-ab4c9a392b94873b.js',
+          revision: 'ab4c9a392b94873b',
+        },
+        {
+          url: '/_next/static/chunks/pages/issues-239ca2d1456e2c33.js',
+          revision: '239ca2d1456e2c33',
+        },
+        {
+          url: '/_next/static/chunks/pages/jobs-0d557745e83dfd67.js',
+          revision: '0d557745e83dfd67',
+        },
+        {
+          url: '/_next/static/chunks/pages/notifications-c8959b0d49a2d7e0.js',
+          revision: 'c8959b0d49a2d7e0',
+        },
+        {
+          url: '/_next/static/chunks/pages/profile-595af932b7d9391c.js',
+          revision: '595af932b7d9391c',
+        },
+        {
+          url: '/_next/static/chunks/pages/projects-558fc335636d0d62.js',
+          revision: '558fc335636d0d62',
+        },
+        {
+          url: '/_next/static/chunks/pages/roadmaps-707e847b69e80828.js',
+          revision: '707e847b69e80828',
+        },
+        {
+          url: '/_next/static/chunks/pages/swap-b972d08bf7ddc6c9.js',
+          revision: 'b972d08bf7ddc6c9',
+        },
+        {
+          url: '/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js',
+          revision: '837c0df77fd5009c9e46d446188ecfd0',
+        },
+        {
+          url: '/_next/static/chunks/webpack-48a12aa0c4e2895f.js',
+          revision: '48a12aa0c4e2895f',
+        },
+        {
+          url: '/_next/static/css/31bd7616cc52eba5.css',
+          revision: '31bd7616cc52eba5',
+        },
+        {
+          url: '/_next/static/css/986e6f335e5aeed1.css',
+          revision: '986e6f335e5aeed1',
+        },
+        {
+          url: '/_next/static/media/1.4dbca401.png',
+          revision: 'd67969903f203227c18bff2812f5b51a',
+        },
+        {
+          url: '/_next/static/media/10.0bb20a46.jpg',
+          revision: '4f6864798753a1a92d272989a88102b4',
+        },
+        {
+          url: '/_next/static/media/11.cdc3c463.jpg',
+          revision: '227631f6acc4415277161219ade08f80',
+        },
+        {
+          url: '/_next/static/media/2.3e7881c0.png',
+          revision: '71812b8f50456b98783fc78a0cfcf1e7',
+        },
+        {
+          url: '/_next/static/media/3.270c90c0.png',
+          revision: '6a35b214d45ed58c4de1bfd97f978960',
+        },
+        {
+          url: '/_next/static/media/4.482c53fb.png',
+          revision: '103d27c8d26e89bab96674bfe118caa0',
+        },
+        {
+          url: '/_next/static/media/404-dark.0a0ffdd2.svg',
+          revision: '603bb59b006307e9bc6fe06ea0768dab',
+        },
+        {
+          url: '/_next/static/media/5.69fc4f70.png',
+          revision: '35fbead9203f8cebc08874612db6f02d',
+        },
+        {
+          url: '/_next/static/media/8.d01df0ca.jpg',
+          revision: 'a1ecd8202a9a1f4d382fea1bbd67ba43',
+        },
+        {
+          url: '/_next/static/media/9.cbdf23e0.jpg',
+          revision: '4badb43d5c1d2a96ed55e99dcf657120',
+        },
+        {
+          url: '/_next/static/media/author.67e99d23.jpg',
+          revision: '3094dd694f05fb77263bbb29593cb119',
+        },
+        {
+          url: '/_next/static/media/binance.20ce4a88.svg',
+          revision: '46b2ffe330118e3a596e3f279ad800e8',
+        },
+        {
+          url: '/_next/static/media/broken.b3ba8d63.svg',
+          revision: '1c7b7c026133bc4149072d85f2e20e79',
+        },
+        {
+          url: '/_next/static/media/collection-1.2655e340.jpg',
+          revision: 'fdb05a61a09c62a7f68b18c97566f6a2',
+        },
+        {
+          url: '/_next/static/media/collection-2.89da124f.jpg',
+          revision: '9de3f89c9d9830cbd76dc0c8b5bb21e8',
+        },
+        {
+          url: '/_next/static/media/collection-3.4e0f5e37.jpg',
+          revision: '34cfc9e1a7bbd81acedc92e2f2fa76f4',
+        },
+        {
+          url: '/_next/static/media/collection-4.5ddfe301.jpg',
+          revision: '5d999d5bd8bd89fb141ca5592a830790',
+        },
+        {
+          url: '/_next/static/media/github-mark-white.fd5c0afd.svg',
+          revision: 'a0b00583d93c2f7084ad151ee0849934',
+        },
+        {
+          url: '/_next/static/media/logo-full.f32bfc25.png',
+          revision: '88b07b9cd9772881923ef5b247dc1111',
+        },
+        {
+          url: '/_next/static/media/metamask.27e6863e.svg',
+          revision: 'cd899d8fa526ab056a475cb2916bc127',
+        },
+        {
+          url: '/_next/static/media/nft-1.35139713.jpg',
+          revision: '7c20fd9c46a7cdf82a5a89760b296c1e',
+        },
+        {
+          url: '/_next/static/media/nft-2.c1c5fed8.jpg',
+          revision: 'c681f6e9baefd72f36b8284aecc6f576',
+        },
+        {
+          url: '/_next/static/media/nft-3.906f9ce2.jpg',
+          revision: '9ae6662be4a369208bd3b475b5116056',
+        },
+        {
+          url: '/_next/static/media/nft-4.e9c10886.jpg',
+          revision: '9d6cb2a72e479fe533a4505401757e25',
+        },
+        {
+          url: '/_next/static/media/profile-cover.56ac09da.jpg',
+          revision: 'e1e1bece5b85fdf3550de16b4f4a5f79',
+        },
+        {
+          url: '/_next/static/media/secure.2584fd3c.svg',
+          revision: '80fda89cd073c69aa0269d4fe8143cb9',
+        },
+        {
+          url: '/_next/static/media/user-1.d4b43d77.png',
+          revision: 'ddf3e4622304fda97b504081c06de271',
+        },
+        {
+          url: '/_next/static/media/user-2.83edef50.png',
+          revision: 'd278930bbc7843dc9a7e389b1f3d26b1',
+        },
+        {
+          url: '/_next/static/media/user-3.ca745d29.png',
+          revision: '0769ea241939c89fe4f180c7ac3f9ee5',
+        },
+        {
+          url: '/_next/static/media/vulnerable.89048963.svg',
+          revision: '2a696705ff30186c3d80d58af4b4e0f8',
+        },
+        {
+          url: '/_next/static/myvirXF55PV-g8BMWtzDI/_buildManifest.js',
+          revision: '97c65ad204bcb16897af7478b9a36aef',
+        },
+        {
+          url: '/_next/static/myvirXF55PV-g8BMWtzDI/_ssgManifest.js',
+          revision: 'b6652df95db52feb4daf4eca35380933',
+        },
+        {
+          url: '/android-chrome-192x192.png',
+          revision: '357ea8372c3900eb13abe81647497b79',
+        },
+        {
+          url: '/android-chrome-512x512.png',
+          revision: '0cd19e34d8d4a7a560c13931f1162f2b',
+        },
+        {
+          url: '/apple-touch-icon.png',
+          revision: 'b0cf3d26a594e69781d31d695a1320b5',
+        },
+        {
+          url: '/favicon-16x16.png',
+          revision: '1fa512f7e0c26b8d8ba0236352727821',
+        },
+        {
+          url: '/favicon-32x32.png',
+          revision: 'b165a2ac7607d76163df48594c701a10',
+        },
+        { url: '/favicon.ico', revision: '2db9a527e21938ba3dd8908837fd8d58' },
+        {
+          url: '/site.webmanifest',
+          revision: '0f0313c9d6d03e27904694634e747f04',
+        },
+      ],
+      { ignoreURLParametersMatching: [] }
+    ),
+    e.cleanupOutdatedCaches(),
+    e.registerRoute(
+      '/',
+      new e.NetworkFirst({
+        cacheName: 'start-url',
+        plugins: [
+          {
+            cacheWillUpdate: async ({
+              request: e,
+              response: s,
+              event: a,
+              state: c,
+            }) =>
+              s && 'opaqueredirect' === s.type
+                ? new Response(s.body, {
+                    status: 200,
+                    statusText: 'OK',
+                    headers: s.headers,
+                  })
+                : s,
+          },
+        ],
+      }),
+      'GET'
+    ),
+    e.registerRoute(
+      /^https:\/\/fonts\.(?:gstatic)\.com\/.*/i,
+      new e.CacheFirst({
+        cacheName: 'google-fonts-webfonts',
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 4, maxAgeSeconds: 31536e3 }),
+        ],
+      }),
+      'GET'
+    ),
+    e.registerRoute(
+      /^https:\/\/fonts\.(?:googleapis)\.com\/.*/i,
+      new e.StaleWhileRevalidate({
+        cacheName: 'google-fonts-stylesheets',
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 4, maxAgeSeconds: 604800 }),
+        ],
+      }),
+      'GET'
+    ),
+    e.registerRoute(
+      /\.(?:eot|otf|ttc|ttf|woff|woff2|font.css)$/i,
+      new e.StaleWhileRevalidate({
+        cacheName: 'static-font-assets',
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 4, maxAgeSeconds: 604800 }),
+        ],
+      }),
+      'GET'
+    ),
+    e.registerRoute(
+      /\.(?:jpg|jpeg|gif|png|svg|ico|webp)$/i,
+      new e.StaleWhileRevalidate({
+        cacheName: 'static-image-assets',
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 64, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      'GET'
+    ),
+    e.registerRoute(
+      /\/_next\/image\?url=.+$/i,
+      new e.StaleWhileRevalidate({
+        cacheName: 'next-image',
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 64, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      'GET'
+    ),
+    e.registerRoute(
+      /\.(?:mp3|wav|ogg)$/i,
+      new e.CacheFirst({
+        cacheName: 'static-audio-assets',
+        plugins: [
+          new e.RangeRequestsPlugin(),
+          new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      'GET'
+    ),
+    e.registerRoute(
+      /\.(?:mp4)$/i,
+      new e.CacheFirst({
+        cacheName: 'static-video-assets',
+        plugins: [
+          new e.RangeRequestsPlugin(),
+          new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      'GET'
+    ),
+    e.registerRoute(
+      /\.(?:js)$/i,
+      new e.StaleWhileRevalidate({
+        cacheName: 'static-js-assets',
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      'GET'
+    ),
+    e.registerRoute(
+      /\.(?:css|less)$/i,
+      new e.StaleWhileRevalidate({
+        cacheName: 'static-style-assets',
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      'GET'
+    ),
+    e.registerRoute(
+      /\/_next\/data\/.+\/.+\.json$/i,
+      new e.StaleWhileRevalidate({
+        cacheName: 'next-data',
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      'GET'
+    ),
+    e.registerRoute(
+      /\.(?:json|xml|csv)$/i,
+      new e.NetworkFirst({
+        cacheName: 'static-data-assets',
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      'GET'
+    ),
+    e.registerRoute(
+      ({ url: e }) => {
+        if (!(self.origin === e.origin)) return !1;
+        const s = e.pathname;
+        return !s.startsWith('/api/auth/') && !!s.startsWith('/api/');
+      },
+      new e.NetworkFirst({
+        cacheName: 'apis',
+        networkTimeoutSeconds: 10,
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 16, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      'GET'
+    ),
+    e.registerRoute(
+      ({ url: e }) => {
+        if (!(self.origin === e.origin)) return !1;
+        return !e.pathname.startsWith('/api/');
+      },
+      new e.NetworkFirst({
+        cacheName: 'others',
+        networkTimeoutSeconds: 10,
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+        ],
+      }),
+      'GET'
+    ),
+    e.registerRoute(
+      ({ url: e }) => !(self.origin === e.origin),
+      new e.NetworkFirst({
+        cacheName: 'cross-origin',
+        networkTimeoutSeconds: 10,
+        plugins: [
+          new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 3600 }),
+        ],
+      }),
+      'GET'
+    );
+});

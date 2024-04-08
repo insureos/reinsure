@@ -6,7 +6,7 @@ import OpenPolicies from '@/components/open-policies/open-policies';
 const OpenPoliciesPage: NextPageWithLayout = () => {
   return (
     <>
-      <NextSeo title="Open Policies" description="reAssure.fi" />
+      <NextSeo title="Open Policies" description="InsureOS" />
       <OpenPolicies />
     </>
   );
