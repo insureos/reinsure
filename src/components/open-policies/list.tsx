@@ -255,30 +255,23 @@ const PolicyList: React.FC<PolicyListTypes> = ({ data }) => {
             e.stopPropagation();
             setIsExpand(!isExpand);
           }}
-          className="relative grid h-auto cursor-pointer grid-cols-7 items-center gap-3 py-4 sm:h-20 sm:gap-6 sm:py-0"
+          className="relative grid h-auto cursor-pointer grid-cols-5 items-center gap-3 py-4 sm:h-20 sm:gap-6 sm:py-0"
         >
-          <div className="col-span-2 px-8 text-xs font-medium text-white xl:text-sm 3xl:text-base">
-            <AnchorLink
-              href={`https://explorer.solana.com/address/${data?.insurance_insurer}`}
-              target="_blank"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {data?.insurance_insurer.slice(0, 8)}...
-              {data?.insurance_insurer.slice(24, 32)}
-            </AnchorLink>
+          <div className="px-8 text-xs font-medium text-white xl:text-sm 3xl:text-base">
+            {data?.insurance_name}
           </div>
           <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
-            {data.coverage}
+            {data.coverage / 10 ** 6}
           </div>
           <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
-            {data.premium}
+            {data.premium / 10 ** 6}
           </div>
-          <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base"></div>
+          {/* <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base"></div> */}
           <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
             {data?.minimum_commision}
           </div>
           <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
-            {data.deductible}
+            {data.deductible / 10 ** 6}
           </div>
         </div>
         <AnimatePresence initial={false}>
@@ -295,10 +288,7 @@ const PolicyList: React.FC<PolicyListTypes> = ({ data }) => {
               transition={{ duration: 0.4, ease: 'easeInOut' }}
             >
               <div className="mb-6 flex w-full items-center justify-between border-y border-dashed border-gray-700 px-4 py-6 text-gray-400">
-                <div className="text-sm xl:text-base 3xl:text-lg">
-                  Current Leading Bid : PoolAddress (Size: ,Leverage:
-                  ,Consensus: )
-                </div>
+                <div className='ml-4'>Create / Support Bid</div>
                 <div className="flex items-center gap-3">
                   <Button
                     shape="rounded"

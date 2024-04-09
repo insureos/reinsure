@@ -30,12 +30,12 @@ export type Insurance = {
     {
       name: 'TWO_WEEKS';
       type: 'i64';
-      value: '10 * MINUTE';
+      value: '5';
     },
     {
       name: 'MONTH';
       type: 'i64';
-      value: '10 * MINUTE';
+      value: '5';
     },
     {
       name: 'DEFAULT_MINT_DECIMALS';
@@ -869,14 +869,9 @@ export type Insurance = {
       name: 'releaseSecurity';
       accounts: [
         {
-          name: 'lpCreator';
-          isMut: false;
-          isSigner: true;
-        },
-        {
           name: 'insuranceCreator';
           isMut: false;
-          isSigner: false;
+          isSigner: true;
         },
         {
           name: 'insuranceCreatorTokenAccount';
@@ -2391,12 +2386,12 @@ export const IDL: Insurance = {
     {
       name: 'TWO_WEEKS',
       type: 'i64',
-      value: '10 * MINUTE',
+      value: '5',
     },
     {
       name: 'MONTH',
       type: 'i64',
-      value: '10 * MINUTE',
+      value: '5',
     },
     {
       name: 'DEFAULT_MINT_DECIMALS',
@@ -3230,14 +3225,9 @@ export const IDL: Insurance = {
       name: 'releaseSecurity',
       accounts: [
         {
-          name: 'lpCreator',
-          isMut: false,
-          isSigner: true,
-        },
-        {
           name: 'insuranceCreator',
           isMut: false,
-          isSigner: false,
+          isSigner: true,
         },
         {
           name: 'insuranceCreatorTokenAccount',

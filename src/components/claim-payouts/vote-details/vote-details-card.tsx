@@ -15,7 +15,11 @@ import Textarea from '@/components/ui/forms/textarea';
 import votePool from '@/assets/images/vote-pool.svg';
 import { Tab, TabItem, TabPanel, TabPanels } from '@/components/ui/tab';
 
-import { ClaimVote, sendClaimDecision } from '@/lib/helpers/contract-interact';
+import {
+  ClaimVote,
+  sendClaimDecision,
+  ReleaseClaim,
+} from '@/lib/helpers/contract-interact';
 import { useAppSelector, useAppDispatch } from '@/store/store';
 import { PublicKey } from '@solana/web3.js';
 import { onLoading, onFailure, onSuccess } from '@/store/callLoaderSlice';
@@ -132,29 +136,40 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
   const [claimDesc, setClaimDesc] = useState('');
 
   const parseDateToMilliseconds = (dateStr: string) => {
-    const dateParts = dateStr.split(', ');
-    const daysPart = dateParts[0].split(' ')[0];
-    const timePart = dateParts[1];
+    let dateParts: any;
+    let daysPart: any;
+    let timePart: any;
 
-    const days = parseInt(daysPart);
+    let days = 0;
+    if (dateStr.includes(',')) {
+      dateParts = dateStr.split(', ');
+      daysPart = dateParts[0].split(' ')[0];
+      timePart = dateParts[1];
+      days = parseInt(daysPart);
+    } else {
+      timePart = dateStr;
+    }
+
     const [hours, minutes, seconds, milliseconds] = timePart
       .split(/[:,.]/)
       .map(Number);
 
-    const totalMilliseconds =
+    let totalMilliseconds =
       days * 24 * 60 * 60 * 1000 +
       hours * 60 * 60 * 1000 +
       minutes * 60 * 1000 +
-      seconds * 1000 +
-      parseInt((milliseconds / 1000).toString());
+      seconds * 1000;
 
+    if (milliseconds !== undefined) {
+      totalMilliseconds += parseInt((milliseconds / 1000).toString());
+    }
     return totalMilliseconds;
   };
 
   const milliseconds = parseDateToMilliseconds(claimData?.voting_ending_in);
   const startTime = new Date(claimData?.voting_start).getTime();
-  const endTime = startTime + milliseconds;
   const dateNow = new Date();
+  const endTime = dateNow.getTime() + milliseconds;
 
   const fetchIpfs = async (link: string, type: string) => {
     axios
@@ -297,6 +312,50 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
       });
   };
 
+  const redeemClaim = async () => {
+    if (
+      wallet.publicKey === null ||
+      claimData.insurance_insurer === null ||
+      claimData.insurance_insurer === undefined ||
+      claimData.insurance_insurer === '' ||
+      wallet.publicKey.toString() !== claimData.insurance_insurer
+    )
+      return;
+
+    dispatch(onLoading('Releasing Security...'));
+
+    await ReleaseClaim(
+      wallet.publicKey,
+      new PublicKey(claimData.insurance),
+      new PublicKey(claimData.lp),
+      new PublicKey(claimData.reinsurance),
+      new PublicKey(claimData.claim_addr)
+    )
+      .then((res) => {
+        dispatch(
+          onSuccess({
+            label: 'Releasing Security Success',
+            description: 'check out tx at',
+            link: res
+              ? `https://solscan.io/tx/${res.toString()}?cluster=devnet`
+              : '',
+            redirect: null,
+          })
+        );
+        getClaimData();
+      })
+      .catch((err) => {
+        dispatch(
+          onFailure({
+            label: 'Releasing Security Failed',
+            description: err.message,
+            link: '',
+            redirect: null,
+          })
+        );
+      });
+  };
+
   return (
     <div
       className={cn(
@@ -320,7 +379,7 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
           <div className="mt-5 flex gap-2 text-sm xl:text-base 3xl:text-lg">
             <div>Claim Address - </div>
             <AnchorLink
-              href={`https://explorer.solana.com/address/${claimData?.claim_addr}`}
+              href={`https://explorer.solana.com/address/${claimData?.claim_addr}?cluster=devnet`}
               className="flex items-center gap-3"
               target="_blank"
             >
@@ -353,7 +412,7 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
             new Date(endTime).getTime() - dateNow.getTime() < 0 && (
               <div className="mt-4 flex w-full items-center justify-between pr-4 xs:mt-6 md:mt-10">
                 <Button onClick={() => setIsExpand(!isExpand)} shape="rounded">
-                  Vote Now
+                  Expand
                 </Button>
                 <Button shape="rounded" onClick={claimDecision}>
                   Accept Vote Result
@@ -370,6 +429,23 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                 </Button>
               </div>
             )}
+
+          {claimData.claim_accepted &&
+            !claimData.claim_claimed &&
+            wallet.publicKey?.toString() === claimData.insurance_insurer && (
+              <div className="mt-4 flex w-full items-center justify-between pr-4 xs:mt-6 md:mt-10">
+                <div />
+                <Button shape="rounded" color="success" onClick={redeemClaim}>
+                  Release Security
+                </Button>
+              </div>
+            )}
+
+          {claimData.claim_claimed && (
+            <div className="mt-4 flex w-full items-center justify-between pr-4 text-base font-medium uppercase text-green-400 xs:mt-6 md:mt-10 xl:text-lg 3xl:text-xl">
+              Security Released
+            </div>
+          )}
         </div>
 
         <div
@@ -381,7 +457,7 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
           <div className="flex items-center gap-3">
             <div className="uppercase">Expected Compensation :</div>
             <div className="xl:text-cl text-base xl:text-lg">
-              $ {claimData?.claim_amount}
+              $ {claimData?.claim_amount / 10 ** 6}
             </div>
           </div>
           <h3 className="flex flex-col gap-2 text-xs font-medium md:uppercase xl:text-sm 3xl:text-base ">
@@ -459,7 +535,7 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Proposal Address</div>
                             <AnchorLink
-                              href={`https://explorer.solana.com/address/${proposal?.proposal_pubkey}`}
+                              href={`https://explorer.solana.com/address/${proposal?.proposal_pubkey}?cluster=devnet`}
                               className="flex items-center gap-3"
                               target="_blank"
                             >
@@ -502,7 +578,7 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Pool Address</div>
                             <AnchorLink
-                              href={`https://explorer.solana.com/address/${proposal?.lp?.pool_pubkey}`}
+                              href={`https://explorer.solana.com/address/${proposal?.lp?.pool_pubkey}?cluster=devnet`}
                               className="flex items-center gap-3"
                               target="_blank"
                             >
@@ -516,7 +592,7 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Created by</div>
                             <AnchorLink
-                              href={`https://explorer.solana.com/address/${proposal?.lp?.created_by}`}
+                              href={`https://explorer.solana.com/address/${proposal?.lp?.created_by}?cluster=devnet`}
                               className="flex items-center gap-3"
                               target="_blank"
                             >
@@ -567,9 +643,13 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                             Insurance Details
                           </div>
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
+                            <div>Insurance Name</div>
+                            <div>$ {insurance?.insurance_name}</div>
+                          </div>
+                          <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Insurance Address</div>
                             <AnchorLink
-                              href={`https://explorer.solana.com/address/${insurance?.insurance_pubkey}`}
+                              href={`https://explorer.solana.com/address/${insurance?.insurance_pubkey}?cluster=devnet`}
                               className="flex items-center gap-3"
                               target="_blank"
                             >
@@ -584,7 +664,7 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Created by</div>
                             <AnchorLink
-                              href={`https://explorer.solana.com/address/${insurance?.insurance_insurer}`}
+                              href={`https://explorer.solana.com/address/${insurance?.insurance_insurer}?cluster=devnet`}
                               className="flex items-center gap-3"
                               target="_blank"
                             >
@@ -598,7 +678,7 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                           </div>
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Maximum Coverage</div>
-                            <div>$ {insurance?.coverage}</div>
+                            <div>$ {insurance?.coverage / 10 ** 6}</div>
                           </div>
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Minimum Commission</div>
@@ -606,11 +686,11 @@ const VoteDetailsCard: React.FC<VoteDetailsCardProps> = ({
                           </div>
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Premium (bi-weekly)</div>
-                            <div>$ {insurance?.premium}</div>
+                            <div>$ {insurance?.premium / 10 ** 6}</div>
                           </div>
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Deductible</div>
-                            <div>$ {insurance?.deductible}</div>
+                            <div>$ {insurance?.deductible / 10 ** 6}</div>
                           </div>
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Insurance Expiry</div>

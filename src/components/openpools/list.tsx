@@ -58,6 +58,8 @@ const PoolList: React.FC<PoolListTypes> = ({ data, setTrigger }) => {
           })
         );
         setTrigger((trigger) => trigger + 1);
+        setUsdcAmt(0);
+        setUsdtAmt(0);
         getTokenAccBal();
       })
       .catch((err) => {
@@ -82,21 +84,21 @@ const PoolList: React.FC<PoolListTypes> = ({ data, setTrigger }) => {
         onClick={() => setIsExpand(!isExpand)}
         className="relative grid h-auto cursor-pointer grid-cols-5 items-center gap-3 py-4 sm:h-20 sm:gap-6 sm:py-0"
       >
-        <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
+        <div className="px-4 text-center text-xs font-medium tracking-wider text-white xl:text-sm 3xl:text-base">
           {/* <CurrencySwapIcons from={setFrom} to={setTo} /> */}
           {data.pool_name}
         </div>
-        <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
+        <div className="px-4 text-center text-xs font-medium tracking-wider text-white xl:text-sm 3xl:text-base">
           {data.target_pool_size / 10 ** 6}
         </div>
-        <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
+        <div className="px-4 text-center text-xs font-medium tracking-wider text-white xl:text-sm 3xl:text-base">
           {data.current_pool_size / 10 ** 6}
         </div>
-        <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
+        <div className="px-4 text-center text-xs font-medium tracking-wider text-white xl:text-sm 3xl:text-base">
           {data.overcapitalization_ratio}
         </div>
-        <div className="px-4 text-center text-xs font-medium uppercase tracking-wider text-white xl:text-sm 3xl:text-base">
-          {data.pool_lifecycle}
+        <div className="px-4 text-center text-xs font-medium tracking-wider text-white xl:text-sm 3xl:text-base">
+          {new Date(data.pool_lifecycle).toDateString()}
         </div>
       </div>
       <AnimatePresence initial={false}>

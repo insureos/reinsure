@@ -29,7 +29,8 @@ const Test: React.FC<CreatePoolProps> = ({}) => {
     if (result === null) {
       console.log('Aggregator holds no value');
     } else {
-      console.log(result.map((item)=>item.value.toString()));
+      console.log(result.map((item) => item.timestamp.toString()));
+      // console.log(result.aggregator.data.name)
     }
   };
 

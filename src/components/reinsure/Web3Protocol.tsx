@@ -103,8 +103,20 @@ const Dropdown: React.FC<DropdownProps> = ({
   );
 };
 
-const RangeSlider = () => {
-  let [range, setRange] = useState({ min: 1, max: 100 });
+interface RangeSliderProps {
+  range: {
+    min: number;
+    max: number;
+  };
+  setRange: React.Dispatch<
+    React.SetStateAction<{
+      min: number;
+      max: number;
+    }>
+  >;
+}
+
+const RangeSlider: React.FC<RangeSliderProps> = ({ range, setRange }) => {
   function handleRangeChange(value: any) {
     setRange({
       min: value[0],
@@ -202,7 +214,7 @@ const AddressInput: React.FC<AddressInputProps> = ({
         />
         <div className="flex flex-col">
           <div className="mb-2 text-xs uppercase tracking-widest text-gray-100 sm:mb-3 sm:text-sm">
-            Duration
+            Chain
           </div>
           <Dropdown
             Options={chainOptions}
@@ -260,6 +272,8 @@ const Web3Protocol: React.FC<Web3ProtocolProps> = ({}) => {
   const [redemptionPolicy, setRedemptionPolicy] = useState('');
   const [addressList, setAddressList] = useState<any[]>([]);
   const [addressModal, setAddressModal] = useState(false);
+  const [insuranceName, setInsuranceName] = useState('');
+  const [range, setRange] = useState({ min: 1, max: 100 });
 
   const [registerModal, setRegisterModal] = useState(false);
   const [registerDesc, setRegisterDesc] = useState('');
@@ -347,11 +361,14 @@ const Web3Protocol: React.FC<Web3ProtocolProps> = ({}) => {
 
     const durationSecs = durationMap[duration];
     const metadataHash = await uploadMetadataToIPFS({
+      insuranceName: insuranceName,
       coverage: coverage,
       premium: premium,
       deductible: deductible,
       duration: durationSecs,
       redemptionPolicy: redemptionPolicy,
+      addressList: addressList,
+      bidderLeverage: range,
     });
 
     console.log(durationSecs);
@@ -412,6 +429,16 @@ const Web3Protocol: React.FC<Web3ProtocolProps> = ({}) => {
           submitFunc={registerInsurerFunc}
         />
       )}
+      <div className="flex gap-20">
+        <Input
+          required
+          label="Insurance Name"
+          placeholder="insurance name"
+          className="w-[40rem]"
+          value={insuranceName}
+          onChange={(e: any) => setInsuranceName(e.target.value)}
+        />
+      </div>
       <div className="flex gap-20">
         <Input
           required
@@ -510,7 +537,7 @@ const Web3Protocol: React.FC<Web3ProtocolProps> = ({}) => {
         <div className="mb-2 text-xs uppercase tracking-widest text-gray-100 sm:mb-3 sm:text-sm">
           Maximum Bidder Leverage
         </div>
-        <RangeSlider />
+        <RangeSlider range={range} setRange={setRange} />
       </div>
       <Button
         color="info"

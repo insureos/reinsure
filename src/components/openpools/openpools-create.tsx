@@ -103,8 +103,20 @@ const Dropdown: React.FC<DropdownProps> = ({
   );
 };
 
-const RangeSlider = () => {
-  let [range, setRange] = useState({ min: 1, max: 100 });
+interface RangeSliderProps {
+  range: {
+    min: number;
+    max: number;
+  };
+  setRange: React.Dispatch<
+    React.SetStateAction<{
+      min: number;
+      max: number;
+    }>
+  >;
+}
+
+const RangeSlider: React.FC<RangeSliderProps> = ({ range, setRange }) => {
   function handleRangeChange(value: any) {
     setRange({
       min: value[0],
@@ -162,6 +174,7 @@ const CreatePool: React.FC<CreatePoolProps> = ({}) => {
   const [duration, setDuration] = useState('');
   const [targetSize, setTargetSize] = useState(0);
   const [additionalConstraints, setAdditionalConstraints] = useState('');
+  const [range, setRange] = useState({ min: 1, max: 100 });
 
   const dispatch = useAppDispatch();
 
@@ -174,6 +187,7 @@ const CreatePool: React.FC<CreatePoolProps> = ({}) => {
       symbol: tokenSymbol,
       image: `https://ipfs.io/ipfs/${imageHash}`,
       additionalConstraints: additionalConstraints,
+      acceptableLeverage: range,
     });
     return `https://ipfs.io/ipfs/${metadataHash}`;
   };
@@ -312,7 +326,7 @@ const CreatePool: React.FC<CreatePoolProps> = ({}) => {
         <div className="mb-2 text-xs uppercase tracking-widest text-gray-100 sm:mb-3 sm:text-sm">
           Maximum Acceptable Leverage
         </div>
-        <RangeSlider />
+        <RangeSlider range={range} setRange={setRange} />
       </div>
       <Textarea
         label="Additional Constraints"

@@ -80,9 +80,9 @@ export default function OpenPolicies() {
         </Switch>
       </div>
 
-      <div className="test-xs mb-3 grid grid-cols-7 items-center gap-6 rounded-lg bg-light-dark font-semibold shadow-card xl:text-sm 3xl:text-base">
-        <span className="col-span-2 px-6 py-6 tracking-wider text-gray-300">
-          Insuree Name
+      <div className="test-xs mb-3 grid grid-cols-5 items-center gap-6 rounded-lg bg-light-dark font-semibold shadow-card xl:text-sm 3xl:text-base">
+        <span className="px-6 py-6 tracking-wider text-gray-300">
+          Insurance Name
         </span>
         <span className="px-6 py-6 text-center tracking-wider text-gray-300">
           Coverage Amount ($)
@@ -90,11 +90,11 @@ export default function OpenPolicies() {
         <span className="px-6 py-6 text-center tracking-wider text-gray-300">
           Premium ($)
         </span>
-        <span className="px-6 py-6 text-center tracking-wider text-gray-300">
+        {/* <span className="px-6 py-6 text-center tracking-wider text-gray-300">
           Maximum Leverage
-        </span>
+        </span> */}
         <span className="px-4 py-6 text-center tracking-wider text-gray-300">
-          Minimum Commission (%)
+          Min. Commission (%)
         </span>
         <span className="px-4 py-6 text-center tracking-wider text-gray-300">
           Latest Deductible ($)
