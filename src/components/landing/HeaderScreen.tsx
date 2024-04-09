@@ -57,7 +57,7 @@ export const HeaderScreen: React.FC<HeaderScreenProps> = ({}) => {
             </g>
           </svg>
         </div>
-        <div className="absolute left-[-10px] bottom-0">
+        <div className="absolute bottom-0 left-[-10px]">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="604"
@@ -74,7 +74,7 @@ export const HeaderScreen: React.FC<HeaderScreenProps> = ({}) => {
             </g>
           </svg>
         </div>
-        <div className="absolute right-[-10px] bottom-0">
+        <div className="absolute bottom-0 right-[-10px]">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="596"
@@ -105,7 +105,7 @@ export const HeaderScreen: React.FC<HeaderScreenProps> = ({}) => {
         width={0}
         height={0}
         alt="screen"
-        className="absolute mt-[30px] h-[800px] w-[1400px] rounded-lg drop-shadow-2xl"
+        className="absolute mt-[50px] h-[653px] w-[1210px] rounded-lg drop-shadow-2xl"
         src={LandingScreen}
       />
     </div>
