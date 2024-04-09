@@ -25,21 +25,21 @@ export const menuItems = [
     icon: <ExchangeIcon />,
     href: routes.insuranceRisk,
   },
-  {
-    name: 'Risk Mitigation',
-    icon: <VoteIcon />,
-    href: routes.riskMitigation,
-  },
+  // {
+  //   name: 'Risk Mitigation',
+  //   icon: <VoteIcon />,
+  //   href: routes.riskMitigation,
+  // },
   {
     name: 'Claim Payouts',
     icon: <CompassIcon />,
     href: routes.claimPayouts,
   },
-  {
-    name: 'Portfolio',
-    icon: <ProfileIcon />,
-    href: routes.portfolio,
-  },
+  // {
+  //   name: 'Portfolio',
+  //   icon: <ProfileIcon />,
+  //   href: routes.portfolio,
+  // },
   {
     name: 'Open Policies',
     icon: <PoolIcon />,

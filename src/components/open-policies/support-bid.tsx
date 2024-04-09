@@ -97,7 +97,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                       5
                     )}...${item.proposal_pubkey.slice(27, 32)} `}
                     {active !== null &&
-                      active.pool_pubkey === item.pool_pubkey && (
+                      active.proposal_pubkey === item.proposal_pubkey && (
                         <CheckIcon className="h-5 w-5" />
                       )}
                   </>

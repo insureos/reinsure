@@ -65,7 +65,7 @@ const FarmList: React.FC<FarmListTypes> = ({
           >
             <div className="flex w-full flex-col gap-4 border-t border-dashed border-gray-700 px-4 py-4">
               <div className="grid w-full auto-cols-min grid-flow-col grid-cols-3 overflow-x-auto pb-3">
-                {NFTList.map((nft) => (
+                {/* {NFTList.map((nft) => (
                   <div key={nft.id} className="px-3">
                     <OracleCard
                       name={nft.name}
@@ -76,7 +76,7 @@ const FarmList: React.FC<FarmListTypes> = ({
                       collection={nft.collection}
                     />
                   </div>
-                ))}
+                ))} */}
               </div>
               <div className="mt-2 flex w-full items-center justify-center gap-2">
                 <Button shape="rounded" size="small" className="w-1/2">

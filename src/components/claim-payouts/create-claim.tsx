@@ -52,11 +52,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         className="flex cursor-pointer items-center justify-between rounded-lg border border-gray-700 bg-[#171E2E] px-6 py-3 text-xs hover:scale-[1.01] xl:text-sm 3xl:text-base"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <div>
-          {active !== null
-            ? `Coverage $${active?.coverage} , premium $${active?.premium} , deductible: $${active?.deductible}`
-            : placeholder}
-        </div>
+        <div>{active !== null ? active?.insurance_name : placeholder}</div>
         <ChevronDownIcon
           className={cn('h-5 w-5 transition-all', isOpen ? 'rotate-180' : '')}
         />
@@ -70,7 +66,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                 onClick={() => handleChoose(item)}
                 className="my-1 flex w-full cursor-pointer items-center justify-between rounded-lg px-6 py-2 text-xs hover:bg-gray-900 xl:text-sm 3xl:text-base"
               >
-                {`Coverage $${item?.coverage} , premium $${item?.premium} , deductible: $${item?.deductible}`}
+                {item?.insurance_name}
                 {active !== null &&
                   active.insurance_pubkey === item.insurance_pubkey && (
                     <CheckIcon className="h-5 w-5" />
@@ -355,7 +351,7 @@ const CreateClaim: React.FC<CreateClaimProps> = ({}) => {
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Proposal Address</div>
                             <AnchorLink
-                              href={`https://explorer.solana.com/address/${proposal?.proposal_pubkey}`}
+                              href={`https://explorer.solana.com/address/${proposal?.proposal_pubkey}?cluster=devnet`}
                               className="flex items-center gap-3"
                               target="_blank"
                             >
@@ -398,7 +394,7 @@ const CreateClaim: React.FC<CreateClaimProps> = ({}) => {
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Pool Address</div>
                             <AnchorLink
-                              href={`https://explorer.solana.com/address/${proposal?.lp?.pool_pubkey}`}
+                              href={`https://explorer.solana.com/address/${proposal?.lp?.pool_pubkey}?cluster=devnet`}
                               className="flex items-center gap-3"
                               target="_blank"
                             >
@@ -412,7 +408,7 @@ const CreateClaim: React.FC<CreateClaimProps> = ({}) => {
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Created by</div>
                             <AnchorLink
-                              href={`https://explorer.solana.com/address/${proposal?.lp?.created_by}`}
+                              href={`https://explorer.solana.com/address/${proposal?.lp?.created_by}?cluster=devnet`}
                               className="flex items-center gap-3"
                               target="_blank"
                             >
@@ -463,9 +459,13 @@ const CreateClaim: React.FC<CreateClaimProps> = ({}) => {
                             Insurance Details
                           </div>
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
+                            <div>Insurance Name</div>
+                            <div>$ {chosenInsurance?.insurance_name}</div>
+                          </div>
+                          <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Insurance Address</div>
                             <AnchorLink
-                              href={`https://explorer.solana.com/address/${chosenInsurance?.insurance_pubkey}`}
+                              href={`https://explorer.solana.com/address/${chosenInsurance?.insurance_pubkey}?cluster=devnet`}
                               className="flex items-center gap-3"
                               target="_blank"
                             >
@@ -483,7 +483,7 @@ const CreateClaim: React.FC<CreateClaimProps> = ({}) => {
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Created by</div>
                             <AnchorLink
-                              href={`https://explorer.solana.com/address/${chosenInsurance?.insurance_insurer}`}
+                              href={`https://explorer.solana.com/address/${chosenInsurance?.insurance_insurer}?cluster=devnet`}
                               className="flex items-center gap-3"
                               target="_blank"
                             >
@@ -500,7 +500,7 @@ const CreateClaim: React.FC<CreateClaimProps> = ({}) => {
                           </div>
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Maximum Coverage</div>
-                            <div>$ {chosenInsurance?.coverage}</div>
+                            <div>$ {chosenInsurance?.coverage / 10 ** 6}</div>
                           </div>
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Minimum Commission</div>
@@ -508,11 +508,11 @@ const CreateClaim: React.FC<CreateClaimProps> = ({}) => {
                           </div>
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Premium (bi-weekly)</div>
-                            <div>$ {chosenInsurance?.premium}</div>
+                            <div>$ {chosenInsurance?.premium / 10 ** 6}</div>
                           </div>
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Deductible</div>
-                            <div>$ {chosenInsurance?.deductible}</div>
+                            <div>$ {chosenInsurance?.deductible / 10 ** 6}</div>
                           </div>
                           <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                             <div>Insurance Expiry</div>

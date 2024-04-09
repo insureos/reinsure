@@ -629,7 +629,7 @@ export const RaiseClaim = (
       );
 
       await program.methods
-        .raiseClaim(claimId, new BN(claimAmount), claimMetadataLink)
+        .raiseClaim(claimId, new BN(claimAmount * 10 ** 6), claimMetadataLink)
         .accounts({
           insuranceCreator: insuranceCreator,
           insurance: insurance,
@@ -712,10 +712,7 @@ export const ClaimVote = (
   });
 };
 
-export const sendClaimDecision = (
-  notifier:PublicKey,
-  claim: PublicKey,
-) => {
+export const sendClaimDecision = (notifier: PublicKey, claim: PublicKey) => {
   return new Promise(async (resolve, reject) => {
     try {
       const program = await getInsuranceProgram(Connection, Signer);
@@ -728,6 +725,63 @@ export const sendClaimDecision = (
           systemProgram: web3.SystemProgram.programId,
         })
         .rpc({ skipPreflight: false, maxRetries: 3 })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+export const ReleaseClaim = (
+  insuranceCreator: PublicKey,
+  insurance: PublicKey,
+  lp: PublicKey,
+  proposal: PublicKey,
+  claim: PublicKey
+) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const program = await getInsuranceProgram(Connection, Signer);
+
+      const mintAddress = new PublicKey(
+        '9z6gCi1qjiv599YXS1EYtSvbWGQtcV67PnBk1GfrF3RF'
+      );
+
+      const insuranceCreatorUsdcAccount = await getAssociatedTokenAddress(
+        mintAddress,
+        insuranceCreator,
+        true
+      );
+
+      console.log(insuranceCreatorUsdcAccount.toString());
+
+      const lpUsdcAccount = await getAssociatedTokenAddress(
+        mintAddress,
+        lp,
+        true
+      );
+
+      await program.methods
+        .releaseSecurity()
+        .accounts({
+          insuranceCreator: insuranceCreator,
+          insurance: insurance,
+          insuranceCreatorTokenAccount: insuranceCreatorUsdcAccount,
+          lp: lp,
+          lpUsdcAccount: lpUsdcAccount,
+          proposal: proposal,
+          usdcMint: mintAddress,
+          claim: claim,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+          systemProgram: web3.SystemProgram.programId,
+        })
+        .rpc({ skipPreflight: true, maxRetries: 3 })
         .then((res) => {
           resolve(res);
         })

@@ -143,7 +143,7 @@ const PremiumPay: React.FC<PremiumPayProps> = ({
                   <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                     <div>Proposal Address</div>
                     <AnchorLink
-                      href={`https://explorer.solana.com/address/${proposalAccepted?.proposal_pubkey}`}
+                      href={`https://explorer.solana.com/address/${proposalAccepted?.proposal_pubkey}?cluster=devnet`}
                       className="flex items-center gap-3"
                       target="_blank"
                     >
@@ -186,7 +186,7 @@ const PremiumPay: React.FC<PremiumPayProps> = ({
                   <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                     <div>Pool Address</div>
                     <AnchorLink
-                      href={`https://explorer.solana.com/address/${proposalAccepted?.lp?.pool_pubkey}`}
+                      href={`https://explorer.solana.com/address/${proposalAccepted?.lp?.pool_pubkey}?cluster=devnet`}
                       className="flex items-center gap-3"
                       target="_blank"
                     >
@@ -200,7 +200,7 @@ const PremiumPay: React.FC<PremiumPayProps> = ({
                   <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                     <div>Created by</div>
                     <AnchorLink
-                      href={`https://explorer.solana.com/address/${proposalAccepted?.lp?.created_by}`}
+                      href={`https://explorer.solana.com/address/${proposalAccepted?.lp?.created_by}?cluster=devnet`}
                       className="flex items-center gap-3"
                       target="_blank"
                     >
@@ -251,9 +251,13 @@ const PremiumPay: React.FC<PremiumPayProps> = ({
                     Insurance Details
                   </div>
                   <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
+                    <div>Insurance Name</div>
+                    <div>$ {insurance?.insurance_name}</div>
+                  </div>
+                  <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                     <div>Insurance Address</div>
                     <AnchorLink
-                      href={`https://explorer.solana.com/address/${insurance?.insurance_pubkey}`}
+                      href={`https://explorer.solana.com/address/${insurance?.insurance_pubkey}?cluster=devnet`}
                       className="flex items-center gap-3"
                       target="_blank"
                     >
@@ -267,7 +271,7 @@ const PremiumPay: React.FC<PremiumPayProps> = ({
                   <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                     <div>Created by</div>
                     <AnchorLink
-                      href={`https://explorer.solana.com/address/${insurance?.insurance_insurer}`}
+                      href={`https://explorer.solana.com/address/${insurance?.insurance_insurer}?cluster=devnet`}
                       className="flex items-center gap-3"
                       target="_blank"
                     >
@@ -280,7 +284,7 @@ const PremiumPay: React.FC<PremiumPayProps> = ({
                   </div>
                   <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                     <div>Maximum Coverage</div>
-                    <div>$ {insurance?.coverage}</div>
+                    <div>$ {insurance?.coverage / 10 ** 6}</div>
                   </div>
                   <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                     <div>Minimum Commission</div>
@@ -288,11 +292,11 @@ const PremiumPay: React.FC<PremiumPayProps> = ({
                   </div>
                   <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                     <div>Premium (bi-weekly)</div>
-                    <div>$ {insurance?.premium}</div>
+                    <div>$ {insurance?.premium / 10 ** 6}</div>
                   </div>
                   <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                     <div>Deductible</div>
-                    <div>$ {insurance?.deductible}</div>
+                    <div>$ {insurance?.deductible / 10 ** 6}</div>
                   </div>
                   <div className="flex w-full items-center justify-between text-sm xl:text-base 3xl:text-lg">
                     <div>Insurance Expiry</div>

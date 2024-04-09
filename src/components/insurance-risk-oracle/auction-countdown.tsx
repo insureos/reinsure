@@ -66,7 +66,11 @@ function CountdownDisplayWrapper({ days, hours, minutes, seconds }: any) {
 
 const renderer = ({ days, hours, minutes, seconds, completed }: any) => {
   if (completed) {
-    return <div className="text-base xl:text-lg 3xl:text-xl mt-2 font-semibold">Voting Ended</div>;
+    return (
+      <div className="mt-2 text-base font-semibold text-red-600 xl:text-lg 3xl:text-xl">
+        Voting Ended
+      </div>
+    );
   } else {
     return (
       <CountdownDisplayWrapper
@@ -84,5 +88,7 @@ export default function AuctionCountdown({
 }: {
   date: string | number | Date | undefined;
 }) {
-  return <Countdown date={date} renderer={renderer} />;
+  return (
+      <Countdown date={date} renderer={renderer} />
+  );
 }
