@@ -28,7 +28,7 @@ const Reinsure: React.FC<ReinsureProps> = ({}) => {
         <div className="flex h-[25rem] w-[20rem] cursor-pointer flex-col items-center justify-between rounded-xl bg-gray-900 px-4 py-10 shadow-xl hover:scale-[1.01]">
           <Image src={img2} alt="image" className="h-[70%]" />
           <div className="text-center text-base font-bold xl:text-lg 3xl:text-xl">
-            Software Security Auditor
+            Software Security Auditor (Coming soon)
           </div>
         </div>
         <div className="flex h-[25rem] w-[20rem] cursor-pointer flex-col items-center justify-between rounded-xl bg-gray-900 px-4 py-10 shadow-xl hover:scale-[1.01]">
